@@ -1,0 +1,91 @@
+.status-bar {
+   position: fixed;
+   top: 20px;
+   left: 50%;
+   transform: translateX(-50%);
+   background: #f8f7f6;
+   padding: 10px 20px;
+   border-radius: 25px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+   display: flex;
+   align-items: center;
+   gap: 15px;
+   z-index: 9999;
+   pointer-events: none;
+   border: 1px solid #000;
+}
+
+.status-bar * {
+   pointer-events: auto;
+}
+
+.game-status {
+   color: #000;
+   font-weight: normal;
+}
+
+/* Button base styles */
+.status-bar button {
+   padding: 5px 15px;
+   color: #f8f7f6;
+   border: none;
+   border-radius: 15px;
+   cursor: pointer;
+   pointer-events: auto;
+   font-size: 14px;
+   transition: background-color 0.2s ease;
+}
+
+.restart-button {
+   background: #4CAF50;
+}
+
+.restart-button:hover {
+   background: #45a049;
+}
+
+.accept-rematch-button {
+   background: #4CAF50;
+}
+
+.accept-rematch-button:hover {
+   background: #45a049;
+}
+
+.decline-rematch-button {
+   background: #ff6961;
+}
+
+.decline-rematch-button:hover {
+   background: #ff5752;
+}
+
+.cancel-rematch-button {
+   background: #ff6961;
+}
+
+.cancel-rematch-button:hover {
+   background: #ff5752;
+}
+
+.exit-game-button {
+   background: #666;
+}
+
+.exit-game-button:hover {
+   background: #555;
+}
+
+/* Room ID hover effects (for when gameStatus shows room ID) */
+.game-status.room-id {
+   transition: color 0.2s ease;
+   cursor: pointer;
+}
+
+.game-status.room-id:hover {
+   color: #4CAF50;
+}
+
+.game-status.room-id:active {
+   color: #4CAF50;
+}
