@@ -1,4 +1,4 @@
-import { StatusBar, MenuOverlay } from './index.js'
+import { StatusBar, MainMenu } from './index.js'
 
 const GameUI = ({ statusBarState, statusBarActions, menuState, menuActions }) => {
    return (
@@ -7,7 +7,7 @@ const GameUI = ({ statusBarState, statusBarActions, menuState, menuActions }) =>
             {...statusBarState}
             {...statusBarActions}
          />
-         <MenuOverlay
+         <MainMenu
             {...menuState}
             {...menuActions}
          />
