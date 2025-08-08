@@ -14,7 +14,7 @@ const StatusBar = ({
    onExitGame
 }) => {
    return (
-      <div className="status-bar">
+      <div className="status-bar noselect" id="statusBar">
          <span className="game-status">{gameStatus}</span>
          
          {showRestartButton && (

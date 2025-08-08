@@ -3,7 +3,7 @@
    top: 20px;
    left: 50%;
    transform: translateX(-50%);
-   background: #f8f7f6;
+   background: var(--bg-primary);
    padding: 10px 20px;
    border-radius: 25px;
    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -11,7 +11,7 @@
    align-items: center;
    gap: 15px;
    z-index: 9999;
-   pointer-events: none;
+   pointer-events: none !important;
    border: 1px solid #000;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .game-status {
-   color: #000;
+   color: var(--text-dark);
    font-weight: normal;
 }
 
@@ -37,35 +37,35 @@
 }
 
 .restart-button {
-   background: #4CAF50;
+   background: var(--color-1);
 }
 
 .restart-button:hover {
-   background: #45a049;
+   background: var(--color-1-hover);
 }
 
 .accept-rematch-button {
-   background: #4CAF50;
+   background: var(--color-1);
 }
 
 .accept-rematch-button:hover {
-   background: #45a049;
+   background: var(--color-1-hover);
 }
 
 .decline-rematch-button {
-   background: #ff6961;
+   background: var(--danger-color);
 }
 
 .decline-rematch-button:hover {
-   background: #ff5752;
+   background: var(--danger-color-hover);
 }
 
 .cancel-rematch-button {
-   background: #ff6961;
+   background: var(--danger-color);
 }
 
 .cancel-rematch-button:hover {
-   background: #ff5752;
+   background: var(--danger-color-hover);
 }
 
 .exit-game-button {

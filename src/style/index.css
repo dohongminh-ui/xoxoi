@@ -82,10 +82,15 @@ h6 {
 
 :root {
    --primary-color: #7fc8f8;
+   --primary-color-hover: #72b4df;
    --success-color: #aee6c5;
+   --success-color-hover: #9dcfb1;
    --info-color: #ffb5a7;
+   --info-color-hover: #e6a396;
    --warning-color: #fae588;
+   --warning-color-hover: #e1ce7a;
    --danger-color: #ff686b;
+   --danger-color-hover: #e65e60;
 
    --color-1: #aee6c5;
    --color-1-hover: #9dcfb1;
