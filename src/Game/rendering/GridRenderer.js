@@ -224,15 +224,16 @@ export class GridRenderer {
     * @param {Object} event - Pointer event with position data
     * @param {number} scale - Current grid scale
     * @param {Object} gameState - Current game state
-    * @param {boolean} isDragging - Whether user is currently dragging
-    * @param {boolean} hasMoved - Whether drag has moved significantly
     * @param {Map} placedMarks - Map of placed marks
     */
-   updateHoverCell(event, scale, gameState, isDragging, hasMoved, placedMarks) {
+   updateHoverCell(event, scale, gameState, placedMarks) {
       this.hoverGraphics.clear();
 
+      // Disable hover when not in an active game or when menu overlays are shown
+      if (gameState?.gamePhase && gameState.gamePhase !== 'playing') return;
+      if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
+      if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
-      if (!(!isDragging || !hasMoved)) return;
       if (gameState.gameMode === "multi" && !gameState.isMyTurn) return;
 
       let pos;

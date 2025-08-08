@@ -245,12 +245,23 @@ export class GameEngine {
          const { event: pointerEvent, isDragging, hasMoved } = event.detail;
          const cameraState = this.cameraController.getCameraState();
 
-         // Get real game state or use fallback
-         const gameState = this.gameLogic ? this.gameLogic.getGameState() : {
+         // Get real game state
+         let gameState = this.gameLogic ? this.gameLogic.getGameState() : {
             isGameOver: false,
             gameMode: "test",
             isMyTurn: true
          };
+
+         // If GameStateManager exists, enrich with phase/menu/isGameActive
+         if (this.gameStateManager) {
+            const gsmState = this.gameStateManager.getState();
+            gameState = {
+               ...gameState,
+               gamePhase: gsmState.gamePhase,
+               showMenu: gsmState.showMenu,
+               isGameActive: this.gameStateManager.isGameActive()
+            };
+         }
 
          this.gridRenderer.updateHoverCell(
             pointerEvent,
@@ -444,6 +455,9 @@ export class GameEngine {
       this.gameStateManager.addEventListener('gamePhaseChanged', (event) => {
          const { from, to } = event.detail;
          console.log(`Game phase changed from ${from} to ${to}`);
+         if (this.gridRenderer) {
+            this.gridRenderer.clearHover();
+         }
       });
 
       // Listen for turn changes
@@ -456,12 +470,18 @@ export class GameEngine {
       this.gameStateManager.addEventListener('gameEnded', (event) => {
          const { winner } = event.detail;
          console.log(`Game ended. Winner: ${winner || 'Draw'}`);
+         if (this.gridRenderer) {
+            this.gridRenderer.clearHover();
+         }
       });
 
       // Listen for menu state changes
       this.gameStateManager.addEventListener('menuStateChanged', (event) => {
          const { currentMenu, showMenu } = event.detail;
          console.log(`Menu state changed: ${currentMenu} (visible: ${showMenu})`);
+         if (this.gridRenderer) {
+            this.gridRenderer.clearHover();
+         }
       });
 
       // Listen for button state changes

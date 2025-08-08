@@ -128,8 +128,19 @@ export class CameraController extends EventTarget {
       this.lastDragTime = Date.now();
       this.velocity = { x: 0, y: 0 };
 
+      // Compute initial cell under pointer in grid coordinates
+      let heldCell = null;
+      try {
+         const gridPos = event.data.getLocalPosition(this.gridContainer);
+         if (gridPos && isFinite(gridPos.x) && isFinite(gridPos.y)) {
+            const cellX = Math.floor(gridPos.x / CELL_SIZE);
+            const cellY = Math.floor(gridPos.y / CELL_SIZE);
+            heldCell = { cellX, cellY };
+         }
+      } catch (_) { /* ignore */ }
+
       this.dispatchEvent(new CustomEvent('dragStart', {
-         detail: { position: this.dragStart }
+         detail: { position: this.dragStart, ...(heldCell || {}) }
       }));
    }
 
