@@ -216,7 +216,7 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 
 ## Current Architecture & Tech Stack
 
-### Backend Stack (TypeScript)
+### Backend Stack
 
 - **Node.js + Express.js** - Main server framework
 - **Socket.IO** - Real-time multiplayer communication
@@ -224,7 +224,7 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 - **Redis** - Caching and real-time state management
 - **JWT + OAuth2 Authentication** - User session management
 
-### Frontend Stack (TypeScript)
+### Frontend Stack
 
 - **React** - UI framework
 - **PIXI.js** - Canvas rendering for infinite grid
@@ -237,7 +237,6 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 - User accounts, authentication, profiles
 - Match history and statistics
 - Leaderboards and rankings
-- Tournament data
 
 **Redis (Hot Data):**
 
@@ -271,6 +270,7 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 - **Real-time Synchronization** - Socket.IO with Redis pub/sub
 - **Reconnection Handling** - Automatic state recovery
 - **Rematch System** - Request, accept, decline rematch options
+- **Friend and Invitation System** - Add and invite friends to private rooms, send game invitations
 
 ### UI/UX Features
 
