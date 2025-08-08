@@ -224,9 +224,11 @@ export class GridRenderer {
     * @param {Object} event - Pointer event with position data
     * @param {number} scale - Current grid scale
     * @param {Object} gameState - Current game state
+    * @param {boolean} isDragging - Whether user is currently dragging
+    * @param {boolean} hasMoved - Whether drag has moved significantly
     * @param {Map} placedMarks - Map of placed marks
     */
-   updateHoverCell(event, scale, gameState, placedMarks) {
+   updateHoverCell(event, scale, gameState, isDragging, hasMoved, placedMarks) {
       this.hoverGraphics.clear();
 
       // Disable hover when not in an active game or when menu overlays are shown
