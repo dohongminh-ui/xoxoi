@@ -343,4 +343,4 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 ## Contribute
 
 - slavery: [todo list in trello](https://trello.com/b/e5EF2jcw/xoxo)
-- and someone to help me convert this project to typescript :sob::wilted_rose::broken_heart::pray:
+- and someone to help me convert this project to typescript :sob::wilted_flower::broken_heart::pray:
