@@ -8,8 +8,8 @@
 /* Disable text selection only on specific interactive elements if needed */
 .noselect,
 button,
-input[type="button"],
-input[type="submit"] {
+input[type='button'],
+input[type='submit'] {
    user-select: none;
 }
 

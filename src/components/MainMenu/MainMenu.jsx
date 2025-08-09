@@ -28,29 +28,29 @@ const MainMenu = ({
 
    return (
       <MenuOverlay isVisible={isVisible}>
-         <div className="menu-content">
-            <button className="menu-button single-player-btn" onClick={onStartSinglePlayer}>
+         <div className='menu-content'>
+            <button className='menu-button single-player-btn' onClick={onStartSinglePlayer}>
                Singleplayer
             </button>
 
-            <button className="menu-button bot-game-btn" onClick={onStartBotGame}>
+            <button className='menu-button bot-game-btn' onClick={onStartBotGame}>
                Play with Bot
             </button>
 
-            <button className="menu-button multiplayer-btn" onClick={onCreateMultiplayer} >
+            <button className='menu-button multiplayer-btn' onClick={onCreateMultiplayer} >
                Create Multiplayer Game
             </button>
 
-            <div className="join-game-section">
+            <div className='join-game-section'>
                <input
-                  type="text"
-                  className="room-id-input"
-                  placeholder="Enter Room ID"
+                  type='text'
+                  className='room-id-input'
+                  placeholder='Enter Room ID'
                   value={roomId}
                   onChange={(e) => setRoomId(e.target.value)}
                   onKeyDown={handleKeyDown}
                />
-               <button className="menu-button join-game-btn" onClick={handleJoinGame} >
+               <button className='menu-button join-game-btn' onClick={handleJoinGame} >
                   Join Game
                </button>
             </div>

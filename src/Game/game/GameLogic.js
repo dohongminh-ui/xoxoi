@@ -10,11 +10,11 @@ export class GameLogic extends EventTarget {
       super();
 
       // Game state
-      this.gameMode = null; // "single", "bot", "multi"
-      this.currentPlayer = "X";
+      this.gameMode = null; // 'single', 'bot', 'multi'
+      this.currentPlayer = 'X';
       this.isGameOver = false;
-      this.playerMark = ""; // For multiplayer
-      this.roomId = ""; // For multiplayer
+      this.playerMark = ''; // For multiplayer
+      this.roomId = ''; // For multiplayer
       this.isMyTurn = false; // For multiplayer
       this.hasOpponent = false; // For multiplayer
 
@@ -27,7 +27,7 @@ export class GameLogic extends EventTarget {
 
    /**
     * Start a new game
-    * @param {string} mode - Game mode: "single", "bot", or "multi"
+    * @param {string} mode - Game mode: 'single', 'bot', or 'multi'
     * @param {Object} options - Additional options for the game mode
     */
    startGame(mode, options = {}) {
@@ -35,22 +35,22 @@ export class GameLogic extends EventTarget {
       this.gameMode = mode;
 
       switch (mode) {
-         case "single":
-            this.currentPlayer = "X";
+         case 'single':
+            this.currentPlayer = 'X';
             this.isMyTurn = true;
             break;
 
-         case "bot":
-            this.currentPlayer = "X";
+         case 'bot':
+            this.currentPlayer = 'X';
             this.isMyTurn = true;
             break;
 
-         case "multi":
-            this.playerMark = options.playerMark || "X";
-            this.roomId = options.roomId || "";
+         case 'multi':
+            this.playerMark = options.playerMark || 'X';
+            this.roomId = options.roomId || '';
             this.isMyTurn = options.isMyTurn || false;
             this.hasOpponent = options.hasOpponent || false;
-            this.currentPlayer = options.currentPlayer || "X";
+            this.currentPlayer = options.currentPlayer || 'X';
             break;
       }
 
@@ -91,7 +91,7 @@ export class GameLogic extends EventTarget {
       const key = coordKey(cellX, cellY);
 
       // For multiplayer, emit to server instead of placing directly
-      if (this.gameMode === "multi") {
+      if (this.gameMode === 'multi') {
          this.dispatchEvent(new CustomEvent('multiplayerMove', {
             detail: {
                roomId: this.roomId,
@@ -128,7 +128,7 @@ export class GameLogic extends EventTarget {
       if (this.placedMarks.has(key)) {
          return {
             success: false,
-            reason: "Cell already occupied",
+            reason: 'Cell already occupied',
             cellX,
             cellY,
             player
@@ -199,8 +199,8 @@ export class GameLogic extends EventTarget {
       }
 
       // Switch turns (for local games)
-      if (this.gameMode === "single" || this.gameMode === "bot") {
-         this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
+      if (this.gameMode === 'single' || this.gameMode === 'bot') {
+         this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
 
          this.dispatchEvent(new CustomEvent('turnChanged', {
             detail: {
@@ -228,32 +228,32 @@ export class GameLogic extends EventTarget {
    validateMove(cellX, cellY) {
       // Check if game is over
       if (this.isGameOver) {
-         return { isValid: false, reason: "Game is over" };
+         return { isValid: false, reason: 'Game is over' };
       }
 
       // Check if game mode is set
       if (!this.gameMode) {
-         return { isValid: false, reason: "No game mode set" };
+         return { isValid: false, reason: 'No game mode set' };
       }
 
       // Check coordinates are valid numbers
       if (!Number.isInteger(cellX) || !Number.isInteger(cellY)) {
-         return { isValid: false, reason: "Invalid coordinates" };
+         return { isValid: false, reason: 'Invalid coordinates' };
       }
 
       // Check if cell is already occupied
       const key = coordKey(cellX, cellY);
       if (this.placedMarks.has(key)) {
-         return { isValid: false, reason: "Cell already occupied" };
+         return { isValid: false, reason: 'Cell already occupied' };
       }
 
       // Check multiplayer-specific conditions
-      if (this.gameMode === "multi") {
+      if (this.gameMode === 'multi') {
          if (!this.isMyTurn) {
-            return { isValid: false, reason: "Not your turn" };
+            return { isValid: false, reason: 'Not your turn' };
          }
          if (!this.hasOpponent) {
-            return { isValid: false, reason: "No opponent" };
+            return { isValid: false, reason: 'No opponent' };
          }
       }
 
@@ -448,10 +448,10 @@ export class GameLogic extends EventTarget {
     */
    resetGame() {
       this.gameMode = null;
-      this.currentPlayer = "X";
+      this.currentPlayer = 'X';
       this.isGameOver = false;
-      this.playerMark = "";
-      this.roomId = "";
+      this.playerMark = '';
+      this.roomId = '';
       this.isMyTurn = false;
       this.hasOpponent = false;
 

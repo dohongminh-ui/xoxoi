@@ -14,12 +14,12 @@ const StatusBar = ({
    onExitGame
 }) => {
    return (
-      <div className="status-bar noselect" id="statusBar">
-         <span className="game-status">{gameStatus}</span>
+      <div className='status-bar noselect' id='statusBar'>
+         <span className='game-status'>{gameStatus}</span>
          
          {showRestartButton && (
             <button 
-               className="restart-button"
+               className='restart-button'
                onClick={onRestart}
             >
                Rematch
@@ -28,7 +28,7 @@ const StatusBar = ({
          
          {showAcceptRematchButton && (
             <button 
-               className="accept-rematch-button"
+               className='accept-rematch-button'
                onClick={onAcceptRematch}
             >
                Accept
@@ -37,7 +37,7 @@ const StatusBar = ({
          
          {showDeclineRematchButton && (
             <button 
-               className="decline-rematch-button"
+               className='decline-rematch-button'
                onClick={onDeclineRematch}
             >
                Decline
@@ -46,7 +46,7 @@ const StatusBar = ({
          
          {showCancelRematchButton && (
             <button 
-               className="cancel-rematch-button"
+               className='cancel-rematch-button'
                onClick={onCancelRematch}
             >
                Cancel
@@ -55,7 +55,7 @@ const StatusBar = ({
          
          {showExitGameButton && (
             <button 
-               className="exit-game-button"
+               className='exit-game-button'
                onClick={onExitGame}
             >
                Exit

@@ -38,13 +38,13 @@ export class CameraController extends EventTarget {
     */
    setupEventListeners() {
       // Zoom/wheel events
-      this.app.view.addEventListener("wheel", this.handleWheel.bind(this));
+      this.app.view.addEventListener('wheel', this.handleWheel.bind(this));
 
       // Drag events
-      this.app.stage.on("pointerdown", this.handlePointerDown.bind(this));
-      this.app.stage.on("pointermove", this.handlePointerMove.bind(this));
-      this.app.stage.on("pointerup", this.handlePointerUp.bind(this));
-      this.app.stage.on("pointerupoutside", this.handlePointerUpOutside.bind(this));
+      this.app.stage.on('pointerdown', this.handlePointerDown.bind(this));
+      this.app.stage.on('pointermove', this.handlePointerMove.bind(this));
+      this.app.stage.on('pointerup', this.handlePointerUp.bind(this));
+      this.app.stage.on('pointerupoutside', this.handlePointerUpOutside.bind(this));
    }
 
    /**
@@ -314,7 +314,7 @@ export class CameraController extends EventTarget {
             const markWorldX = targetX * CELL_SIZE * this.scale + this.gridContainer.x;
             const markWorldY = targetY * CELL_SIZE * this.scale + this.gridContainer.y;
             const markSize = CELL_SIZE * this.scale;
-            const statusBarHeight = (document.getElementById("statusBar")?.offsetHeight || 0) + 40;
+            const statusBarHeight = (document.getElementById('statusBar')?.offsetHeight || 0) + 40;
 
             let needsAdjustment = false;
             const adjustments = { x: 0, y: 0 };
@@ -460,11 +460,11 @@ export class CameraController extends EventTarget {
       this.app.ticker.remove(this.updateMomentum);
 
       // Remove event listeners
-      this.app.view.removeEventListener("wheel", this.handleWheel);
-      this.app.stage.off("pointerdown", this.handlePointerDown);
-      this.app.stage.off("pointermove", this.handlePointerMove);
-      this.app.stage.off("pointerup", this.handlePointerUp);
-      this.app.stage.off("pointerupoutside", this.handlePointerUpOutside);
+      this.app.view.removeEventListener('wheel', this.handleWheel);
+      this.app.stage.off('pointerdown', this.handlePointerDown);
+      this.app.stage.off('pointermove', this.handlePointerMove);
+      this.app.stage.off('pointerup', this.handlePointerUp);
+      this.app.stage.off('pointerupoutside', this.handlePointerUpOutside);
 
       // Reset velocity
       this.velocity = { x: 0, y: 0 };

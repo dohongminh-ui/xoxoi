@@ -1,8 +1,8 @@
-importScripts("bot.js");
+importScripts('bot.js');
 
 self.onmessage = (e) => {
    try {
-      console.log("Worker received message", e.data);
+      console.log('Worker received message', e.data);
       const { placedMarks, potentialWins } = e.data;
 
       const marksMap = new Map();
@@ -12,7 +12,7 @@ self.onmessage = (e) => {
 
       const potentialWinsMap = new Map();
       potentialWins.forEach(win => {
-         const [direction, x, y] = win.key.split(",");
+         const [direction, x, y] = win.key.split(',');
          potentialWinsMap.set(win.key, {
             count: win.count,
             cells: [[parseInt(x), parseInt(y)]]
@@ -20,27 +20,27 @@ self.onmessage = (e) => {
       });
 
       const move = bot.getBestMove(marksMap, potentialWinsMap);
-      console.log("Bot move:", move);
+      console.log('Bot move:', move);
 
-      if (move && typeof move.x === "number" && typeof move.y === "number") {
+      if (move && typeof move.x === 'number' && typeof move.y === 'number') {
          self.postMessage({
-            type: "move",
+            type: 'move',
             data: move
          });
       } else {
          const fallbackMove = getFallbackMove(marksMap);
          if (fallbackMove) {
             self.postMessage({
-               type: "move",
+               type: 'move',
                data: fallbackMove
             });
          } else {
-            throw new Error("No valid moves available");
+            throw new Error('No valid moves available');
          }
       }
    } catch (error) {
       self.postMessage({
-         type: "error",
+         type: 'error',
          message: error.message,
          stack: error.stack
       });
@@ -56,7 +56,7 @@ function getFallbackMove(marksMap) {
    let maxX = -Infinity, maxY = -Infinity;
 
    for (const key of marksMap.keys()) {
-      const [x, y] = key.split(",").map(Number);
+      const [x, y] = key.split(',').map(Number);
       minX = Math.min(minX, x);
       maxX = Math.max(maxX, x);
       minY = Math.min(minY, y);

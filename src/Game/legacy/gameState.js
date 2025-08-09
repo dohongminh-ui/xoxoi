@@ -1,19 +1,19 @@
 const gameState = {
    gameMode: null,
-   playerMark: "",
-   roomId: "",
+   playerMark: '',
+   roomId: '',
    isMyTurn: false,
-   currentPlayer: "X",
+   currentPlayer: 'X',
    isGameOver: false,
    hasOpponent: false
 };
 
 const BUTTON_STATES = {
-   IN_GAME: "in_game",
-   GAME_OVER: "game_over",
-   REMATCH_REQUEST: "rematch_request",
-   WAITING_REMATCH: "waiting_rematch",
-   OPPONENT_LEFT: "opponent_left"
+   IN_GAME: 'in_game',
+   GAME_OVER: 'game_over',
+   REMATCH_REQUEST: 'rematch_request',
+   WAITING_REMATCH: 'waiting_rematch',
+   OPPONENT_LEFT: 'opponent_left'
 };
 
 function updateButtonState(state) {
@@ -48,7 +48,7 @@ function updateButtonState(state) {
    }
 
    Object.entries(buttons).forEach(([buttonId, isVisible]) => {
-      document.getElementById(buttonId).style.display = isVisible ? "block" : "none";
+      document.getElementById(buttonId).style.display = isVisible ? 'block' : 'none';
    });
 }
 
@@ -77,11 +77,11 @@ function resetGameState(options = {}) {
    }
 
    if (settings.showMenu) {
-      document.getElementById("menuOverlay").style.display = "flex";
+      document.getElementById('menuOverlay').style.display = 'flex';
    }
 
    if (settings.updateStatus) {
-      document.getElementById("gameStatus").textContent = "toe";
+      document.getElementById('gameStatus').textContent = 'toe';
    }
 
    if (settings.redrawGrid) {
@@ -90,10 +90,10 @@ function resetGameState(options = {}) {
 
    if (!settings.keepGameState) {
       gameState.gameMode = null;
-      gameState.playerMark = "";
-      gameState.roomId = "";
+      gameState.playerMark = '';
+      gameState.roomId = '';
       gameState.isMyTurn = false;
-      gameState.currentPlayer = "X";
+      gameState.currentPlayer = 'X';
       gameState.isGameOver = false;
       updateButtonState(null);
    }

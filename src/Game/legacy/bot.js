@@ -12,27 +12,27 @@ class ToeBot {
       const bounds = this.getBoardBoundaries(placedMarks);
       const isSpotAvailable = (x, y) => !placedMarks.has(`${x},${y}`);
 
-      const winningMove = this.findLineMove(placedMarks, bounds, "O", this.WINNING_LENGTH - 1);
-      const criticalBlock = this.findLineMove(placedMarks, bounds, "X", 4);
+      const winningMove = this.findLineMove(placedMarks, bounds, 'O', this.WINNING_LENGTH - 1);
+      const criticalBlock = this.findLineMove(placedMarks, bounds, 'X', 4);
 
       if (winningMove && criticalBlock &&
          isSpotAvailable(winningMove.x, winningMove.y) &&
          isSpotAvailable(criticalBlock.x, criticalBlock.y)) {
 
-         placedMarks.set(`${winningMove.x},${winningMove.y}`, { player: "O" });
-         const opponentCanStillWin = this.findLineMove(placedMarks, bounds, "X", 4);
+         placedMarks.set(`${winningMove.x},${winningMove.y}`, { player: 'O' });
+         const opponentCanStillWin = this.findLineMove(placedMarks, bounds, 'X', 4);
          placedMarks.delete(`${winningMove.x},${winningMove.y}`);
 
          if (opponentCanStillWin) {
-            placedMarks.set(`${criticalBlock.x},${criticalBlock.y}`, { player: "O" });
-            const weCanWinAfterBlock = this.findLineMove(placedMarks, bounds, "O", 4);
+            placedMarks.set(`${criticalBlock.x},${criticalBlock.y}`, { player: 'O' });
+            const weCanWinAfterBlock = this.findLineMove(placedMarks, bounds, 'O', 4);
             placedMarks.delete(`${criticalBlock.x},${criticalBlock.y}`);
 
             if (weCanWinAfterBlock) {
                return criticalBlock;
             }
-            const opponentDir = this.getWinningDirection(criticalBlock.x, criticalBlock.y, placedMarks, "X");
-            const ourDir = this.getWinningDirection(winningMove.x, winningMove.y, placedMarks, "O");
+            const opponentDir = this.getWinningDirection(criticalBlock.x, criticalBlock.y, placedMarks, 'X');
+            const ourDir = this.getWinningDirection(winningMove.x, winningMove.y, placedMarks, 'O');
 
             if (opponentDir && ourDir && !this.areParallelDirections(opponentDir, ourDir)) {
                return winningMove;
@@ -47,7 +47,7 @@ class ToeBot {
       let developmentMove = null;
       const quickWin = this.analyzePotentialThreats(potentialWins);
       if (quickWin && isSpotAvailable(quickWin.x, quickWin.y)) {
-         if (quickWin.priority === "immediate") {
+         if (quickWin.priority === 'immediate') {
             return quickWin;
          }
          developmentMove = quickWin;
@@ -56,7 +56,7 @@ class ToeBot {
       const forcedWinMove = this.findForcedWinMove(placedMarks, bounds, potentialWins);
       if (forcedWinMove && isSpotAvailable(forcedWinMove.x, forcedWinMove.y)) return forcedWinMove;
 
-      const blockForcedWin = this.findForcedWinMove(placedMarks, bounds, potentialWins, "X");
+      const blockForcedWin = this.findForcedWinMove(placedMarks, bounds, potentialWins, 'X');
       if (blockForcedWin && isSpotAvailable(blockForcedWin.x, blockForcedWin.y)) return blockForcedWin;
 
       const doubleThreeBlock = this.findDoubleThreeThreat(placedMarks, bounds);
@@ -92,7 +92,7 @@ class ToeBot {
       let maxX = -Infinity, maxY = -Infinity;
 
       for (const key of placedMarks.keys()) {
-         const [x, y] = key.split(",").map(Number);
+         const [x, y] = key.split(',').map(Number);
          minX = Math.min(minX, x);
          minY = Math.min(minY, y);
          maxX = Math.max(maxX, x);
@@ -284,7 +284,7 @@ class ToeBot {
       const threatsByPosition = new Map();
 
       for (const [key, data] of potentialWins) {
-         const [dx, dy, x, y] = key.split(",").map(Number);
+         const [dx, dy, x, y] = key.split(',').map(Number);
          const posKey = `${x},${y}`;
 
          if (!threatsByPosition.has(posKey)) {
@@ -316,7 +316,7 @@ class ToeBot {
             bestThreat = {
                x: posData.x,
                y: posData.y,
-               priority: "immediate",
+               priority: 'immediate',
                value: threatLevel,
                connected: connectedThreats
             };
@@ -326,7 +326,7 @@ class ToeBot {
             bestDevelopment = {
                x: posData.x,
                y: posData.y,
-               priority: "development",
+               priority: 'development',
                value: threatLevel,
                connected: connectedThreats
             };
@@ -347,7 +347,7 @@ class ToeBot {
 
       let centerX = 0, centerY = 0, count = 0;
       for (const key of placedMarks.keys()) {
-         const [x, y] = key.split(",").map(Number);
+         const [x, y] = key.split(',').map(Number);
          centerX += x;
          centerY += y;
          count++;
@@ -376,9 +376,9 @@ class ToeBot {
    evaluateStrategicPosition(x, y, placedMarks) {
       let score = 0;
 
-      score += this.evaluatePositionPotential(x, y, placedMarks, "O") * 1.5;
+      score += this.evaluatePositionPotential(x, y, placedMarks, 'O') * 1.5;
 
-      score += this.evaluatePositionPotential(x, y, placedMarks, "X");
+      score += this.evaluatePositionPotential(x, y, placedMarks, 'X');
 
       score += this.evaluateSpaceControl(x, y, placedMarks);
 
@@ -419,7 +419,7 @@ class ToeBot {
                if (!cell) {
                   space++;
                   if (space === 1) openEnds++;
-               } else if (cell.player === "O") {
+               } else if (cell.player === 'O') {
                   consecutive++;
                   score += 15;
                } else {
@@ -453,7 +453,7 @@ class ToeBot {
                const newY = y + dy * i * dir;
                const cell = placedMarks.get(`${newX},${newY}`);
 
-               if (cell?.player === "X") {
+               if (cell?.player === 'X') {
                   consecutive++;
                } else {
                   break;
@@ -474,8 +474,8 @@ class ToeBot {
          for (let y = bounds.minY; y <= bounds.maxY; y++) {
             if (placedMarks.has(`${x},${y}`)) continue;
 
-            placedMarks.set(`${x},${y}`, { player: "O" });
-            const evaluation = this.evaluateThreats(x, y, placedMarks, "O");
+            placedMarks.set(`${x},${y}`, { player: 'O' });
+            const evaluation = this.evaluateThreats(x, y, placedMarks, 'O');
             placedMarks.delete(`${x},${y}`);
 
             if (evaluation.openThreats >= 2 && evaluation.totalScore > bestScore) {
@@ -496,8 +496,8 @@ class ToeBot {
          for (let y = bounds.minY; y <= bounds.maxY; y++) {
             if (placedMarks.has(`${x},${y}`)) continue;
 
-            placedMarks.set(`${x},${y}`, { player: "X" });
-            const evaluation = this.evaluateThreats(x, y, placedMarks, "X");
+            placedMarks.set(`${x},${y}`, { player: 'X' });
+            const evaluation = this.evaluateThreats(x, y, placedMarks, 'X');
             placedMarks.delete(`${x},${y}`);
 
             if (evaluation.openThreats >= 2 && evaluation.totalScore > bestScore) {
@@ -510,7 +510,7 @@ class ToeBot {
       return bestMove;
    }
 
-   findForcedWinMove(placedMarks, bounds, potentialWins, player = "O") {
+   findForcedWinMove(placedMarks, bounds, potentialWins, player = 'O') {
       for (let x = bounds.minX; x <= bounds.maxX; x++) {
          for (let y = bounds.minY; y <= bounds.maxY; y++) {
             if (placedMarks.has(`${x},${y}`)) continue;
@@ -536,8 +536,8 @@ class ToeBot {
          for (let y = bounds.minY; y <= bounds.maxY; y++) {
             if (placedMarks.has(`${x},${y}`)) continue;
 
-            placedMarks.set(`${x},${y}`, { player: "X" });
-            const threatPotential = this.evaluatePositionPotential(x, y, placedMarks, "X");
+            placedMarks.set(`${x},${y}`, { player: 'X' });
+            const threatPotential = this.evaluatePositionPotential(x, y, placedMarks, 'X');
             placedMarks.delete(`${x},${y}`);
 
             if (threatPotential > maxThreatPotential) {
@@ -593,7 +593,7 @@ class ToeBot {
          for (let y = bounds.minY; y <= bounds.maxY; y++) {
             if (placedMarks.has(`${x},${y}`)) continue;
 
-            placedMarks.set(`${x},${y}`, { player: "X" });
+            placedMarks.set(`${x},${y}`, { player: 'X' });
             const threatLevel = this.evaluateOpenThreats(x, y, placedMarks);
             placedMarks.delete(`${x},${y}`);
 
@@ -656,7 +656,7 @@ class ToeBot {
                if (!cell) {
                   if (isOpen) openEnds++;
                   break;
-               } else if (cell.player === "X") {
+               } else if (cell.player === 'X') {
                   tempConsecutive++;
                   score += 20;
                } else {
@@ -719,7 +719,7 @@ class ToeBot {
             let moveScore = 0;
             let threats = 0;
 
-            placedMarks.set(`${x},${y}`, { player: "O" });
+            placedMarks.set(`${x},${y}`, { player: 'O' });
 
             for (const [dx, dy] of this.DIRECTIONS) {
                const score = this.evaluateDirection(x, y, dx, dy, placedMarks);

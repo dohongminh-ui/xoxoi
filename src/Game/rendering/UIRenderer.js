@@ -26,11 +26,11 @@ export class UIRenderer extends EventTarget {
       };
       
       this.buttonStates = {
-         IN_GAME: "in_game",
-         GAME_OVER: "game_over",
-         REMATCH_REQUEST: "rematch_request",
-         WAITING_REMATCH: "waiting_rematch",
-         OPPONENT_LEFT: "opponent_left"
+         IN_GAME: 'in_game',
+         GAME_OVER: 'game_over',
+         REMATCH_REQUEST: 'rematch_request',
+         WAITING_REMATCH: 'waiting_rematch',
+         OPPONENT_LEFT: 'opponent_left'
       };
       
       this.initialized = false;
@@ -369,7 +369,7 @@ export class UIRenderer extends EventTarget {
       Object.entries(buttons).forEach(([buttonId, isVisible]) => {
          const element = this.elements[buttonId];
          if (element) {
-            element.style.display = isVisible ? "block" : "none";
+            element.style.display = isVisible ? 'block' : 'none';
          }
       });
    }
@@ -389,7 +389,7 @@ export class UIRenderer extends EventTarget {
     */
    showMenu() {
       if (this.elements.menuOverlay) {
-         this.elements.menuOverlay.style.display = "flex";
+         this.elements.menuOverlay.style.display = 'flex';
       }
       
       // Clear room ID input when showing menu
@@ -403,7 +403,7 @@ export class UIRenderer extends EventTarget {
     */
    hideMenu() {
       if (this.elements.menuOverlay) {
-         this.elements.menuOverlay.style.display = "none";
+         this.elements.menuOverlay.style.display = 'none';
       }
    }
 

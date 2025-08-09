@@ -6,7 +6,7 @@ const MenuOverlay = ({ isVisible = true, children }) => {
    }
 
    return (
-      <div className="menu-overlay">
+      <div className='menu-overlay'>
          {children}
       </div>
    )

@@ -7,7 +7,7 @@ export const GAME_CONSTANTS = {
    ZOOM_SPEED: 0.1,
 
    // Visual styling
-   STRIKE_COLOR: "#52575D",
+   STRIKE_COLOR: '#52575D',
    STRIKE_WIDTH: 5,
    STRIKE_ANIMATION_DURATION: 150,
 
@@ -23,11 +23,11 @@ export const GAME_CONSTANTS = {
 
    // Colors
    COLORS: {
-      BACKGROUND: "#FEF9F2",
-      GRID_LINE: "#52575D",
-      PLAYER_X: "#ff6961",
-      PLAYER_O: "#a2bffe",
-      HOVER: "#888888"
+      BACKGROUND: '#FEF9F2',
+      GRID_LINE: '#52575D',
+      PLAYER_X: '#ff6961',
+      PLAYER_O: '#a2bffe',
+      HOVER: '#888888'
    }
 };
 

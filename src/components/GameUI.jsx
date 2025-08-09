@@ -2,7 +2,7 @@ import { StatusBar, MainMenu } from './index.js'
 
 const GameUI = ({ statusBarState, statusBarActions, menuState, menuActions }) => {
    return (
-      <div className="ui-overlay">
+      <div className='ui-overlay'>
          <StatusBar
             {...statusBarState}
             {...statusBarActions}

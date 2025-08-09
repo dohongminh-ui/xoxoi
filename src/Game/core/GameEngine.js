@@ -132,7 +132,7 @@ export class GameEngine {
       console.log('Initializing components...');
       console.log('App available:', !!this.app);
       console.log('GridContainer available:', !!this.gridContainer);
-      console.log('App stage available:', !!(this.app && this.app.stage));
+      console.log('App stage available:', !!(this.app?.stage));
 
       // Initialize GridRenderer if available
       if (this.components.GridRenderer) {
@@ -202,7 +202,7 @@ export class GameEngine {
     */
    setupEventListeners() {
       // Window resize handler
-      window.addEventListener("resize", () => {
+      window.addEventListener('resize', () => {
          this.app.renderer.resize(window.innerWidth, window.innerHeight);
          this.app.stage.hitArea = this.app.screen;
 
@@ -248,7 +248,7 @@ export class GameEngine {
          // Get real game state
          let gameState = this.gameLogic ? this.gameLogic.getGameState() : {
             isGameOver: false,
-            gameMode: "test",
+            gameMode: 'test',
             isMyTurn: true
          };
 
@@ -576,7 +576,7 @@ export class GameEngine {
          console.log('placeMark result:', result);
       } else {
          // Fallback to test code if GameLogic isn't available
-         const player = Math.random() > 0.5 ? "X" : "O";
+         const player = Math.random() > 0.5 ? 'X' : 'O';
          const coordKey = `${cellX},${cellY}`;
 
          // Initialize placedMarks if it doesn't exist

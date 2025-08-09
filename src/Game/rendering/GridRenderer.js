@@ -96,8 +96,8 @@ export class GridRenderer {
       graphics.lineStyle({
          width: GAME_CONSTANTS.STRIKE_WIDTH,
          color: GAME_CONSTANTS.STRIKE_COLOR,
-         cap: "round",
-         join: "round",
+         cap: 'round',
+         join: 'round',
          alpha: 1
       });
       graphics.moveTo(startX, startY);
@@ -147,8 +147,8 @@ export class GridRenderer {
             graphics.lineStyle({
                width: GAME_CONSTANTS.STRIKE_WIDTH,
                color: GAME_CONSTANTS.STRIKE_COLOR,
-               cap: "round",
-               join: "round",
+               cap: 'round',
+               join: 'round',
                alpha: 1
             });
             graphics.moveTo(startX, startY);
@@ -183,7 +183,7 @@ export class GridRenderer {
     * Highlight the last move made
     * @param {number} cellX - Cell X coordinate
     * @param {number} cellY - Cell Y coordinate
-    * @param {string} player - Player who made the move ("X" or "O")
+    * @param {string} player - Player who made the move ('X' or 'O')
     */
    highlightLastMove(cellX, cellY, player) {
       if (this.currentHighlight) {
@@ -192,7 +192,7 @@ export class GridRenderer {
       }
 
       const highlight = new PIXI.Graphics();
-      const color = player === "X" ? COLORS.PLAYER_X : COLORS.PLAYER_O;
+      const color = player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O;
 
       highlight.lineStyle(2, color, 0.5);
       highlight.beginFill(color, 0.2);
@@ -236,7 +236,7 @@ export class GridRenderer {
       if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
       if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
-      if (gameState.gameMode === "multi" && !gameState.isMyTurn) return;
+      if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
 
       let pos;
       try {
@@ -290,15 +290,15 @@ export class GridRenderer {
     * Add a player mark to the grid
     * @param {number} cellX - Cell X coordinate
     * @param {number} cellY - Cell Y coordinate
-    * @param {string} player - Player ("X" or "O")
+    * @param {string} player - Player ('X' or 'O')
     * @param {number} scale - Current grid scale for sizing
     */
    addPlayerMark(cellX, cellY, player, scale) {
       const text = new PIXI.Text(player, {
          fontSize: 40,
-         fill: player === "X" ? COLORS.PLAYER_X : COLORS.PLAYER_O,
-         align: "center",
-         fontWeight: "bold"
+         fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,
+         align: 'center',
+         fontWeight: 'bold'
       });
 
       text.anchor.set(0.5);

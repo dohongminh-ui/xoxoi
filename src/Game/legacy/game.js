@@ -1,7 +1,7 @@
 const app = new PIXI.Application({
    width: window.innerWidth,
    height: window.innerHeight,
-   backgroundColor: "#FEF9F2",
+   backgroundColor: '#FEF9F2',
    resizeTo: window,
    autoDensity: true,
    resolution: window.devicePixelRatio || 1
@@ -12,7 +12,7 @@ const gridContainer = new PIXI.Container();
 app.stage.addChild(gridContainer);
 
 gridContainer.interactive = true;
-gridContainer.on("pointerdown", (event) => {
+gridContainer.on('pointerdown', (event) => {
    if (gameState.isGameOver) return;
 
    const pos = event.data.getLocalPosition(gridContainer);
@@ -39,7 +39,7 @@ let currentHighlight = null;
 const MIN_SCALE = 0.1;
 const MAX_SCALE = 6;
 const ZOOM_SPEED = 0.1;
-const STRIKE_COLOR = "#52575D";
+const STRIKE_COLOR = '#52575D';
 const STRIKE_WIDTH = 5;
 const STRIKE_ANIMATION_DURATION = 150;
 const FRICTION = 0.85;
@@ -54,23 +54,23 @@ const potentialWins = new Map();
 
 let winningCells = null;
 
-document.getElementById("singlePlayerBtn").addEventListener("click", () => {
-   gameState.gameMode = "single";
-   gameState.currentPlayer = "X";
-   document.getElementById("menuOverlay").style.display = "none";
-   document.getElementById("gameStatus").textContent = "X's turn";
+document.getElementById('singlePlayerBtn').addEventListener('click', () => {
+   gameState.gameMode = 'single';
+   gameState.currentPlayer = 'X';
+   document.getElementById('menuOverlay').style.display = 'none';
+   document.getElementById('gameStatus').textContent = 'X's turn';
    updateButtonState(BUTTON_STATES.IN_GAME);
 });
 
-document.getElementById("playWithBotBtn").addEventListener("click", () => {
-   gameState.gameMode = "bot";
-   gameState.currentPlayer = "X";
-   document.getElementById("menuOverlay").style.display = "none";
-   document.getElementById("gameStatus").textContent = "X's turn";
+document.getElementById('playWithBotBtn').addEventListener('click', () => {
+   gameState.gameMode = 'bot';
+   gameState.currentPlayer = 'X';
+   document.getElementById('menuOverlay').style.display = 'none';
+   document.getElementById('gameStatus').textContent = 'X's turn';
    updateButtonState(BUTTON_STATES.IN_GAME);
 });
 
-app.view.addEventListener("wheel", (event) => {
+app.view.addEventListener('wheel', (event) => {
    event.preventDefault();
 
    const mousePos = {
@@ -117,7 +117,7 @@ function drawGrid() {
    }
 
    const graphics = new PIXI.Graphics();
-   graphics.lineStyle(1 / scale, "#52575D", 1);
+   graphics.lineStyle(1 / scale, '#52575D', 1);
 
    const startX = Math.floor(-gridContainer.x / (cellSize * scale)) - 20;
    const startY = Math.floor(-gridContainer.y / (cellSize * scale)) - 20;
@@ -149,8 +149,8 @@ function drawGrid() {
       graphics.lineStyle({
          width: STRIKE_WIDTH,
          color: STRIKE_COLOR,
-         cap: "round",
-         join: "round",
+         cap: 'round',
+         join: 'round',
          alpha: 1
       });
       graphics.moveTo(startX, startY);
@@ -160,7 +160,7 @@ function drawGrid() {
    gridContainer.addChild(graphics);
 }
 
-app.stage.on("pointerdown", (event) => {
+app.stage.on('pointerdown', (event) => {
    isDragging = true;
    hasMoved = false;
    totalMovement = 0;
@@ -170,7 +170,7 @@ app.stage.on("pointerdown", (event) => {
    velocity = { x: 0, y: 0 };
 });
 
-app.stage.on("pointermove", (event) => {
+app.stage.on('pointermove', (event) => {
    if (isDragging) {
       const newPosition = event.data.getLocalPosition(app.stage);
       const currentTime = Date.now();
@@ -202,7 +202,7 @@ app.stage.on("pointermove", (event) => {
    updateHoverCell(event);
 });
 
-app.stage.on("pointerup", (event) => {
+app.stage.on('pointerup', (event) => {
    if (isDragging && !hasMoved) {
       const pos = event.data.getLocalPosition(gridContainer);
       const cellX = Math.floor(pos.x / cellSize);
@@ -213,7 +213,7 @@ app.stage.on("pointerup", (event) => {
    updateHoverCell(event);
 });
 
-app.stage.on("pointerupoutside", () => {
+app.stage.on('pointerupoutside', () => {
    isDragging = false;
 });
 
@@ -226,7 +226,7 @@ function cameraAdjustment(targetX, targetY) {
       const markWorldX = targetX * cellSize * scale + gridContainer.x;
       const markWorldY = targetY * cellSize * scale + gridContainer.y;
       const markSize = cellSize * scale;
-      const statusBarHeight = document.getElementById("statusBar").offsetHeight + 40;
+      const statusBarHeight = document.getElementById('statusBar').offsetHeight + 40;
 
       let needsAdjustment = false;
       const adjustments = { x: 0, y: 0 };
@@ -265,13 +265,13 @@ function placeMark(cellX, cellY) {
 
    const coordKey = `${cellX},${cellY}`;
 
-   if (gameState.gameMode === "multi") {
+   if (gameState.gameMode === 'multi') {
       if (!gameState.isMyTurn || !gameState.hasOpponent) return;
       if (placedMarks.has(coordKey)) return;
 
-      socket.emit("placeMark", { roomId: gameState.roomId, cellX, cellY });
+      socket.emit('placeMark', { roomId: gameState.roomId, cellX, cellY });
       return;
-   } else if (gameState.gameMode === "single" || gameState.gameMode === "bot") {
+   } else if (gameState.gameMode === 'single' || gameState.gameMode === 'bot') {
       const player = gameState.currentPlayer;
       if (placedMarks.has(coordKey)) return;
 
@@ -279,9 +279,9 @@ function placeMark(cellX, cellY) {
 
       const text = new PIXI.Text(player, {
          fontSize: 40,
-         fill: player === "X" ? "#ff6961" : "#a2bffe",
-         align: "center",
-         fontWeight: "bold"
+         fill: player === 'X' ? '#ff6961' : '#a2bffe',
+         align: 'center',
+         fontWeight: 'bold'
       });
 
       text.anchor.set(0.5);
@@ -308,16 +308,16 @@ function placeMark(cellX, cellY) {
          animateWinningLine(winningCells);
          setTimeout(() => {
             gameState.isGameOver = true;
-            document.getElementById("gameStatus").textContent = `${player} wins!`;
+            document.getElementById('gameStatus').textContent = `${player} wins!`;
             updateButtonState(BUTTON_STATES.GAME_OVER);
          }, STRIKE_ANIMATION_DURATION);
          return;
       }
 
-      gameState.currentPlayer = gameState.currentPlayer === "X" ? "O" : "X";
-      document.getElementById("gameStatus").textContent = `${gameState.currentPlayer}'s turn`;
+      gameState.currentPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
+      document.getElementById('gameStatus').textContent = `${gameState.currentPlayer}'s turn`;
 
-      if (gameState.gameMode === "bot" && gameState.currentPlayer === "O") {
+      if (gameState.gameMode === 'bot' && gameState.currentPlayer === 'O') {
          setTimeout(makeBotMove, 100);
       }
    }
@@ -405,8 +405,8 @@ function animateWinningLine(cells) {
       graphics.lineStyle({
          width: STRIKE_WIDTH,
          color: STRIKE_COLOR,
-         cap: "round",
-         join: "round",
+         cap: 'round',
+         join: 'round',
          alpha: 1
       });
       graphics.moveTo(startX, startY);
@@ -425,7 +425,7 @@ function animateWinningLine(cells) {
 
 drawGrid();
 
-window.addEventListener("resize", onResize);
+window.addEventListener('resize', onResize);
 
 function onResize() {
    app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -441,7 +441,7 @@ function updateHoverCell(event) {
 
    if (gameState.isGameOver) return;
    if (!(!isDragging || !hasMoved)) return;
-   if (gameState.gameMode === "multi" && !gameState.isMyTurn) return;
+   if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
 
    const pos = event.data.getLocalPosition(gridContainer);
    const cellX = Math.floor(pos.x / cellSize);
@@ -453,8 +453,8 @@ function updateHoverCell(event) {
    const worldX = cellX * cellSize * scale + gridContainer.x;
    const worldY = cellY * cellSize * scale + gridContainer.y;
 
-   hoverGraphics.lineStyle(1, "#888888", 0.3);
-   hoverGraphics.beginFill("#888888", 0.3);
+   hoverGraphics.lineStyle(1, '#888888', 0.3);
+   hoverGraphics.beginFill('#888888', 0.3);
    hoverGraphics.drawRect(
       worldX,
       worldY,
@@ -501,14 +501,14 @@ function restartGame() {
       clearTimeout(i);
    }
 
-   if (gameState.gameMode === "multi") {
+   if (gameState.gameMode === 'multi') {
       resetGameState({
          showMenu: false,
          updateStatus: false,
          clearMarks: true,
          keepGameState: true
       });
-   } else if (gameState.gameMode === "single" || gameState.gameMode === "bot") {
+   } else if (gameState.gameMode === 'single' || gameState.gameMode === 'bot') {
       resetGameState({
          showMenu: false,
          updateStatus: true,
@@ -516,9 +516,9 @@ function restartGame() {
          keepGameState: true
       });
 
-      gameState.currentPlayer = "X";
+      gameState.currentPlayer = 'X';
       gameState.isGameOver = false;
-      document.getElementById("gameStatus").textContent = "X's turn";
+      document.getElementById('gameStatus').textContent = 'X's turn';
 
       if (currentHighlight) {
          gridContainer.removeChild(currentHighlight);
@@ -536,7 +536,7 @@ function restartGame() {
 }
 
 function handleRestartButtonClick() {
-   if (gameState.gameMode === "multi") {
+   if (gameState.gameMode === 'multi') {
       requestRematch();
    } else {
       restartGame();
@@ -561,8 +561,8 @@ function highlightLastMove(cellX, cellY, player) {
    }
 
    const highlight = new PIXI.Graphics();
-   highlight.lineStyle(2, player === "X" ? "#ff6961" : "#a2bffe", 0.5);
-   highlight.beginFill(player === "X" ? "#ff6961" : "#a2bffe", 0.2);
+   highlight.lineStyle(2, player === 'X' ? '#ff6961' : '#a2bffe', 0.5);
+   highlight.beginFill(player === 'X' ? '#ff6961' : '#a2bffe', 0.2);
    highlight.drawRect(
       cellX * cellSize,
       cellY * cellSize,
@@ -581,13 +581,13 @@ function showOffscreenIndicator(cellX, cellY, player) {
    const graphics = new PIXI.Graphics();
    const text = new PIXI.Text(`Click to view ${player} at (${cellX}, ${cellY})`, {
       fontSize: 14,
-      fill: player === "X" ? "#ff6961" : "#a2bffe",
-      align: "center"
+      fill: player === 'X' ? '#ff6961' : '#a2bffe',
+      align: 'center'
    });
 
    const container = new PIXI.Container();
    container.interactive = true;
-   container.cursor = "pointer";
+   container.cursor = 'pointer';
 
    function updateIndicator() {
       const worldX = cellX * cellSize * scale + gridContainer.x;
@@ -595,7 +595,7 @@ function showOffscreenIndicator(cellX, cellY, player) {
       const cellWorldSize = cellSize * scale;
       const padding = 60;
       const arrowLength = 40;
-      const statusBarHeight = document.getElementById("statusBar").offsetHeight + 40;
+      const statusBarHeight = document.getElementById('statusBar').offsetHeight + 40;
 
       if (worldX >= 0 && worldX + cellWorldSize <= window.innerWidth &&
          worldY >= statusBarHeight && worldY + cellWorldSize <= window.innerHeight) {
@@ -627,8 +627,8 @@ function showOffscreenIndicator(cellX, cellY, player) {
       indicatorY = Math.max(statusBarHeight + boxHeight + padding,
          Math.min(window.innerHeight - padding, indicatorY));
 
-      graphics.lineStyle(2, player === "X" ? "#ff6961" : "#a2bffe", 1);
-      graphics.beginFill("#ffffff", 0.9);
+      graphics.lineStyle(2, player === 'X' ? '#ff6961' : '#a2bffe', 1);
+      graphics.beginFill('#ffffff', 0.9);
       graphics.drawRoundedRect(
          indicatorX - boxWidth / 2,
          indicatorY - 30 - boxHeight / 2,
@@ -638,7 +638,7 @@ function showOffscreenIndicator(cellX, cellY, player) {
       );
       graphics.endFill();
 
-      graphics.lineStyle(2, player === "X" ? "#ff6961" : "#a2bffe", 1);
+      graphics.lineStyle(2, player === 'X' ? '#ff6961' : '#a2bffe', 1);
       graphics.moveTo(indicatorX, indicatorY);
       graphics.lineTo(
          indicatorX + Math.cos(angle) * arrowLength,
@@ -654,7 +654,7 @@ function showOffscreenIndicator(cellX, cellY, player) {
    container.addChild(graphics);
    container.addChild(text);
 
-   container.on("pointerdown", (event) => {
+   container.on('pointerdown', (event) => {
       event.stopPropagation();
 
       const targetX = -(cellX * cellSize * scale) + window.innerWidth / 2 - (cellSize * scale / 2);
@@ -664,7 +664,7 @@ function showOffscreenIndicator(cellX, cellY, player) {
          x: targetX,
          y: targetY,
          duration: 0.5,
-         ease: "power2.out",
+         ease: 'power2.out',
          onUpdate: () => {
             drawGrid();
          }
@@ -675,35 +675,35 @@ function showOffscreenIndicator(cellX, cellY, player) {
    app.ticker.add(updateIndicator);
 }
 
-const botWorker = new Worker("js/botWorker.js");
+const botWorker = new Worker('js/botWorker.js');
 
 botWorker.onmessage = (e) => {
    const response = e.data;
-   console.log("Received bot response:", response);
+   console.log('Received bot response:', response);
 
-   if (response.type === "move") {
+   if (response.type === 'move') {
       const move = response.data;
-      if (move && typeof move.x === "number" && typeof move.y === "number") {
-         gameState.currentPlayer = "O";
+      if (move && typeof move.x === 'number' && typeof move.y === 'number') {
+         gameState.currentPlayer = 'O';
          placeMark(move.x, move.y);
-         document.getElementById("gameStatus").textContent = "X's turn";
+         document.getElementById('gameStatus').textContent = 'X's turn';
       } else {
-         console.error("Invalid move received from bot:", move);
-         document.getElementById("gameStatus").textContent = "Bot error - invalid move";
+         console.error('Invalid move received from bot:', move);
+         document.getElementById('gameStatus').textContent = 'Bot error - invalid move';
          gameState.isGameOver = true;
       }
-   } else if (response.type === "error") {
-      console.error("Bot error:", response.message, response.stack);
-      document.getElementById("gameStatus").textContent = "Bot error - please restart";
+   } else if (response.type === 'error') {
+      console.error('Bot error:', response.message, response.stack);
+      document.getElementById('gameStatus').textContent = 'Bot error - please restart';
       gameState.isGameOver = true;
    }
 };
 
 function makeBotMove() {
-   if (gameState.isGameOver || gameState.currentPlayer !== "O") return;
+   if (gameState.isGameOver || gameState.currentPlayer !== 'O') return;
 
    try {
-      console.log("Making bot move...");
+      console.log('Making bot move...');
       const marksArray = Array.from(placedMarks.entries()).map(([key, value]) => ({
          key,
          player: value.player
@@ -715,16 +715,16 @@ function makeBotMove() {
          quality: data.quality || 0
       }));
 
-      console.log("Sending to bot:", { marksArray, potentialWinsArray });
+      console.log('Sending to bot:', { marksArray, potentialWinsArray });
       botWorker.postMessage({
          placedMarks: marksArray,
          potentialWins: potentialWinsArray
       });
 
-      document.getElementById("gameStatus").textContent = "Bot is thinking...";
+      document.getElementById('gameStatus').textContent = 'Bot is thinking...';
    } catch (error) {
-      console.error("Error making bot move:", error);
-      document.getElementById("gameStatus").textContent = "Bot error - please restart";
+      console.error('Error making bot move:', error);
+      document.getElementById('gameStatus').textContent = 'Bot error - please restart';
       gameState.isGameOver = true;
    }
 }

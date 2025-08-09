@@ -4,19 +4,19 @@ const connectionEvents = {
    connect: (id) => `Connected to server with ID: ${id}`,
    disconnect: (reason) => `Disconnected from server. Reason: ${reason}`,
    connect_error: (error) => `Connection error: ${error}`,
-   connect_timeout: () => "Connection timeout",
+   connect_timeout: () => 'Connection timeout',
    reconnect: (attempts) => `Reconnected to server after ${attempts} attempts`,
    reconnect_attempt: (attempt) => `Attempting to reconnect: ${attempt}`,
    reconnect_error: (error) => `Reconnection error: ${error}`,
-   reconnect_failed: () => "Failed to reconnect to server"
+   reconnect_failed: () => 'Failed to reconnect to server'
 };
 
-socket.on("connect", () => {
+socket.on('connect', () => {
    console.log(connectionEvents.connect(socket.id));
-   if (gameState.gameMode === "multi" && gameState.roomId) {
-      socket.emit("checkRoom", { roomId: gameState.roomId }, (exists) => {
+   if (gameState.gameMode === 'multi' && gameState.roomId) {
+      socket.emit('checkRoom', { roomId: gameState.roomId }, (exists) => {
          if (exists) {
-            socket.emit("rejoinRoom", {
+            socket.emit('rejoinRoom', {
                roomId: gameState.roomId,
                playerId: localStorage.getItem(`room_${gameState.roomId}_playerId`) || socket.id
             });
@@ -32,35 +32,35 @@ socket.on("connect", () => {
    }
 });
 
-socket.on("disconnect", (reason) => {
+socket.on('disconnect', (reason) => {
    console.log(connectionEvents.disconnect(reason));
-   if (gameState.gameMode === "multi") {
-      document.getElementById("gameStatus").textContent = "Disconnected from server...";
+   if (gameState.gameMode === 'multi') {
+      document.getElementById('gameStatus').textContent = 'Disconnected from server...';
    }
 });
 
-socket.on("connect_error", (error) => console.log(connectionEvents.connect_error(error)));
-socket.on("connect_timeout", () => console.log(connectionEvents.connect_timeout()));
+socket.on('connect_error', (error) => console.log(connectionEvents.connect_error(error)));
+socket.on('connect_timeout', () => console.log(connectionEvents.connect_timeout()));
 
-socket.io.on("reconnect", (attempts) => {
+socket.io.on('reconnect', (attempts) => {
    console.log(connectionEvents.reconnect(attempts));
-   if (gameState.gameMode === "multi" && gameState.roomId) {
-      document.getElementById("gameStatus").textContent = "Reconnecting to game...";
+   if (gameState.gameMode === 'multi' && gameState.roomId) {
+      document.getElementById('gameStatus').textContent = 'Reconnecting to game...';
    }
 });
 
-socket.io.on("reconnect_attempt", (attempt) => console.log(connectionEvents.reconnect_attempt(attempt)));
-socket.io.on("reconnect_error", (error) => console.log(connectionEvents.reconnect_error(error)));
-socket.io.on("reconnect_failed", () => {
+socket.io.on('reconnect_attempt', (attempt) => console.log(connectionEvents.reconnect_attempt(attempt)));
+socket.io.on('reconnect_error', (error) => console.log(connectionEvents.reconnect_error(error)));
+socket.io.on('reconnect_failed', () => {
    console.log(connectionEvents.reconnect_failed());
-   if (gameState.gameMode === "multi") {
-      document.getElementById("gameStatus").textContent = "Failed to reconnect. Please refresh the page.";
+   if (gameState.gameMode === 'multi') {
+      document.getElementById('gameStatus').textContent = 'Failed to reconnect. Please refresh the page.';
       updateButtonState(BUTTON_STATES.OPPONENT_LEFT);
    }
 });
 
-socket.on("roomRejoined", (data) => {
-   gameState.gameMode = "multi";
+socket.on('roomRejoined', (data) => {
+   gameState.gameMode = 'multi';
    gameState.roomId = data.roomId;
    gameState.playerMark = data.mark;
    gameState.isMyTurn = data.isYourTurn;
@@ -74,9 +74,9 @@ socket.on("roomRejoined", (data) => {
 
          const text = new PIXI.Text(player, {
             fontSize: 40,
-            fill: player === "X" ? "#ff6961" : "#a2bffe",
-            align: "center",
-            fontWeight: "bold"
+            fill: player === 'X' ? '#ff6961' : '#a2bffe',
+            align: 'center',
+            fontWeight: 'bold'
          });
 
          text.anchor.set(0.5);
@@ -92,61 +92,61 @@ socket.on("roomRejoined", (data) => {
       });
    }
 
-   document.getElementById("gameStatus").textContent =
-      gameState.isGameOver ? "Game Over" :
-         (gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === "X" ? "O" : "X"}) Opponent's turn`);
+   document.getElementById('gameStatus').textContent =
+      gameState.isGameOver ? 'Game Over' :
+         (gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === 'X' ? 'O' : 'X'}) Opponent's turn`);
 });
 
-document.getElementById("createGameBtn").addEventListener("click", () => {
-   socket.emit("createRoom");
+document.getElementById('createGameBtn').addEventListener('click', () => {
+   socket.emit('createRoom');
 });
 
-document.getElementById("joinGameBtn").addEventListener("click", () => {
-   const roomIdToJoin = document.getElementById("roomIdInput").value;
-   socket.emit("joinRoom", roomIdToJoin);
+document.getElementById('joinGameBtn').addEventListener('click', () => {
+   const roomIdToJoin = document.getElementById('roomIdInput').value;
+   socket.emit('joinRoom', roomIdToJoin);
 });
 
-socket.on("roomCreated", (newRoomId) => {
-   gameState.gameMode = "multi";
+socket.on('roomCreated', (newRoomId) => {
+   gameState.gameMode = 'multi';
    gameState.roomId = newRoomId;
-   gameState.playerMark = "X";
+   gameState.playerMark = 'X';
    gameState.isMyTurn = true;
    gameState.hasOpponent = false;
    localStorage.setItem(`room_${newRoomId}_playerId`, socket.id);
-   document.getElementById("menuOverlay").style.display = "none";
+   document.getElementById('menuOverlay').style.display = 'none';
    const inviteUrl = `${window.location.origin}/invite/${newRoomId}`;
-   document.getElementById("gameStatus").innerHTML = `
-      Room ID: <span class="room-id" onclick="copyInviteLink('${inviteUrl}')" style="cursor: pointer; text-decoration: underline;" title="Click to copy invite link">
+   document.getElementById('gameStatus').innerHTML = `
+      Room ID: <span class='room-id' onclick='copyInviteLink('${inviteUrl}')' style='cursor: pointer; text-decoration: underline;' title='Click to copy invite link'>
          ${newRoomId}
       </span><br>Waiting for opponent...
    `;
    updateButtonState(BUTTON_STATES.IN_GAME);
 });
 
-socket.on("gameJoined", (data) => {
-   gameState.gameMode = "multi";
-   gameState.playerMark = typeof data === "object" ? data.mark : data;
-   gameState.roomId = typeof data === "object" ? data.roomId : null;
-   gameState.isMyTurn = gameState.playerMark === "X";
+socket.on('gameJoined', (data) => {
+   gameState.gameMode = 'multi';
+   gameState.playerMark = typeof data === 'object' ? data.mark : data;
+   gameState.roomId = typeof data === 'object' ? data.roomId : null;
+   gameState.isMyTurn = gameState.playerMark === 'X';
    gameState.hasOpponent = true;
    if (gameState.roomId) {
       localStorage.setItem(`room_${gameState.roomId}_playerId`, socket.id);
    }
 
-   document.getElementById("menuOverlay").style.display = "none";
-   document.getElementById("gameStatus").textContent =
-      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === "X" ? "O" : "X"}) Opponent's turn`;
+   document.getElementById('menuOverlay').style.display = 'none';
+   document.getElementById('gameStatus').textContent =
+      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === 'X' ? 'O' : 'X'}) Opponent's turn`;
    updateButtonState(BUTTON_STATES.IN_GAME);
 });
 
-socket.on("opponentJoined", () => {
+socket.on('opponentJoined', () => {
    gameState.hasOpponent = true;
-   document.getElementById("gameStatus").textContent =
-      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === "X" ? "O" : "X"}) Opponent's turn`;
+   document.getElementById('gameStatus').textContent =
+      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === 'X' ? 'O' : 'X'}) Opponent's turn`;
    updateButtonState(BUTTON_STATES.IN_GAME);
 });
 
-socket.on("markPlaced", ({ cellX, cellY, player, nextPlayer }) => {
+socket.on('markPlaced', ({ cellX, cellY, player, nextPlayer }) => {
    const coordKey = `${cellX},${cellY}`;
    if (placedMarks.has(coordKey)) return;
 
@@ -154,9 +154,9 @@ socket.on("markPlaced", ({ cellX, cellY, player, nextPlayer }) => {
 
    const text = new PIXI.Text(player, {
       fontSize: 40,
-      fill: player === "X" ? "#ff6961" : "#a2bffe",
-      align: "center",
-      fontWeight: "bold"
+      fill: player === 'X' ? '#ff6961' : '#a2bffe',
+      align: 'center',
+      fontWeight: 'bold'
    });
 
    text.anchor.set(0.5);
@@ -182,10 +182,10 @@ socket.on("markPlaced", ({ cellX, cellY, player, nextPlayer }) => {
       setTimeout(() => {
          gameState.isGameOver = true;
          const isWinner = player === gameState.playerMark;
-         document.getElementById("gameStatus").textContent =
-            isWinner ? "You win!" : "Opponent wins!";
+         document.getElementById('gameStatus').textContent =
+            isWinner ? 'You win!' : 'Opponent wins!';
 
-         socket.emit("gameWon", {
+         socket.emit('gameWon', {
             roomId: gameState.roomId,
             winner: player
          });
@@ -196,30 +196,30 @@ socket.on("markPlaced", ({ cellX, cellY, player, nextPlayer }) => {
    }
 
    gameState.isMyTurn = nextPlayer === gameState.playerMark;
-   document.getElementById("gameStatus").textContent =
-      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === "X" ? "O" : "X"}) Opponent's turn`;
+   document.getElementById('gameStatus').textContent =
+      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === 'X' ? 'O' : 'X'}) Opponent's turn`;
 });
 
 function requestRematch() {
    if (!gameState.roomId) return;
-   socket.emit("requestRematch", { roomId: gameState.roomId });
-   document.getElementById("gameStatus").textContent = "Waiting for opponent's response...";
+   socket.emit('requestRematch', { roomId: gameState.roomId });
+   document.getElementById('gameStatus').textContent = 'Waiting for opponent's response...';
    updateButtonState(BUTTON_STATES.WAITING_REMATCH);
 }
 
 function cancelRematch() {
    if (!gameState.roomId) return;
-   socket.emit("cancelRematch", { roomId: gameState.roomId });
-   document.getElementById("gameStatus").textContent = "Rematch cancelled";
+   socket.emit('cancelRematch', { roomId: gameState.roomId });
+   document.getElementById('gameStatus').textContent = 'Rematch cancelled';
    updateButtonState(BUTTON_STATES.GAME_OVER);
 }
 
-socket.on("rematchRequested", () => {
-   document.getElementById("gameStatus").textContent = "Opponent wants a rematch!";
+socket.on('rematchRequested', () => {
+   document.getElementById('gameStatus').textContent = 'Opponent wants a rematch!';
    updateButtonState(BUTTON_STATES.REMATCH_REQUEST);
 });
 
-socket.on("rematchAccepted", (data) => {
+socket.on('rematchAccepted', (data) => {
    if (data) {
       gameState.playerMark = data.mark;
       gameState.isMyTurn = data.isYourTurn;
@@ -227,7 +227,7 @@ socket.on("rematchAccepted", (data) => {
       gameState.hasOpponent = true;
    }
 
-   gameState.gameMode = "multi";
+   gameState.gameMode = 'multi';
 
    resetGameState({
       showMenu: false,
@@ -236,28 +236,28 @@ socket.on("rematchAccepted", (data) => {
       keepGameState: true
    });
 
-   document.getElementById("gameStatus").textContent =
-      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === "X" ? "O" : "X"}) Opponent's turn`;
+   document.getElementById('gameStatus').textContent =
+      gameState.isMyTurn ? `(${gameState.playerMark}) Your turn` : `(${gameState.playerMark === 'X' ? 'O' : 'X'}) Opponent's turn`;
 
    updateButtonState(BUTTON_STATES.IN_GAME);
 });
 
-socket.on("rematchDeclined", () => {
-   document.getElementById("gameStatus").textContent = "Opponent declined rematch";
+socket.on('rematchDeclined', () => {
+   document.getElementById('gameStatus').textContent = 'Opponent declined rematch';
    updateButtonState(BUTTON_STATES.GAME_OVER);
 });
 
-socket.on("rematchCancelled", () => {
-   document.getElementById("gameStatus").textContent = "Opponent cancelled rematch request";
+socket.on('rematchCancelled', () => {
+   document.getElementById('gameStatus').textContent = 'Opponent cancelled rematch request';
    updateButtonState(BUTTON_STATES.GAME_OVER);
 });
 
-socket.on("opponentLeft", () => {
+socket.on('opponentLeft', () => {
    if (!gameState.gameMode) return;
 
    gameState.isGameOver = true;
    gameState.hasOpponent = false;
-   document.getElementById("gameStatus").textContent = "Opponent left the game";
+   document.getElementById('gameStatus').textContent = 'Opponent left the game';
 
    resetGameState({
       showMenu: false,
@@ -269,18 +269,18 @@ socket.on("opponentLeft", () => {
 });
 
 function handleAcceptRematch() {
-   socket.emit("acceptRematch", { roomId: gameState.roomId });
+   socket.emit('acceptRematch', { roomId: gameState.roomId });
    updateButtonState(BUTTON_STATES.IN_GAME);
 }
 
 function handleDeclineRematch() {
-   socket.emit("declineRematch", { roomId: gameState.roomId });
+   socket.emit('declineRematch', { roomId: gameState.roomId });
    updateButtonState(BUTTON_STATES.GAME_OVER);
 }
 
 function handleExitGame() {
-   if (gameState.gameMode === "multi") {
-      socket.emit("leaveRoom", { roomId: gameState.roomId });
+   if (gameState.gameMode === 'multi') {
+      socket.emit('leaveRoom', { roomId: gameState.roomId });
    }
    resetGameState({
       showMenu: true,
@@ -291,26 +291,26 @@ function handleExitGame() {
 }
 
 function copyInviteLink(url) {
-   const gameStatusEl = document.getElementById("gameStatus");
+   const gameStatusEl = document.getElementById('gameStatus');
    if (!gameStatusEl) return;
 
    const originalText = gameStatusEl.innerHTML;
    let timeoutId;
-   const [beforeBr, afterBr] = originalText.split("<br>");
+   const [beforeBr, afterBr] = originalText.split('<br>');
 
    navigator.clipboard.writeText(url)
       .then(() => {
-         gameStatusEl.innerHTML = `Room ID: Invite link copied!<br>${afterBr || ""}`;
+         gameStatusEl.innerHTML = `Room ID: Invite link copied!<br>${afterBr || ''}`;
 
          timeoutId = setTimeout(() => {
-            if (gameStatusEl?.innerHTML.includes("Invite link copied!")) {
+            if (gameStatusEl?.innerHTML.includes('Invite link copied!')) {
                gameStatusEl.innerHTML = originalText;
             }
          }, 2000);
       })
       .catch(err => {
-         console.error("Failed to copy:", err);
-         gameStatusEl.innerHTML = `Room ID: Failed to copy link<br>${afterBr || ""}`;
+         console.error('Failed to copy:', err);
+         gameStatusEl.innerHTML = `Room ID: Failed to copy link<br>${afterBr || ''}`;
       });
 
    return () => {
@@ -318,28 +318,28 @@ function copyInviteLink(url) {
    };
 }
 
-window.addEventListener("load", () => {
+window.addEventListener('load', () => {
    const urlParams = new URLSearchParams(window.location.search);
-   const roomToJoin = urlParams.get("join");
-   const error = urlParams.get("error");
+   const roomToJoin = urlParams.get('join');
+   const error = urlParams.get('error');
 
    if (error) {
-      let errorMessage = "";
+      let errorMessage = '';
       switch (error) {
-         case "room-not-found":
-            errorMessage = "Room not found";
+         case 'room-not-found':
+            errorMessage = 'Room not found';
             break;
-         case "room-full":
-            errorMessage = "Room is full";
+         case 'room-full':
+            errorMessage = 'Room is full';
             break;
       }
-      document.getElementById("gameStatus").textContent = errorMessage;
+      document.getElementById('gameStatus').textContent = errorMessage;
    }
 
    if (!roomToJoin) {
       return;
    }
-   document.getElementById("roomIdInput").value = roomToJoin;
-   document.getElementById("joinGameBtn").click();
-   window.history.replaceState({}, document.title, "/");
+   document.getElementById('roomIdInput').value = roomToJoin;
+   document.getElementById('joinGameBtn').click();
+   window.history.replaceState({}, document.title, '/');
 });
