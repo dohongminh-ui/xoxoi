@@ -18,7 +18,7 @@ export const useStatusBar = (gameEngine = null) => {
    const handleRestart = () => {
       console.log('Restart button clicked')
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:restart-request'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchRequest'))
       } else if (gameEngine?.gameLogic) {
          gameEngine.gameLogic.requestRematch()
       }
@@ -27,7 +27,7 @@ export const useStatusBar = (gameEngine = null) => {
    const handleAcceptRematch = () => {
       console.log('Accept rematch clicked')
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:accept-rematch'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchAccept'))
       } else if (gameEngine?.networkManager) {
          gameEngine.networkManager.acceptRematch()
       }
@@ -36,7 +36,7 @@ export const useStatusBar = (gameEngine = null) => {
    const handleDeclineRematch = () => {
       console.log('Decline rematch clicked')
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:decline-rematch'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchDecline'))
       } else if (gameEngine?.networkManager) {
          gameEngine.networkManager.declineRematch()
       }
@@ -45,7 +45,7 @@ export const useStatusBar = (gameEngine = null) => {
    const handleCancelRematch = () => {
       console.log('Cancel rematch clicked')
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:cancel-rematch'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchCancel'))
       } else if (gameEngine?.networkManager) {
          gameEngine.networkManager.cancelRematch()
       }
@@ -54,7 +54,7 @@ export const useStatusBar = (gameEngine = null) => {
    const handleExitGame = () => {
       console.log('Exit game clicked')
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:exit-game'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('exitGame'))
       } else if (gameEngine?.leaveMultiplayerGame) {
          gameEngine.leaveMultiplayerGame()
       }

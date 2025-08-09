@@ -196,50 +196,50 @@ export class UIRenderer extends EventTarget {
       // Status bar button listeners
       if (this.elements.restartButton) {
          this.elements.restartButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:restart-request'));
+            this.dispatchEvent(new CustomEvent('rematchRequest'));
          });
       }
 
       if (this.elements.acceptRematchButton) {
          this.elements.acceptRematchButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:accept-rematch'));
+            this.dispatchEvent(new CustomEvent('rematchAccept'));
          });
       }
 
       if (this.elements.declineRematchButton) {
          this.elements.declineRematchButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:decline-rematch'));
+            this.dispatchEvent(new CustomEvent('rematchDecline'));
          });
       }
 
       if (this.elements.cancelRematchButton) {
          this.elements.cancelRematchButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:cancel-rematch'));
+            this.dispatchEvent(new CustomEvent('rematchCancel'));
          });
       }
 
       if (this.elements.exitGameButton) {
          this.elements.exitGameButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:exit-game'));
+            this.dispatchEvent(new CustomEvent('exitGame'));
          });
       }
 
       // Menu button listeners
       if (this.elements.singlePlayerBtn) {
          this.elements.singlePlayerBtn.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:start-single-player'));
+            this.dispatchEvent(new CustomEvent('startSingle'));
          });
       }
 
       if (this.elements.playWithBotBtn) {
          this.elements.playWithBotBtn.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:start-bot-game'));
+            this.dispatchEvent(new CustomEvent('startBot'));
          });
       }
 
       if (this.elements.createGameBtn) {
          this.elements.createGameBtn.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('ui:create-multiplayer'));
+            this.dispatchEvent(new CustomEvent('multiCreate'));
          });
       }
 
@@ -247,7 +247,7 @@ export class UIRenderer extends EventTarget {
          this.elements.joinGameBtn.addEventListener('click', () => {
             const roomId = this.elements.roomIdInput?.value?.trim();
             if (roomId) {
-               this.dispatchEvent(new CustomEvent('ui:join-multiplayer', {
+               this.dispatchEvent(new CustomEvent('multiJoin', {
                   detail: { roomId }
                }));
             } else {
@@ -271,15 +271,14 @@ export class UIRenderer extends EventTarget {
     */
    setupGameStateListeners() {
       if (!this.gameStateManager) return;
-
       // Listen for game state changes
-      this.gameStateManager.addEventListener('state:game-started', (e) => {
-         this.updateGameStatus(`Game Started - ${e.detail.gameMode}`);
+      this.gameStateManager.addEventListener('gameStarted', (e) => {
+         this.updateGameStatus(`Game Started - ${e.detail.mode}`);
          this.hideMenu();
          this.updateButtonState(this.buttonStates.IN_GAME);
       });
 
-      this.gameStateManager.addEventListener('state:game-ended', (e) => {
+      this.gameStateManager.addEventListener('gameEnded', (e) => {
          const { winner, reason } = e.detail;
          if (winner) {
             this.updateGameStatus(`Game Over - Player ${winner} wins!`);
@@ -289,7 +288,7 @@ export class UIRenderer extends EventTarget {
          this.updateButtonState(this.buttonStates.GAME_OVER);
       });
 
-      this.gameStateManager.addEventListener('state:player-turn-changed', (e) => {
+      this.gameStateManager.addEventListener('turnChange', (e) => {
          const { currentPlayer, isMyTurn } = e.detail;
          if (isMyTurn) {
             this.updateGameStatus(`Your turn (${currentPlayer})`);
@@ -298,33 +297,33 @@ export class UIRenderer extends EventTarget {
          }
       });
 
-      this.gameStateManager.addEventListener('state:multiplayer-joined', (e) => {
+      this.gameStateManager.addEventListener('multiJoin', (e) => {
          const { roomId } = e.detail;
          this.updateGameStatus(`Joined room: ${roomId}`);
          this.hideMenu();
       });
 
-      this.gameStateManager.addEventListener('state:multiplayer-waiting', (e) => {
+      this.gameStateManager.addEventListener('multiWait', (e) => {
          const { roomId } = e.detail;
          this.updateGameStatus(`Waiting for opponent... Room: ${roomId}`);
       });
 
-      this.gameStateManager.addEventListener('state:opponent-left', () => {
+      this.gameStateManager.addEventListener('opponentLeft', () => {
          this.updateGameStatus('Opponent left the game');
          this.updateButtonState(this.buttonStates.OPPONENT_LEFT);
       });
 
-      this.gameStateManager.addEventListener('state:rematch-requested', () => {
+      this.gameStateManager.addEventListener('rematchRequest', () => {
          this.updateGameStatus('Rematch requested by opponent');
          this.updateButtonState(this.buttonStates.REMATCH_REQUEST);
       });
 
-      this.gameStateManager.addEventListener('state:rematch-waiting', () => {
+      this.gameStateManager.addEventListener('rematchWait', () => {
          this.updateGameStatus('Waiting for rematch response...');
          this.updateButtonState(this.buttonStates.WAITING_REMATCH);
       });
 
-      this.gameStateManager.addEventListener('state:reset', () => {
+      this.gameStateManager.addEventListener('reest', () => {
          this.showMenu();
          this.updateGameStatus('toe');
          this.updateButtonState(null);

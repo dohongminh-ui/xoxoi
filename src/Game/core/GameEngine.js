@@ -313,6 +313,14 @@ export class GameEngine {
          const { winner, winningCells } = event.detail;
          console.log(`Game won by ${winner}!`, 'Winning cells:', winningCells);
 
+         //end game
+         this.gameStateManager.dispatchEvent(new CustomEvent('gameEnded', {
+            detail: {
+               winner: winner,
+               reason: ''
+            }
+         }));
+
          // Show winning animation if renderer supports it
          if (this.gridRenderer && this.gridRenderer.animateWinningLine) {
             console.log('Calling animateWinningLine with:', winningCells);
@@ -504,56 +512,56 @@ export class GameEngine {
       if (!this.uiRenderer) return;
 
       // Single player game
-      this.uiRenderer.addEventListener('ui:start-single-player', () => {
+      this.uiRenderer.addEventListener('startSingle', () => {
          this.startSinglePlayerGame();
       });
 
       // Bot game
-      this.uiRenderer.addEventListener('ui:start-bot-game', () => {
+      this.uiRenderer.addEventListener('startBot', () => {
          this.startBotGame();
       });
 
       // Multiplayer game creation
-      this.uiRenderer.addEventListener('ui:create-multiplayer', () => {
+      this.uiRenderer.addEventListener('multiCreate', () => {
          this.createMultiplayerGame();
       });
 
       // Multiplayer game joining
-      this.uiRenderer.addEventListener('ui:join-multiplayer', (event) => {
+      this.uiRenderer.addEventListener('multiJoin', (event) => {
          const { roomId } = event.detail;
          this.joinMultiplayerGame(roomId);
       });
 
       // Game restart/rematch
-      this.uiRenderer.addEventListener('ui:restart-request', () => {
+      this.uiRenderer.addEventListener('rematchRequest', () => {
          if (this.gameLogic) {
             this.gameLogic.requestRematch();
          }
       });
 
       // Accept rematch
-      this.uiRenderer.addEventListener('ui:accept-rematch', () => {
+      this.uiRenderer.addEventListener('rematchAccept', () => {
          if (this.networkManager) {
             this.networkManager.acceptRematch();
          }
       });
 
       // Decline rematch
-      this.uiRenderer.addEventListener('ui:decline-rematch', () => {
+      this.uiRenderer.addEventListener('rematchDecline', () => {
          if (this.networkManager) {
             this.networkManager.declineRematch();
          }
       });
 
       // Cancel rematch
-      this.uiRenderer.addEventListener('ui:cancel-rematch', () => {
+      this.uiRenderer.addEventListener('rematchCancel', () => {
          if (this.networkManager) {
             this.networkManager.cancelRematch();
          }
       });
 
       // Exit game
-      this.uiRenderer.addEventListener('ui:exit-game', () => {
+      this.uiRenderer.addEventListener('exitGame', () => {
          this.leaveMultiplayerGame();
       });
    }
