@@ -202,7 +202,7 @@ export class GameLogic extends EventTarget {
       if (this.gameMode === 'single' || this.gameMode === 'bot') {
          this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
 
-         this.dispatchEvent(new CustomEvent('turnChanged', {
+         this.dispatchEvent(new CustomEvent('turnChange', {
             detail: {
                currentPlayer: this.currentPlayer,
                gameState: this.getGameState()

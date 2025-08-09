@@ -323,7 +323,7 @@ export class UIRenderer extends EventTarget {
          this.updateButtonState(this.buttonStates.WAITING_REMATCH);
       });
 
-      this.gameStateManager.addEventListener('reest', () => {
+      this.gameStateManager.addEventListener('reset', () => {
          this.showMenu();
          this.updateGameStatus('toe');
          this.updateButtonState(null);

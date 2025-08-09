@@ -312,14 +312,11 @@ export class GameEngine {
       this.gameLogic.addEventListener('gameWon', (event) => {
          const { winner, winningCells } = event.detail;
          console.log(`Game won by ${winner}!`, 'Winning cells:', winningCells);
-
-         //end game
-         this.gameStateManager.dispatchEvent(new CustomEvent('gameEnded', {
-            detail: {
-               winner: winner,
-               reason: ''
-            }
-         }));
+         this.gameStateManager.endGame({
+         winner: winner,
+         winningCells: winningCells,
+         reason: 'game finished'
+      });
 
          // Show winning animation if renderer supports it
          if (this.gridRenderer && this.gridRenderer.animateWinningLine) {
@@ -336,7 +333,7 @@ export class GameEngine {
       });
 
       // Listen for game state changes
-      this.gameLogic.addEventListener('gameStateChanged', (event) => {
+      this.gameLogic.addEventListener('stateChanged', (event) => {
          const { gameState } = event.detail;
          console.log('Game state changed:', gameState);
       });
@@ -469,7 +466,7 @@ export class GameEngine {
       });
 
       // Listen for turn changes
-      this.gameStateManager.addEventListener('turnChanged', (event) => {
+      this.gameStateManager.addEventListener('turnChange', (event) => {
          const { currentPlayer, isMyTurn } = event.detail;
          console.log(`Turn changed: ${currentPlayer} (my turn: ${isMyTurn})`);
       });
