@@ -315,11 +315,14 @@ export class GameEngine {
       this.gameLogic.addEventListener('gameWon', (event) => {
          const { winner, winningCells } = event.detail;
          console.log(`Game won by ${winner}!`, 'Winning cells:', winningCells);
+      
+      // end the game after win
          this.gameStateManager.endGame({
          winner: winner,
          winningCells: winningCells,
          reason: 'game finished'
       });
+         this.gameLogic.dispatchEvent(new CustomEvent('gameEnded'))
 
          // Show winning animation if renderer supports it
          if (this.gridRenderer && this.gridRenderer.animateWinningLine) {

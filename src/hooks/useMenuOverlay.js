@@ -17,7 +17,7 @@ export const useMenuOverlay = (gameEngine = null) => {
 
       const handleGameEnd = () => {
          // Could show menu again after game ends, or keep it hidden
-         // setIsMenuVisible(true)
+         setIsMenuVisible(true)
       }
 
       // Listen to game engine events if available
@@ -40,6 +40,7 @@ export const useMenuOverlay = (gameEngine = null) => {
          if (gameEngine?.uiRenderer) {
             gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startSingle'))
          }
+         gameEngine.startSinglePlayerGame()
          setIsMenuVisible(false)
       }
       else {

@@ -1,0 +1,100 @@
+.menu-content {
+   background: var(--bg-primary);
+   padding: 30px;
+   border-radius: 10px;
+   display: flex;
+   flex-direction: column;
+   gap: 15px;
+   min-width: 300px;
+   text-align: center;
+}
+
+.menu-button {
+   padding: 12px 24px;
+   font-size: 16px;
+   border: none;
+   border-radius: 5px;
+   color: var(--text-light);
+   cursor: pointer;
+   transition: background-color 0.2s;
+}
+
+.menu-button:hover {
+   opacity: 0.9;
+   transform: translateY(-1px);
+   transition: transform 0.2s;
+}
+
+.menu-button:active {
+   transform: translateY(0);
+   transition: transform 0.2s;
+}
+
+.single-player-btn,
+.bot-game-btn,
+.multiplayer-btn {
+   transition: all 0.2s ease;
+}
+
+.single-player-btn:hover,
+.bot-game-btn:hover,
+.multiplayer-btn:hover {
+   transition: all 0.2s ease;
+}
+
+.single-player-btn {
+   background: var(--color-1);
+}
+
+.single-player-btn:hover {
+   background: var(--color-1-hover);
+}
+
+.bot-game-btn {
+   background: var(--color-2);
+}
+
+.bot-game-btn:hover {
+   background: var(--color-2-hover);
+}
+
+.multiplayer-btn {
+   background: var(--color-3);
+}
+
+.multiplayer-btn:hover {
+   background: var(--color-3-hover);
+}
+
+.join-game-section {
+   display: flex;
+   gap: 10px;
+   margin-top: 10px;
+}
+
+.room-id-input {
+   flex: 1;
+   padding: 8px 12px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   font-size: 14px;
+}
+
+.room-id-input:focus {
+   outline: none;
+   border-color: #007bff;
+   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.join-game-btn {
+   padding: 8px 16px !important;
+   background: #ffc107;
+   color: black !important;
+   font-size: 14px !important;
+   transition: all 0.2s ease;
+}
+
+.join-game-btn:hover {
+   background: #e0a800;
+   transition: all 0.2s ease;
+}
