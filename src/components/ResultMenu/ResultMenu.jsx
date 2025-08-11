@@ -2,61 +2,26 @@ import { useState } from 'react'
 import MenuOverlay from '../MenuOverlay/MenuOverlay'
 import './ResultMenu.css'
 
-const MainMenu = ({
+const ResultMenu = ({
    isVisible = true,
-   onStartSinglePlayer,
-   onStartBotGame,
-   onCreateMultiplayer,
-   onJoinMultiplayer
+   onRematchGame,
+   onReturnToMenu
 }) => {
    const [roomId, setRoomId] = useState('')
-
-   const handleJoinGame = () => {
-      const trimmedRoomId = roomId.trim()
-      if (trimmedRoomId && onJoinMultiplayer) {
-         onJoinMultiplayer(trimmedRoomId)
-      } else {
-         alert('Please enter a Room ID')
-      }
-   }
-
-   const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-         handleJoinGame()
-      }
-   }
 
    return (
       <MenuOverlay isVisible={isVisible}>
          <div className='menu-content'>
-            <button className='menu-button single-player-btn' onClick={onStartSinglePlayer}>
-               Singleplayer
+            <button className='menu-button rematch-btn' onClick={onRematchGame}>
+               Rematch
             </button>
 
-            <button className='menu-button bot-game-btn' onClick={onStartBotGame}>
-               Play with Bot
+            <button className='menu-button return-btn' onClick={onReturnToMenu}>
+               Return to menu
             </button>
-
-            <button className='menu-button multiplayer-btn' onClick={onCreateMultiplayer} >
-               Create Multiplayer Game
-            </button>
-
-            <div className='join-game-section'>
-               <input
-                  type='text'
-                  className='room-id-input'
-                  placeholder='Enter Room ID'
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
-                  onKeyDown={handleKeyDown}
-               />
-               <button className='menu-button join-game-btn' onClick={handleJoinGame} >
-                  Join Game
-               </button>
-            </div>
          </div>
       </MenuOverlay>
    )
 }
 
-export default MainMenu
+export default ResultMenu
