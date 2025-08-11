@@ -332,7 +332,6 @@ export class GameStateManager extends EventTarget {
 			showMenu: false,
 		});
 
-		// Game Start
 		let modeString = '';
 		switch (this.state.gameMode) {
 			case 'single':
@@ -394,6 +393,15 @@ export class GameStateManager extends EventTarget {
 			isMyTurn: this.state.gameMode === 'multi' ? newPlayer === this.state.playerMark : true,
 			statusMessage: this.getStatusMessage(this.state.gameMode, newPlayer, this.state.gameMode === 'multi' ? newPlayer === this.state.playerMark : true),
 		});
+
+		this.dispatchEvent(			
+			new CustomEvent('turnChange', {
+				detail: {
+					currentPlayer: this.state.currentPlayer,
+					isMyTurn: this.state.isMyTurn,
+				},
+			})
+		)
 	}
 
 	/**

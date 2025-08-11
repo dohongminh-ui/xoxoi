@@ -306,6 +306,9 @@ export class GameEngine {
 
          // Update local tracking
          this.placedMarks.set(`${cellX},${cellY}`, { player, x: cellX, y: cellY });
+
+         // update game state
+         this.gameStateManager.switchTurn()
       });
 
       // Listen for wins
