@@ -15,7 +15,7 @@ const StatusBar = ({
 }) => {
    return (
       <div className='status-bar noselect' id='statusBar'>
-         <span className='game-status'>{gameStatus}</span>
+         <span className='game-status' id="gameStatus">{gameStatus}</span>
          
          {showRestartButton && (
             <button 

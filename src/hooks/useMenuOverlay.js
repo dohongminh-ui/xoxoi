@@ -17,7 +17,7 @@ export const useMenuOverlay = (gameEngine = null) => {
 
       const handleGameEnd = () => {
          // Could show menu again after game ends, or keep it hidden
-         // setIsMenuVisible(true)
+         setIsMenuVisible(true)
       }
 
       // Listen to game engine events if available
@@ -37,12 +37,13 @@ export const useMenuOverlay = (gameEngine = null) => {
    const handleStartSinglePlayer = () => {
       console.log('Start single player clicked')
       if (gameEngine?.startSinglePlayerGame) {
+         if (gameEngine?.uiRenderer) {
+            gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startSingle'))
+         }
          gameEngine.startSinglePlayerGame()
          setIsMenuVisible(false)
-      } else if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:start-single-player'))
-         setIsMenuVisible(false)
-      } else {
+      }
+      else {
          console.warn('Game engine or startSinglePlayerGame method not available')
       }
    }
@@ -53,7 +54,7 @@ export const useMenuOverlay = (gameEngine = null) => {
          gameEngine.startBotGame()
          setIsMenuVisible(false)
       } else if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:start-bot-game'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startBot'))
          setIsMenuVisible(false)
       } else {
          console.warn('Game engine or startBotGame method not available')
@@ -63,7 +64,7 @@ export const useMenuOverlay = (gameEngine = null) => {
    const handleCreateMultiplayer = () => {
       console.log('Create multiplayer clicked')
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:create-multiplayer'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('multiCreate'))
          setIsMenuVisible(false)
       } else {
          console.warn('Game engine or uiRenderer not available')
@@ -73,7 +74,7 @@ export const useMenuOverlay = (gameEngine = null) => {
    const handleJoinMultiplayer = (roomId) => {
       console.log('Join multiplayer clicked', roomId)
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('ui:join-multiplayer', {
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('multiJoin', {
             detail: { roomId }
          }))
          setIsMenuVisible(false)

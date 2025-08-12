@@ -1,0 +1,57 @@
+.menu-content {
+   background: var(--bg-primary);
+   padding: 30px;
+   border-radius: 10px;
+   display: flex;
+   flex-direction: column;
+   gap: 15px;
+   min-width: 300px;
+   text-align: center;
+}
+
+.menu-button {
+   padding: 12px 24px;
+   font-size: 16px;
+   border: none;
+   border-radius: 5px;
+   color: var(--text-light);
+   cursor: pointer;
+   transition: background-color 0.2s;
+}
+
+.menu-button:hover {
+   opacity: 0.9;
+   transform: translateY(-1px);
+   transition: transform 0.2s;
+}
+
+.menu-button:active {
+   transform: translateY(0);
+   transition: transform 0.2s;
+}
+
+.rematch-btn,
+.return-btn {
+   transition: all 0.2s ease;
+}
+
+.rematch-btn:hover,
+.return-btn:hover {
+   transition: all 0.2s ease;
+}
+
+.rematch-btn {
+   background: var(--color-1);
+}
+
+.rematch-btn:hover {
+   background: var(--color-1-hover);
+}
+
+.return-btn {
+   background: var(--color-2);
+}
+
+.return-btn:hover {
+   background: var(--color-2-hover);
+}

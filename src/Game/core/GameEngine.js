@@ -306,12 +306,23 @@ export class GameEngine {
 
          // Update local tracking
          this.placedMarks.set(`${cellX},${cellY}`, { player, x: cellX, y: cellY });
+
+         // update game state
+         this.gameStateManager.switchTurn()
       });
 
       // Listen for wins
       this.gameLogic.addEventListener('gameWon', (event) => {
          const { winner, winningCells } = event.detail;
          console.log(`Game won by ${winner}!`, 'Winning cells:', winningCells);
+      
+      // end the game after win
+         this.gameStateManager.endGame({
+         winner: winner,
+         winningCells: winningCells,
+         reason: 'game finished'
+      });
+         this.gameLogic.dispatchEvent(new CustomEvent('gameEnded'))
 
          // Show winning animation if renderer supports it
          if (this.gridRenderer && this.gridRenderer.animateWinningLine) {
@@ -328,7 +339,7 @@ export class GameEngine {
       });
 
       // Listen for game state changes
-      this.gameLogic.addEventListener('gameStateChanged', (event) => {
+      this.gameLogic.addEventListener('stateChanged', (event) => {
          const { gameState } = event.detail;
          console.log('Game state changed:', gameState);
       });
@@ -461,7 +472,7 @@ export class GameEngine {
       });
 
       // Listen for turn changes
-      this.gameStateManager.addEventListener('turnChanged', (event) => {
+      this.gameStateManager.addEventListener('turnChange', (event) => {
          const { currentPlayer, isMyTurn } = event.detail;
          console.log(`Turn changed: ${currentPlayer} (my turn: ${isMyTurn})`);
       });
@@ -504,56 +515,56 @@ export class GameEngine {
       if (!this.uiRenderer) return;
 
       // Single player game
-      this.uiRenderer.addEventListener('ui:start-single-player', () => {
+      this.uiRenderer.addEventListener('startSingle', () => {
          this.startSinglePlayerGame();
       });
 
       // Bot game
-      this.uiRenderer.addEventListener('ui:start-bot-game', () => {
+      this.uiRenderer.addEventListener('startBot', () => {
          this.startBotGame();
       });
 
       // Multiplayer game creation
-      this.uiRenderer.addEventListener('ui:create-multiplayer', () => {
+      this.uiRenderer.addEventListener('multiCreate', () => {
          this.createMultiplayerGame();
       });
 
       // Multiplayer game joining
-      this.uiRenderer.addEventListener('ui:join-multiplayer', (event) => {
+      this.uiRenderer.addEventListener('multiJoin', (event) => {
          const { roomId } = event.detail;
          this.joinMultiplayerGame(roomId);
       });
 
       // Game restart/rematch
-      this.uiRenderer.addEventListener('ui:restart-request', () => {
+      this.uiRenderer.addEventListener('rematchRequest', () => {
          if (this.gameLogic) {
             this.gameLogic.requestRematch();
          }
       });
 
       // Accept rematch
-      this.uiRenderer.addEventListener('ui:accept-rematch', () => {
+      this.uiRenderer.addEventListener('rematchAccept', () => {
          if (this.networkManager) {
             this.networkManager.acceptRematch();
          }
       });
 
       // Decline rematch
-      this.uiRenderer.addEventListener('ui:decline-rematch', () => {
+      this.uiRenderer.addEventListener('rematchDecline', () => {
          if (this.networkManager) {
             this.networkManager.declineRematch();
          }
       });
 
       // Cancel rematch
-      this.uiRenderer.addEventListener('ui:cancel-rematch', () => {
+      this.uiRenderer.addEventListener('rematchCancel', () => {
          if (this.networkManager) {
             this.networkManager.cancelRematch();
          }
       });
 
       // Exit game
-      this.uiRenderer.addEventListener('ui:exit-game', () => {
+      this.uiRenderer.addEventListener('exitGame', () => {
          this.leaveMultiplayerGame();
       });
    }
