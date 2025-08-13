@@ -1,5 +1,5 @@
-import { GAME_CONSTANTS, CELL_SIZE, COLORS } from '../core/constants.js';
-import { coordKey } from '../core/utils.js';
+import { GAME_CONSTANTS, CELL_SIZE, COLORS } from "../core/constants.js";
+import { coordKey } from "../core/utils.js";
 
 /**
  * GridRenderer handles all grid visualization and rendering
@@ -8,13 +8,13 @@ import { coordKey } from '../core/utils.js';
 export class GridRenderer {
    constructor(app, gridContainer) {
       if (!app) {
-         throw new Error('GridRenderer: app parameter is required');
+         throw new Error("GridRenderer: app parameter is required");
       }
       if (!gridContainer) {
-         throw new Error('GridRenderer: gridContainer parameter is required');
+         throw new Error("GridRenderer: gridContainer parameter is required");
       }
       if (!app.stage) {
-         throw new Error('GridRenderer: app.stage is not available');
+         throw new Error("GridRenderer: app.stage is not available");
       }
 
       this.app = app;
@@ -36,10 +36,12 @@ export class GridRenderer {
    drawGrid(scale, gridX, gridY) {
       for (let i = this.gridContainer.children.length - 1; i >= 0; i--) {
          const child = this.gridContainer.children[i];
-         if (child instanceof PIXI.Graphics &&
+         if (
+            child instanceof PIXI.Graphics &&
             child !== this.currentHighlight &&
             !child.isWinningLine &&
-            !child.isPlayerMark) {
+            !child.isPlayerMark
+         ) {
             this.gridContainer.removeChild(child);
          }
       }
@@ -50,8 +52,10 @@ export class GridRenderer {
       // Calculate visible grid bounds with padding
       const startX = Math.floor(-gridX / (CELL_SIZE * scale)) - 20;
       const startY = Math.floor(-gridY / (CELL_SIZE * scale)) - 20;
-      const endX = startX + Math.ceil((this.app.screen.width / (CELL_SIZE * scale))) + 40;
-      const endY = startY + Math.ceil((this.app.screen.height / (CELL_SIZE * scale))) + 40;
+      const endX =
+         startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
+      const endY =
+         startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
 
       // Draw vertical lines
       for (let x = startX; x <= endX; x++) {
@@ -88,17 +92,17 @@ export class GridRenderer {
       const startCell = cells[0];
       const endCell = cells[cells.length - 1];
 
-      const startX = (startCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-      const startY = (startCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
-      const endX = (endCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-      const endY = (endCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
+      const startX = startCell[0] * CELL_SIZE + CELL_SIZE / 2;
+      const startY = startCell[1] * CELL_SIZE + CELL_SIZE / 2;
+      const endX = endCell[0] * CELL_SIZE + CELL_SIZE / 2;
+      const endY = endCell[1] * CELL_SIZE + CELL_SIZE / 2;
 
       graphics.lineStyle({
          width: GAME_CONSTANTS.STRIKE_WIDTH,
          color: GAME_CONSTANTS.STRIKE_COLOR,
-         cap: 'round',
-         join: 'round',
-         alpha: 1
+         cap: "round",
+         join: "round",
+         alpha: 1,
       });
       graphics.moveTo(startX, startY);
       graphics.lineTo(endX, endY);
@@ -112,14 +116,14 @@ export class GridRenderer {
     * @returns {Promise} Promise that resolves when animation completes
     */
    animateWinningLine(cells) {
-      console.log('animateWinningLine called with:', cells);
+      console.log("animateWinningLine called with:", cells);
       return new Promise((resolve) => {
          if (!cells || cells.length === 0) {
             resolve();
             return;
          }
 
-         console.log('Starting winning animation for', cells.length, 'cells');
+         console.log("Starting winning animation for", cells.length, "cells");
          this.winningCells = cells;
          const graphics = new PIXI.Graphics();
          graphics.isWinningLine = true;
@@ -128,10 +132,10 @@ export class GridRenderer {
          const startCell = cells[0];
          const endCell = cells[cells.length - 1];
 
-         const startX = (startCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-         const startY = (startCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
-         const endX = (endCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-         const endY = (endCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
+         const startX = startCell[0] * CELL_SIZE + CELL_SIZE / 2;
+         const startY = startCell[1] * CELL_SIZE + CELL_SIZE / 2;
+         const endX = endCell[0] * CELL_SIZE + CELL_SIZE / 2;
+         const endY = endCell[1] * CELL_SIZE + CELL_SIZE / 2;
 
          let progress = 0;
          const animate = () => {
@@ -147,9 +151,9 @@ export class GridRenderer {
             graphics.lineStyle({
                width: GAME_CONSTANTS.STRIKE_WIDTH,
                color: GAME_CONSTANTS.STRIKE_COLOR,
-               cap: 'round',
-               join: 'round',
-               alpha: 1
+               cap: "round",
+               join: "round",
+               alpha: 1,
             });
             graphics.moveTo(startX, startY);
             graphics.lineTo(
@@ -161,8 +165,13 @@ export class GridRenderer {
                requestAnimationFrame(animate);
             }
          };
-
+         
          animate();
+
+         // hack
+         setTimeout(() => {
+            return resolve()
+         }, 1000)
       });
    }
 
@@ -192,7 +201,7 @@ export class GridRenderer {
       }
 
       const highlight = new PIXI.Graphics();
-      const color = player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O;
+      const color = player === "X" ? COLORS.PLAYER_X : COLORS.PLAYER_O;
 
       highlight.lineStyle(2, color, 0.5);
       highlight.beginFill(color, 0.2);
@@ -232,17 +241,26 @@ export class GridRenderer {
       this.hoverGraphics.clear();
 
       // Disable hover when not in an active game or when menu overlays are shown
-      if (gameState?.gamePhase && gameState.gamePhase !== 'playing') return;
-      if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
+      if (gameState?.gamePhase && gameState.gamePhase !== "playing") return;
+      if (
+         typeof gameState?.isGameActive === "boolean" &&
+         !gameState.isGameActive
+      )
+         return;
       if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
-      if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
+      if (gameState.gameMode === "multi" && !gameState.isMyTurn) return;
 
       let pos;
       try {
          pos = event.data.getLocalPosition(this.gridContainer);
-         if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number' ||
-            !isFinite(pos.x) || !isFinite(pos.y)) {
+         if (
+            !pos ||
+            typeof pos.x !== "number" ||
+            typeof pos.y !== "number" ||
+            !isFinite(pos.x) ||
+            !isFinite(pos.y)
+         ) {
             return;
          }
       } catch (error) {
@@ -296,14 +314,14 @@ export class GridRenderer {
    addPlayerMark(cellX, cellY, player, scale) {
       const text = new PIXI.Text(player, {
          fontSize: 40,
-         fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,
-         align: 'center',
-         fontWeight: 'bold'
+         fill: player === "X" ? COLORS.PLAYER_X : COLORS.PLAYER_O,
+         align: "center",
+         fontWeight: "bold",
       });
 
       text.anchor.set(0.5);
-      text.x = (cellX * CELL_SIZE) + (CELL_SIZE / 2);
-      text.y = (cellY * CELL_SIZE) + (CELL_SIZE / 2);
+      text.x = cellX * CELL_SIZE + CELL_SIZE / 2;
+      text.y = cellY * CELL_SIZE + CELL_SIZE / 2;
 
       const targetSize = CELL_SIZE * 0.8;
       const textScale = targetSize / Math.max(text.width, text.height);
@@ -325,6 +343,12 @@ export class GridRenderer {
             this.gridContainer.removeChild(child);
          }
       }
+   }
+
+   restart() {
+      this.clearHighlight();
+      this.clearWinningLine();
+      this.clearAllMarks();
    }
 
    /**
