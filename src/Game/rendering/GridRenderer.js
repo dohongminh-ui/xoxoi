@@ -36,10 +36,12 @@ export class GridRenderer {
    drawGrid(scale, gridX, gridY) {
       for (let i = this.gridContainer.children.length - 1; i >= 0; i--) {
          const child = this.gridContainer.children[i];
-         if (child instanceof PIXI.Graphics &&
+         if (
+            child instanceof PIXI.Graphics &&
             child !== this.currentHighlight &&
             !child.isWinningLine &&
-            !child.isPlayerMark) {
+            !child.isPlayerMark
+         ) {
             this.gridContainer.removeChild(child);
          }
       }
@@ -50,8 +52,10 @@ export class GridRenderer {
       // Calculate visible grid bounds with padding
       const startX = Math.floor(-gridX / (CELL_SIZE * scale)) - 20;
       const startY = Math.floor(-gridY / (CELL_SIZE * scale)) - 20;
-      const endX = startX + Math.ceil((this.app.screen.width / (CELL_SIZE * scale))) + 40;
-      const endY = startY + Math.ceil((this.app.screen.height / (CELL_SIZE * scale))) + 40;
+      const endX =
+         startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
+      const endY =
+         startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
 
       // Draw vertical lines
       for (let x = startX; x <= endX; x++) {
@@ -88,17 +92,17 @@ export class GridRenderer {
       const startCell = cells[0];
       const endCell = cells[cells.length - 1];
 
-      const startX = (startCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-      const startY = (startCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
-      const endX = (endCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-      const endY = (endCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
+      const startX = startCell[0] * CELL_SIZE + CELL_SIZE / 2;
+      const startY = startCell[1] * CELL_SIZE + CELL_SIZE / 2;
+      const endX = endCell[0] * CELL_SIZE + CELL_SIZE / 2;
+      const endY = endCell[1] * CELL_SIZE + CELL_SIZE / 2;
 
       graphics.lineStyle({
          width: GAME_CONSTANTS.STRIKE_WIDTH,
          color: GAME_CONSTANTS.STRIKE_COLOR,
          cap: 'round',
          join: 'round',
-         alpha: 1
+         alpha: 1,
       });
       graphics.moveTo(startX, startY);
       graphics.lineTo(endX, endY);
@@ -128,10 +132,10 @@ export class GridRenderer {
          const startCell = cells[0];
          const endCell = cells[cells.length - 1];
 
-         const startX = (startCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-         const startY = (startCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
-         const endX = (endCell[0] * CELL_SIZE) + (CELL_SIZE / 2);
-         const endY = (endCell[1] * CELL_SIZE) + (CELL_SIZE / 2);
+         const startX = startCell[0] * CELL_SIZE + CELL_SIZE / 2;
+         const startY = startCell[1] * CELL_SIZE + CELL_SIZE / 2;
+         const endX = endCell[0] * CELL_SIZE + CELL_SIZE / 2;
+         const endY = endCell[1] * CELL_SIZE + CELL_SIZE / 2;
 
          let progress = 0;
          const animate = () => {
@@ -149,7 +153,7 @@ export class GridRenderer {
                color: GAME_CONSTANTS.STRIKE_COLOR,
                cap: 'round',
                join: 'round',
-               alpha: 1
+               alpha: 1,
             });
             graphics.moveTo(startX, startY);
             graphics.lineTo(
@@ -163,6 +167,11 @@ export class GridRenderer {
          };
 
          animate();
+
+         // hack
+         setTimeout(() => {
+            return resolve();
+         }, 1000);
       });
    }
 
@@ -233,7 +242,11 @@ export class GridRenderer {
 
       // Disable hover when not in an active game or when menu overlays are shown
       if (gameState?.gamePhase && gameState.gamePhase !== 'playing') return;
-      if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
+      if (
+         typeof gameState?.isGameActive === 'boolean' &&
+         !gameState.isGameActive
+      )
+         return;
       if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
       if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
@@ -241,8 +254,13 @@ export class GridRenderer {
       let pos;
       try {
          pos = event.data.getLocalPosition(this.gridContainer);
-         if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number' ||
-            !isFinite(pos.x) || !isFinite(pos.y)) {
+         if (
+            !pos ||
+            typeof pos.x !== 'number' ||
+            typeof pos.y !== 'number' ||
+            !isFinite(pos.x) ||
+            !isFinite(pos.y)
+         ) {
             return;
          }
       } catch (error) {
@@ -298,12 +316,12 @@ export class GridRenderer {
          fontSize: 40,
          fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,
          align: 'center',
-         fontWeight: 'bold'
+         fontWeight: 'bold',
       });
 
       text.anchor.set(0.5);
-      text.x = (cellX * CELL_SIZE) + (CELL_SIZE / 2);
-      text.y = (cellY * CELL_SIZE) + (CELL_SIZE / 2);
+      text.x = cellX * CELL_SIZE + CELL_SIZE / 2;
+      text.y = cellY * CELL_SIZE + CELL_SIZE / 2;
 
       const targetSize = CELL_SIZE * 0.8;
       const textScale = targetSize / Math.max(text.width, text.height);
@@ -325,6 +343,12 @@ export class GridRenderer {
             this.gridContainer.removeChild(child);
          }
       }
+   }
+
+   restart() {
+      this.clearHighlight();
+      this.clearWinningLine();
+      this.clearAllMarks();
    }
 
    /**
