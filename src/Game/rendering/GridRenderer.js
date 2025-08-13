@@ -1,5 +1,5 @@
-import { GAME_CONSTANTS, CELL_SIZE, COLORS } from "../core/constants.js";
-import { coordKey } from "../core/utils.js";
+import { GAME_CONSTANTS, CELL_SIZE, COLORS } from '../core/constants.js';
+import { coordKey } from '../core/utils.js';
 
 /**
  * GridRenderer handles all grid visualization and rendering
@@ -8,13 +8,13 @@ import { coordKey } from "../core/utils.js";
 export class GridRenderer {
    constructor(app, gridContainer) {
       if (!app) {
-         throw new Error("GridRenderer: app parameter is required");
+         throw new Error('GridRenderer: app parameter is required');
       }
       if (!gridContainer) {
-         throw new Error("GridRenderer: gridContainer parameter is required");
+         throw new Error('GridRenderer: gridContainer parameter is required');
       }
       if (!app.stage) {
-         throw new Error("GridRenderer: app.stage is not available");
+         throw new Error('GridRenderer: app.stage is not available');
       }
 
       this.app = app;
@@ -116,14 +116,14 @@ export class GridRenderer {
     * @returns {Promise} Promise that resolves when animation completes
     */
    animateWinningLine(cells) {
-      console.log("animateWinningLine called with:", cells);
+      console.log('animateWinningLine called with:', cells);
       return new Promise((resolve) => {
          if (!cells || cells.length === 0) {
             resolve();
             return;
          }
 
-         console.log("Starting winning animation for", cells.length, "cells");
+         console.log('Starting winning animation for', cells.length, 'cells');
          this.winningCells = cells;
          const graphics = new PIXI.Graphics();
          graphics.isWinningLine = true;
@@ -196,7 +196,7 @@ export class GridRenderer {
       }
 
       const highlight = new PIXI.Graphics();
-      const color = player === "X" ? COLORS.PLAYER_X : COLORS.PLAYER_O;
+      const color = player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O;
 
       highlight.lineStyle(2, color, 0.5);
       highlight.beginFill(color, 0.2);
@@ -240,7 +240,7 @@ export class GridRenderer {
       if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
       if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
-      if (gameState.gameMode === "multi" && !gameState.isMyTurn) return;
+      if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
 
       let pos;
       try {
