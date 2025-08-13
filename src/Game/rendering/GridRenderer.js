@@ -1,5 +1,5 @@
-import { GAME_CONSTANTS, CELL_SIZE, COLORS } from '../core/constants.js';
-import { coordKey } from '../core/utils.js';
+import { GAME_CONSTANTS, CELL_SIZE, COLORS } from "../core/constants.js";
+import { coordKey } from "../core/utils.js";
 
 /**
  * GridRenderer handles all grid visualization and rendering
@@ -8,13 +8,13 @@ import { coordKey } from '../core/utils.js';
 export class GridRenderer {
    constructor(app, gridContainer) {
       if (!app) {
-         throw new Error('GridRenderer: app parameter is required');
+         throw new Error("GridRenderer: app parameter is required");
       }
       if (!gridContainer) {
-         throw new Error('GridRenderer: gridContainer parameter is required');
+         throw new Error("GridRenderer: gridContainer parameter is required");
       }
       if (!app.stage) {
-         throw new Error('GridRenderer: app.stage is not available');
+         throw new Error("GridRenderer: app.stage is not available");
       }
 
       this.app = app;
@@ -102,7 +102,7 @@ export class GridRenderer {
          color: GAME_CONSTANTS.STRIKE_COLOR,
          cap: 'round',
          join: 'round',
-         alpha: 1,
+         alpha: 1
       });
       graphics.moveTo(startX, startY);
       graphics.lineTo(endX, endY);
@@ -116,14 +116,14 @@ export class GridRenderer {
     * @returns {Promise} Promise that resolves when animation completes
     */
    animateWinningLine(cells) {
-      console.log('animateWinningLine called with:', cells);
+      console.log("animateWinningLine called with:", cells);
       return new Promise((resolve) => {
          if (!cells || cells.length === 0) {
             resolve();
             return;
          }
 
-         console.log('Starting winning animation for', cells.length, 'cells');
+         console.log("Starting winning animation for", cells.length, "cells");
          this.winningCells = cells;
          const graphics = new PIXI.Graphics();
          graphics.isWinningLine = true;
@@ -153,7 +153,7 @@ export class GridRenderer {
                color: GAME_CONSTANTS.STRIKE_COLOR,
                cap: 'round',
                join: 'round',
-               alpha: 1,
+               alpha: 1
             });
             graphics.moveTo(startX, startY);
             graphics.lineTo(
@@ -165,13 +165,8 @@ export class GridRenderer {
                requestAnimationFrame(animate);
             }
          };
-
+         
          animate();
-
-         // hack
-         setTimeout(() => {
-            return resolve();
-         }, 1000);
       });
    }
 
@@ -201,7 +196,7 @@ export class GridRenderer {
       }
 
       const highlight = new PIXI.Graphics();
-      const color = player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O;
+      const color = player === "X" ? COLORS.PLAYER_X : COLORS.PLAYER_O;
 
       highlight.lineStyle(2, color, 0.5);
       highlight.beginFill(color, 0.2);
@@ -242,25 +237,16 @@ export class GridRenderer {
 
       // Disable hover when not in an active game or when menu overlays are shown
       if (gameState?.gamePhase && gameState.gamePhase !== 'playing') return;
-      if (
-         typeof gameState?.isGameActive === 'boolean' &&
-         !gameState.isGameActive
-      )
-         return;
+      if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
       if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
-      if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
+      if (gameState.gameMode === "multi" && !gameState.isMyTurn) return;
 
       let pos;
       try {
          pos = event.data.getLocalPosition(this.gridContainer);
-         if (
-            !pos ||
-            typeof pos.x !== 'number' ||
-            typeof pos.y !== 'number' ||
-            !isFinite(pos.x) ||
-            !isFinite(pos.y)
-         ) {
+         if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number' ||
+            !isFinite(pos.x) || !isFinite(pos.y)) {
             return;
          }
       } catch (error) {
@@ -316,7 +302,7 @@ export class GridRenderer {
          fontSize: 40,
          fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,
          align: 'center',
-         fontWeight: 'bold',
+         fontWeight: 'bold'
       });
 
       text.anchor.set(0.5);
