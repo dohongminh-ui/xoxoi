@@ -6,11 +6,5 @@ indent_size = 3
 charset = utf-8
 trim_trailing_whitespace = true
 
-[*.json]
-indent_style = space
-indent_size = 3
-
 [*.md]
-indent_style = space
-indent_size = 3
 trim_trailing_whitespace = false
