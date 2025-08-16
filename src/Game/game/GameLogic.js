@@ -10,7 +10,7 @@ export class GameLogic extends EventTarget {
       super();
 
       // Game state
-      this.gameMode = null; // 'single', 'bot', 'multi'
+      this.gameMode = null; // 'null', 'single', 'bot', 'multi'
       this.currentPlayer = 'X';
       this.isGameOver = false;
       this.playerMark = ''; // For multiplayer

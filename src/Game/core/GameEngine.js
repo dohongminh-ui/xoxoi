@@ -573,9 +573,7 @@ export class GameEngine {
 
       // Game restart/rematch
       this.uiRenderer.addEventListener('rematchRequest', () => {
-         if (this.gameLogic) {
-            this.gameLogic.requestRematch();
-         }
+         this.requestRematch();
       });
 
       // Accept rematch
@@ -738,6 +736,30 @@ export class GameEngine {
       // Reset GameLogic to single player or stop
       if (this.gameLogic) {
          this.gameLogic.resetGame();
+      }
+   }
+
+   /**
+    * Handle rematch request based on current mode
+    */
+   requestRematch() {
+      const currentState = this.getGameState();
+
+      if (!currentState.isGameOver) return;
+
+      switch (currentState.gameMode) {
+         case 'single':
+            this.startSinglePlayerGame();
+            break;
+         case 'bot':
+            this.startBotGame();
+            break;
+         case 'multi':
+            //idk update status bar or smt
+            break;
+         default:
+            this.leaveMultiplayerGame();
+            break;
       }
    }
 
