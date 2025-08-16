@@ -1,15 +1,11 @@
-import './MenuOverlay.css'
+import './MenuOverlay.css';
 
-const MenuOverlay = ({ isVisible = true, children }) => {
+const MenuOverlay = ({isVisible = true, children}) => {
    if (!isVisible) {
-      return null
+      return null;
    }
 
-   return (
-      <div className='menu-overlay'>
-         {children}
-      </div>
-   )
-}
+   return <div className='menu-overlay'>{children}</div>;
+};
 
-export default MenuOverlay
+export default MenuOverlay;

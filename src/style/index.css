@@ -21,7 +21,13 @@ input[type='submit'] {
 body {
    line-height: 1.5;
    -webkit-font-smoothing: antialiased;
-   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+   font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
 }
 
 img,
@@ -76,7 +82,7 @@ h6 {
    pointer-events: none;
 }
 
-.ui-overlay>* {
+.ui-overlay > * {
    pointer-events: auto;
 }
 

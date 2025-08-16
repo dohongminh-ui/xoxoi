@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import {useState} from 'react';
 
 /**
  * Custom hook for managing status bar state and actions
@@ -7,78 +7,81 @@ import { useState } from 'react'
  */
 export const useStatusBar = (gameEngine = null) => {
    // Status bar state
-   const [gameStatus, setGameStatus] = useState('toe')
-   const [showRestartButton, setShowRestartButton] = useState(false)
-   const [showAcceptRematchButton, setShowAcceptRematchButton] = useState(false)
-   const [showDeclineRematchButton, setShowDeclineRematchButton] = useState(false)
-   const [showCancelRematchButton, setShowCancelRematchButton] = useState(false)
-   const [showExitGameButton, setShowExitGameButton] = useState(false)
+   const [gameStatus, setGameStatus] = useState('toe');
+   const [showRestartButton, setShowRestartButton] = useState(false);
+   const [showAcceptRematchButton, setShowAcceptRematchButton] =
+      useState(false);
+   const [showDeclineRematchButton, setShowDeclineRematchButton] =
+      useState(false);
+   const [showCancelRematchButton, setShowCancelRematchButton] =
+      useState(false);
+   const [showExitGameButton, setShowExitGameButton] = useState(false);
 
    // Status bar actions - now properly connected to game engine
    const handleRestart = () => {
-      console.log('Restart button clicked')
+      console.log('Restart button clicked');
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchRequest'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchRequest'));
       } else if (gameEngine?.gameLogic) {
-         gameEngine.gameLogic.requestRematch()
+         gameEngine.gameLogic.requestRematch();
       }
-   }
+   };
 
    const handleAcceptRematch = () => {
-      console.log('Accept rematch clicked')
+      console.log('Accept rematch clicked');
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchAccept'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchAccept'));
       } else if (gameEngine?.networkManager) {
-         gameEngine.networkManager.acceptRematch()
+         gameEngine.networkManager.acceptRematch();
       }
-   }
+   };
 
    const handleDeclineRematch = () => {
-      console.log('Decline rematch clicked')
+      console.log('Decline rematch clicked');
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchDecline'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchDecline'));
       } else if (gameEngine?.networkManager) {
-         gameEngine.networkManager.declineRematch()
+         gameEngine.networkManager.declineRematch();
       }
-   }
+   };
 
    const handleCancelRematch = () => {
-      console.log('Cancel rematch clicked')
+      console.log('Cancel rematch clicked');
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchCancel'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchCancel'));
       } else if (gameEngine?.networkManager) {
-         gameEngine.networkManager.cancelRematch()
+         gameEngine.networkManager.cancelRematch();
       }
-   }
+   };
 
    const handleExitGame = () => {
-      console.log('Exit game clicked')
+      console.log('Exit game clicked');
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('exitGame'))
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('exitGame'));
       } else if (gameEngine?.leaveMultiplayerGame) {
-         gameEngine.leaveMultiplayerGame()
+         gameEngine.leaveMultiplayerGame();
       }
-   }
+   };
 
-   const updateGameStatus = (status) => setGameStatus(status)
-   
+   const updateGameStatus = status => setGameStatus(status);
+
    const showButtons = ({
       restart = false,
       acceptRematch = false,
       declineRematch = false,
       cancelRematch = false,
-      exitGame = false
+      exitGame = false,
    }) => {
-      setShowRestartButton(restart)
-      setShowAcceptRematchButton(acceptRematch)
-      setShowDeclineRematchButton(declineRematch)
-      setShowCancelRematchButton(cancelRematch)
-      setShowExitGameButton(exitGame)
-   }
+      setShowRestartButton(restart);
+      setShowAcceptRematchButton(acceptRematch);
+      setShowDeclineRematchButton(declineRematch);
+      setShowCancelRematchButton(cancelRematch);
+      setShowExitGameButton(exitGame);
+   };
 
    const hideAllButtons = () => {
-      showButtons({})
-   }
+      showButtons({});
+   };
 
    return {
       // State
@@ -88,7 +91,7 @@ export const useStatusBar = (gameEngine = null) => {
          showAcceptRematchButton,
          showDeclineRematchButton,
          showCancelRematchButton,
-         showExitGameButton
+         showExitGameButton,
       },
       // Actions
       statusBarActions: {
@@ -96,11 +99,11 @@ export const useStatusBar = (gameEngine = null) => {
          onAcceptRematch: handleAcceptRematch,
          onDeclineRematch: handleDeclineRematch,
          onCancelRematch: handleCancelRematch,
-         onExitGame: handleExitGame
+         onExitGame: handleExitGame,
       },
       // Utilities
       updateGameStatus,
       showButtons,
-      hideAllButtons
-   }
-}
+      hideAllButtons,
+   };
+};

@@ -1,12 +1,10 @@
 {
-    "jsxSingleQuote": true,
-    "printWidth": 80,
-    "requireConfig": true,
-    "singleQuote": true,
-    "semi": true,
-    "trailingComma":"es5",
-    "bracketSpacing": false,
-    "bracketSameLine": true,
-    "arrowParens": "avoid",
-    "proseWrap": "always"
+   "jsxSingleQuote": true,
+   "singleQuote": true,
+   "semi": true,
+   "trailingComma": "es5",
+   "bracketSpacing": false,
+   "bracketSameLine": true,
+   "arrowParens": "avoid",
+   "proseWrap": "always"
 }

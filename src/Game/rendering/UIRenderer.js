@@ -6,7 +6,7 @@
 export class UIRenderer extends EventTarget {
    constructor(gameStateManager) {
       super();
-      
+
       this.gameStateManager = gameStateManager;
       this.elements = {
          statusBar: null,
@@ -22,17 +22,17 @@ export class UIRenderer extends EventTarget {
          playWithBotBtn: null,
          createGameBtn: null,
          joinGameBtn: null,
-         roomIdInput: null
+         roomIdInput: null,
       };
-      
+
       this.buttonStates = {
          IN_GAME: 'in_game',
          GAME_OVER: 'game_over',
          REMATCH_REQUEST: 'rematch_request',
          WAITING_REMATCH: 'waiting_rematch',
-         OPPONENT_LEFT: 'opponent_left'
+         OPPONENT_LEFT: 'opponent_left',
       };
-      
+
       this.initialized = false;
    }
 
@@ -46,7 +46,7 @@ export class UIRenderer extends EventTarget {
          this.setupGameStateListeners();
          this.updateUI();
          this.initialized = true;
-         
+
          console.log('UIRenderer initialized successfully');
          return true;
       } catch (error) {
@@ -62,13 +62,20 @@ export class UIRenderer extends EventTarget {
       this.elements.statusBar = document.getElementById('statusBar');
       this.elements.gameStatus = document.getElementById('gameStatus');
       this.elements.restartButton = document.getElementById('restartButton');
-      this.elements.acceptRematchButton = document.getElementById('acceptRematchButton');
-      this.elements.declineRematchButton = document.getElementById('declineRematchButton');
-      this.elements.cancelRematchButton = document.getElementById('cancelRematchButton');
+      this.elements.acceptRematchButton = document.getElementById(
+         'acceptRematchButton'
+      );
+      this.elements.declineRematchButton = document.getElementById(
+         'declineRematchButton'
+      );
+      this.elements.cancelRematchButton = document.getElementById(
+         'cancelRematchButton'
+      );
       this.elements.exitGameButton = document.getElementById('exitGameButton');
       this.elements.menuOverlay = document.getElementById('menuOverlay');
       this.elements.menuContent = document.getElementById('menuContent');
-      this.elements.singlePlayerBtn = document.getElementById('singlePlayerBtn');
+      this.elements.singlePlayerBtn =
+         document.getElementById('singlePlayerBtn');
       this.elements.playWithBotBtn = document.getElementById('playWithBotBtn');
       this.elements.createGameBtn = document.getElementById('createGameBtn');
       this.elements.joinGameBtn = document.getElementById('joinGameBtn');
@@ -247,9 +254,11 @@ export class UIRenderer extends EventTarget {
          this.elements.joinGameBtn.addEventListener('click', () => {
             const roomId = this.elements.roomIdInput?.value?.trim();
             if (roomId) {
-               this.dispatchEvent(new CustomEvent('multiJoin', {
-                  detail: { roomId }
-               }));
+               this.dispatchEvent(
+                  new CustomEvent('multiJoin', {
+                     detail: {roomId},
+                  })
+               );
             } else {
                this.showMessage('Please enter a Room ID');
             }
@@ -258,7 +267,7 @@ export class UIRenderer extends EventTarget {
 
       // Enter key for room ID input
       if (this.elements.roomIdInput) {
-         this.elements.roomIdInput.addEventListener('keydown', (e) => {
+         this.elements.roomIdInput.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                this.elements.joinGameBtn?.click();
             }
@@ -272,14 +281,14 @@ export class UIRenderer extends EventTarget {
    setupGameStateListeners() {
       if (!this.gameStateManager) return;
       // Listen for game state changes
-      this.gameStateManager.addEventListener('gameStarted', (e) => {
+      this.gameStateManager.addEventListener('gameStarted', e => {
          this.updateGameStatus(`Game Started - ${e.detail.mode}`);
          this.hideMenu();
          this.updateButtonState(this.buttonStates.IN_GAME);
       });
 
-      this.gameStateManager.addEventListener('gameEnded', (e) => {
-         const { winner, reason } = e.detail;
+      this.gameStateManager.addEventListener('gameEnded', e => {
+         const {winner, reason} = e.detail;
          if (winner) {
             this.updateGameStatus(`Game Over - Player ${winner} wins!`);
          } else {
@@ -288,8 +297,8 @@ export class UIRenderer extends EventTarget {
          this.updateButtonState(this.buttonStates.GAME_OVER);
       });
 
-      this.gameStateManager.addEventListener('turnChange', (e) => {
-         const { currentPlayer, isMyTurn } = e.detail;
+      this.gameStateManager.addEventListener('turnChange', e => {
+         const {currentPlayer, isMyTurn} = e.detail;
          if (isMyTurn) {
             this.updateGameStatus(`Your turn (${currentPlayer})`);
          } else {
@@ -297,14 +306,14 @@ export class UIRenderer extends EventTarget {
          }
       });
 
-      this.gameStateManager.addEventListener('multiJoin', (e) => {
-         const { roomId } = e.detail;
+      this.gameStateManager.addEventListener('multiJoin', e => {
+         const {roomId} = e.detail;
          this.updateGameStatus(`Joined room: ${roomId}`);
          this.hideMenu();
       });
 
-      this.gameStateManager.addEventListener('multiWait', (e) => {
-         const { roomId } = e.detail;
+      this.gameStateManager.addEventListener('multiWait', e => {
+         const {roomId} = e.detail;
          this.updateGameStatus(`Waiting for opponent... Room: ${roomId}`);
       });
 
@@ -340,7 +349,7 @@ export class UIRenderer extends EventTarget {
          acceptRematchButton: false,
          declineRematchButton: false,
          cancelRematchButton: false,
-         exitGameButton: false
+         exitGameButton: false,
       };
 
       switch (state) {
@@ -390,7 +399,7 @@ export class UIRenderer extends EventTarget {
       if (this.elements.menuOverlay) {
          this.elements.menuOverlay.style.display = 'flex';
       }
-      
+
       // Clear room ID input when showing menu
       if (this.elements.roomIdInput) {
          this.elements.roomIdInput.value = '';

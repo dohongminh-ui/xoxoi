@@ -1,5 +1,5 @@
-import { GAME_CONSTANTS, CELL_SIZE, COLORS } from '../core/constants.js';
-import { coordKey } from '../core/utils.js';
+import {GAME_CONSTANTS, CELL_SIZE, COLORS} from '../core/constants.js';
+import {coordKey} from '../core/utils.js';
 
 /**
  * GridRenderer handles all grid visualization and rendering
@@ -102,7 +102,7 @@ export class GridRenderer {
          color: GAME_CONSTANTS.STRIKE_COLOR,
          cap: 'round',
          join: 'round',
-         alpha: 1
+         alpha: 1,
       });
       graphics.moveTo(startX, startY);
       graphics.lineTo(endX, endY);
@@ -117,7 +117,7 @@ export class GridRenderer {
     */
    animateWinningLine(cells) {
       console.log('animateWinningLine called with:', cells);
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
          if (!cells || cells.length === 0) {
             resolve();
             return;
@@ -153,7 +153,7 @@ export class GridRenderer {
                color: GAME_CONSTANTS.STRIKE_COLOR,
                cap: 'round',
                join: 'round',
-               alpha: 1
+               alpha: 1,
             });
             graphics.moveTo(startX, startY);
             graphics.lineTo(
@@ -165,7 +165,7 @@ export class GridRenderer {
                requestAnimationFrame(animate);
             }
          };
-         
+
          animate();
       });
    }
@@ -237,7 +237,11 @@ export class GridRenderer {
 
       // Disable hover when not in an active game or when menu overlays are shown
       if (gameState?.gamePhase && gameState.gamePhase !== 'playing') return;
-      if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
+      if (
+         typeof gameState?.isGameActive === 'boolean' &&
+         !gameState.isGameActive
+      )
+         return;
       if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
       if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
@@ -245,8 +249,13 @@ export class GridRenderer {
       let pos;
       try {
          pos = event.data.getLocalPosition(this.gridContainer);
-         if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number' ||
-            !isFinite(pos.x) || !isFinite(pos.y)) {
+         if (
+            !pos ||
+            typeof pos.x !== 'number' ||
+            typeof pos.y !== 'number' ||
+            !isFinite(pos.x) ||
+            !isFinite(pos.y)
+         ) {
             return;
          }
       } catch (error) {
@@ -302,7 +311,7 @@ export class GridRenderer {
          fontSize: 40,
          fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,
          align: 'center',
-         fontWeight: 'bold'
+         fontWeight: 'bold',
       });
 
       text.anchor.set(0.5);

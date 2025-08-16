@@ -1,11 +1,11 @@
-/** 
+/**
  * Rough outline of the server for multiplayer
  * No database yet
  */
 
 import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
+import {createServer} from 'http';
+import {Server} from 'socket.io';
 
 const app = express();
 const server = createServer(app);
@@ -17,10 +17,10 @@ const rooms = new Map();
 
 const MARKS = {
    X: 'X',
-   O: 'O'
+   O: 'O',
 };
 
-io.on('connection', (socket) => {
+io.on('connection', socket => {
    socket.on('createRoom', () => {
       const roomId = Math.random().toString(36).substring(2, 8);
       rooms.set(roomId, {
@@ -30,13 +30,13 @@ io.on('connection', (socket) => {
          placedMarks: new Map(),
          isGameOver: false,
          rematchRequested: new Set(),
-         lastWinner: null
+         lastWinner: null,
       });
       socket.join(roomId);
       socket.emit('roomCreated', roomId);
    });
 
-   socket.on('joinRoom', (roomId) => {
+   socket.on('joinRoom', roomId => {
       const room = rooms.get(roomId);
       if (!room) {
          socket.emit('error', 'Room not found');
@@ -54,13 +54,13 @@ io.on('connection', (socket) => {
 
       socket.emit('gameJoined', {
          mark: MARKS.O,
-         roomId
+         roomId,
       });
 
       socket.to(roomId).emit('opponentJoined');
    });
 
-   socket.on('placeMark', ({ roomId, cellX, cellY }) => {
+   socket.on('placeMark', ({roomId, cellX, cellY}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
@@ -79,11 +79,11 @@ io.on('connection', (socket) => {
          cellX,
          cellY,
          player: playerMark,
-         nextPlayer: room.currentPlayer
+         nextPlayer: room.currentPlayer,
       });
    });
 
-   socket.on('gameWon', ({ roomId, winner }) => {
+   socket.on('gameWon', ({roomId, winner}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
@@ -117,7 +117,7 @@ io.on('connection', (socket) => {
       });
    });
 
-   socket.on('requestRematch', ({ roomId }) => {
+   socket.on('requestRematch', ({roomId}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
@@ -144,7 +144,7 @@ io.on('connection', (socket) => {
             const isYourTurn = playerMark === MARKS.X;
             io.to(playerId).emit('rematchAccepted', {
                mark: playerMark,
-               isYourTurn
+               isYourTurn,
             });
          });
          return;
@@ -152,7 +152,7 @@ io.on('connection', (socket) => {
       io.to(opponent).emit('rematchRequested');
    });
 
-   socket.on('acceptRematch', ({ roomId }) => {
+   socket.on('acceptRematch', ({roomId}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
@@ -171,12 +171,12 @@ io.on('connection', (socket) => {
          const playerMark = room.playerMarks.get(playerId);
          io.to(playerId).emit('rematchAccepted', {
             mark: playerMark,
-            isYourTurn: playerMark === MARKS.X
+            isYourTurn: playerMark === MARKS.X,
          });
       });
    });
 
-   socket.on('declineRematch', ({ roomId }) => {
+   socket.on('declineRematch', ({roomId}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
@@ -187,7 +187,7 @@ io.on('connection', (socket) => {
       }
    });
 
-   socket.on('cancelRematch', ({ roomId }) => {
+   socket.on('cancelRematch', ({roomId}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
@@ -195,7 +195,7 @@ io.on('connection', (socket) => {
       socket.to(roomId).emit('rematchCancelled');
    });
 
-   socket.on('leaveRoom', ({ roomId }) => {
+   socket.on('leaveRoom', ({roomId}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
@@ -212,7 +212,7 @@ io.on('connection', (socket) => {
       }
    });
 
-   socket.on('rejoinRoom', ({ roomId, playerId }) => {
+   socket.on('rejoinRoom', ({roomId, playerId}) => {
       const room = rooms.get(roomId);
       if (!room) {
          socket.emit('opponentLeft');
@@ -220,9 +220,14 @@ io.on('connection', (socket) => {
       }
 
       for (const [existingRoomId, existingRoom] of rooms.entries()) {
-         if (existingRoom.players.includes(socket.id) && existingRoomId !== roomId) {
+         if (
+            existingRoom.players.includes(socket.id) &&
+            existingRoomId !== roomId
+         ) {
             socket.leave(existingRoomId);
-            existingRoom.players = existingRoom.players.filter(id => id !== socket.id);
+            existingRoom.players = existingRoom.players.filter(
+               id => id !== socket.id
+            );
             existingRoom.playerMarks.delete(socket.id);
             existingRoom.rematchRequested.delete(socket.id);
          }
@@ -244,15 +249,20 @@ io.on('connection', (socket) => {
          room.playerMarks.set(socket.id, playerMark);
       } else {
          room.players.push(socket.id);
-         room.playerMarks.set(socket.id, currentPlayerCount === 0 ? MARKS.X : MARKS.O);
+         room.playerMarks.set(
+            socket.id,
+            currentPlayerCount === 0 ? MARKS.X : MARKS.O
+         );
       }
 
       socket.join(roomId);
 
-      const placedMarks = Array.from(room.placedMarks.entries()).map(([coord, player]) => {
-         const [x, y] = coord.split(',').map(Number);
-         return { x, y, player };
-      });
+      const placedMarks = Array.from(room.placedMarks.entries()).map(
+         ([coord, player]) => {
+            const [x, y] = coord.split(',').map(Number);
+            return {x, y, player};
+         }
+      );
 
       const otherPlayer = room.players.find(id => id !== socket.id);
       if (otherPlayer) {
@@ -264,11 +274,11 @@ io.on('connection', (socket) => {
          mark: room.playerMarks.get(socket.id),
          isYourTurn: room.currentPlayer === room.playerMarks.get(socket.id),
          isGameOver: room.isGameOver,
-         placedMarks
+         placedMarks,
       });
    });
 
-   socket.on('checkRoom', ({ roomId }, callback) => {
+   socket.on('checkRoom', ({roomId}, callback) => {
       const roomExists = rooms.has(roomId);
       callback(roomExists);
    });

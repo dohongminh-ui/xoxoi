@@ -2,22 +2,24 @@
 
 ## Project Overview
 
-> [!IMPORTANT]
-> All of the things here are subject to change
+> [!IMPORTANT] All of the things here are subject to change
 
-This project is a feature-rich, multiplayer Tic-Tac-Toe game with advanced AI, real-time multiplayer capabilities, and comprehensive user management. The game extends beyond traditional 3x3 grids to support infinite grids with 5-in-a-row win conditions.
+This project is a feature-rich, multiplayer Tic-Tac-Toe game with advanced AI,
+real-time multiplayer capabilities, and comprehensive user management. The game
+extends beyond traditional 3x3 grids to support infinite grids with 5-in-a-row
+win conditions.
 
 ## Getting Started
 
-> [!TIP]
-> Recommended to use pnpm.
+> [!TIP] Recommended to use pnpm.
 
 ```bash
 npm i
 npm run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
+Open [http://localhost:3001](http://localhost:3001) with your browser to see the
+result.
 
 ## Flowchart of System Design
 
@@ -270,7 +272,8 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 - **Real-time Synchronization** - Socket.IO with Redis pub/sub
 - **Reconnection Handling** - Automatic state recovery
 - **Rematch System** - Request, accept, decline rematch options
-- **Friend and Invitation System** - Add and invite friends to private rooms, send game invitations
+- **Friend and Invitation System** - Add and invite friends to private rooms,
+  send game invitations
 
 ### UI/UX Features
 
@@ -334,7 +337,8 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 
 ## Key Design Decisions
 
-1. **Hybrid Communication**: REST APIs for CRUD operations, Socket.IO for real-time features
+1. **Hybrid Communication**: REST APIs for CRUD operations, Socket.IO for
+   real-time features
 2. **Database Split**: PostgreSQL for persistence, Redis for real-time state
 3. **TypeScript Throughout**: Shared types between frontend/backend
 4. **Horizontal Scaling**: Redis adapter enables multiple Socket.IO servers
@@ -343,4 +347,5 @@ Open [http://localhost:3001](http://localhost:3001) with your browser to see the
 ## Contribute
 
 - slavery: [todo list in trello](https://trello.com/b/e5EF2jcw/xoxo)
-- and someone to help me convert this project to typescript :sob::wilted_flower::broken_heart::pray:
+- and someone to help me convert this project to typescript
+  :sob::wilted_flower::broken_heart::pray:

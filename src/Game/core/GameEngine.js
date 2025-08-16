@@ -1,4 +1,4 @@
-import { GAME_CONSTANTS } from './constants.js';
+import {GAME_CONSTANTS} from './constants.js';
 
 /**
  * Main game engine that orchestrates all game components
@@ -67,7 +67,7 @@ export class GameEngine {
 
       // Load GridRenderer component
       try {
-         const { GridRenderer } = await import('../rendering/GridRenderer.js');
+         const {GridRenderer} = await import('../rendering/GridRenderer.js');
          this.components.GridRenderer = GridRenderer;
          console.log('GridRenderer loaded successfully');
       } catch (error) {
@@ -76,7 +76,7 @@ export class GameEngine {
 
       // Load CameraController component
       try {
-         const { CameraController } = await import(
+         const {CameraController} = await import(
             '../input/CameraController.js'
          );
          this.components.CameraController = CameraController;
@@ -87,7 +87,7 @@ export class GameEngine {
 
       // Load GameLogic component
       try {
-         const { GameLogic } = await import('../game/GameLogic.js');
+         const {GameLogic} = await import('../game/GameLogic.js');
          this.components.GameLogic = GameLogic;
          console.log('GameLogic loaded successfully');
       } catch (error) {
@@ -96,9 +96,7 @@ export class GameEngine {
 
       // Load NetworkManager component
       try {
-         const { NetworkManager } = await import(
-            '../network/NetworkManager.js'
-         );
+         const {NetworkManager} = await import('../network/NetworkManager.js');
          this.components.NetworkManager = NetworkManager;
          console.log('NetworkManager loaded successfully');
       } catch (error) {
@@ -107,9 +105,7 @@ export class GameEngine {
 
       // Load GameStateManager component
       try {
-         const { GameStateManager } = await import(
-            '../game/GameStateManager.js'
-         );
+         const {GameStateManager} = await import('../game/GameStateManager.js');
          this.components.GameStateManager = GameStateManager;
          console.log('GameStateManager loaded successfully');
       } catch (error) {
@@ -118,7 +114,7 @@ export class GameEngine {
 
       // Load UIRenderer component
       try {
-         const { UIRenderer } = await import('../rendering/UIRenderer.js');
+         const {UIRenderer} = await import('../rendering/UIRenderer.js');
          this.components.UIRenderer = UIRenderer;
          console.log('UIRenderer loaded successfully');
       } catch (error) {
@@ -243,20 +239,20 @@ export class GameEngine {
       if (!this.cameraController || !this.gridRenderer) return;
 
       // Listen for camera updates to redraw grid
-      this.cameraController.addEventListener('cameraUpdate', (event) => {
-         const { scale, x, y } = event.detail;
+      this.cameraController.addEventListener('cameraUpdate', event => {
+         const {scale, x, y} = event.detail;
          this.gridRenderer.drawGrid(scale, x, y);
       });
 
       // Listen for cell clicks
-      this.cameraController.addEventListener('cellClick', (event) => {
-         const { cellX, cellY } = event.detail;
+      this.cameraController.addEventListener('cellClick', event => {
+         const {cellX, cellY} = event.detail;
          this.handleCellClick(cellX, cellY);
       });
 
       // Listen for pointer moves to update hover
-      this.cameraController.addEventListener('pointerMove', (event) => {
-         const { event: pointerEvent, isDragging, hasMoved } = event.detail;
+      this.cameraController.addEventListener('pointerMove', event => {
+         const {event: pointerEvent, isDragging, hasMoved} = event.detail;
          const cameraState = this.cameraController.getCameraState();
 
          // Get real game state
@@ -297,8 +293,8 @@ export class GameEngine {
       if (!this.gameLogic) return;
 
       // Listen for move attempts
-      this.gameLogic.addEventListener('moveAttempted', (event) => {
-         const { x, y, player, success, reason } = event.detail;
+      this.gameLogic.addEventListener('moveAttempted', event => {
+         const {x, y, player, success, reason} = event.detail;
          console.log(
             `Move attempt: ${player} at (${x}, ${y}) - ${
                success ? 'Success' : reason
@@ -307,8 +303,8 @@ export class GameEngine {
       });
 
       // Listen for successful moves
-      this.gameLogic.addEventListener('movePlaced', (event) => {
-         const { cellX, cellY, player } = event.detail;
+      this.gameLogic.addEventListener('movePlaced', event => {
+         const {cellX, cellY, player} = event.detail;
 
          // Update the visual representation
          if (this.gridRenderer && this.cameraController) {
@@ -336,8 +332,8 @@ export class GameEngine {
       });
 
       // Listen for wins
-      this.gameLogic.addEventListener('gameWon', async (event) => {
-         const { winner, winningCells } = event.detail;
+      this.gameLogic.addEventListener('gameWon', async event => {
+         const {winner, winningCells} = event.detail;
          console.log(`Game won by ${winner}!`, 'Winning cells:', winningCells);
 
          // Show winning animation if renderer supports it
@@ -360,13 +356,13 @@ export class GameEngine {
       });
 
       // Listen for draws
-      this.gameLogic.addEventListener('gameDraw', (event) => {
+      this.gameLogic.addEventListener('gameDraw', event => {
          console.log('Game ended in a draw!');
       });
 
       // Listen for game state changes
-      this.gameLogic.addEventListener('stateChanged', (event) => {
-         const { gameState } = event.detail;
+      this.gameLogic.addEventListener('stateChanged', event => {
+         const {gameState} = event.detail;
          console.log('Game state changed:', gameState);
       });
    }
@@ -378,15 +374,15 @@ export class GameEngine {
       if (!this.networkManager) return;
 
       // Connection events
-      this.networkManager.addEventListener('connected', (event) => {
+      this.networkManager.addEventListener('connected', event => {
          console.log('Network connected:', event.detail);
       });
 
-      this.networkManager.addEventListener('disconnected', (event) => {
+      this.networkManager.addEventListener('disconnected', event => {
          console.log('Network disconnected:', event.detail);
       });
 
-      this.networkManager.addEventListener('reconnected', (event) => {
+      this.networkManager.addEventListener('reconnected', event => {
          console.log(
             'Network reconnected after',
             event.detail.attempts,
@@ -394,13 +390,13 @@ export class GameEngine {
          );
       });
 
-      this.networkManager.addEventListener('reconnectFailed', (event) => {
+      this.networkManager.addEventListener('reconnectFailed', event => {
          console.log('Network reconnection failed');
       });
 
       // Room events
-      this.networkManager.addEventListener('roomCreated', (event) => {
-         const { roomId, playerMark, inviteUrl } = event.detail;
+      this.networkManager.addEventListener('roomCreated', event => {
+         const {roomId, playerMark, inviteUrl} = event.detail;
          console.log('Room created:', roomId, 'Player mark:', playerMark);
 
          // Switch GameLogic to multiplayer mode
@@ -414,8 +410,8 @@ export class GameEngine {
          }
       });
 
-      this.networkManager.addEventListener('gameJoined', (event) => {
-         const { roomId, playerMark, isMyTurn } = event.detail;
+      this.networkManager.addEventListener('gameJoined', event => {
+         const {roomId, playerMark, isMyTurn} = event.detail;
          console.log('Joined game:', roomId, 'Player mark:', playerMark);
 
          // Switch GameLogic to multiplayer mode
@@ -429,16 +425,16 @@ export class GameEngine {
          }
       });
 
-      this.networkManager.addEventListener('opponentJoined', (event) => {
+      this.networkManager.addEventListener('opponentJoined', event => {
          console.log('Opponent joined');
 
          // Update GameLogic state
          if (this.gameLogic) {
-            this.gameLogic.updateGameState({ hasOpponent: true });
+            this.gameLogic.updateGameState({hasOpponent: true});
          }
       });
 
-      this.networkManager.addEventListener('opponentLeft', (event) => {
+      this.networkManager.addEventListener('opponentLeft', event => {
          console.log('Opponent left');
 
          // Update GameLogic state
@@ -451,31 +447,31 @@ export class GameEngine {
       });
 
       // Move synchronization
-      this.networkManager.addEventListener('moveReceived', (event) => {
-         const { cellX, cellY, player, isMyTurn } = event.detail;
+      this.networkManager.addEventListener('moveReceived', event => {
+         const {cellX, cellY, player, isMyTurn} = event.detail;
          console.log('Move received:', cellX, cellY, 'by', player);
 
          // Execute the move in GameLogic
          if (this.gameLogic) {
             this.gameLogic.executeMove(cellX, cellY, player);
-            this.gameLogic.updateGameState({ isMyTurn });
+            this.gameLogic.updateGameState({isMyTurn});
          }
       });
 
       // Listen for multiplayer moves from GameLogic
       if (this.gameLogic) {
-         this.gameLogic.addEventListener('multiplayerMove', (event) => {
-            const { cellX, cellY } = event.detail;
+         this.gameLogic.addEventListener('multiplayerMove', event => {
+            const {cellX, cellY} = event.detail;
             this.networkManager.sendMove(cellX, cellY);
          });
       }
 
       // Error handling
-      this.networkManager.addEventListener('error', (event) => {
+      this.networkManager.addEventListener('error', event => {
          console.error('Network error:', event.detail.error);
       });
 
-      this.networkManager.addEventListener('roomNotFound', (event) => {
+      this.networkManager.addEventListener('roomNotFound', event => {
          console.warn('Room not found:', event.detail.roomId);
       });
    }
@@ -487,14 +483,14 @@ export class GameEngine {
       if (!this.gameStateManager) return;
 
       // Listen for game mode changes
-      this.gameStateManager.addEventListener('gameModeChanged', (event) => {
-         const { from, to } = event.detail;
+      this.gameStateManager.addEventListener('gameModeChanged', event => {
+         const {from, to} = event.detail;
          console.log(`Game mode changed from ${from} to ${to}`);
       });
 
       // Listen for game phase changes
-      this.gameStateManager.addEventListener('gamePhaseChanged', (event) => {
-         const { from, to } = event.detail;
+      this.gameStateManager.addEventListener('gamePhaseChanged', event => {
+         const {from, to} = event.detail;
          console.log(`Game phase changed from ${from} to ${to}`);
          if (this.gridRenderer) {
             this.gridRenderer.clearHover();
@@ -502,14 +498,14 @@ export class GameEngine {
       });
 
       // Listen for turn changes
-      this.gameStateManager.addEventListener('turnChange', (event) => {
-         const { currentPlayer, isMyTurn } = event.detail;
+      this.gameStateManager.addEventListener('turnChange', event => {
+         const {currentPlayer, isMyTurn} = event.detail;
          console.log(`Turn changed: ${currentPlayer} (my turn: ${isMyTurn})`);
       });
 
       // Listen for game end
-      this.gameStateManager.addEventListener('gameEnded', (event) => {
-         const { winner } = event.detail;
+      this.gameStateManager.addEventListener('gameEnded', event => {
+         const {winner} = event.detail;
          console.log(`Game ended. Winner: ${winner || 'Draw'}`);
          if (this.gridRenderer) {
             this.gridRenderer.clearHover();
@@ -517,8 +513,8 @@ export class GameEngine {
       });
 
       // Listen for menu state changes
-      this.gameStateManager.addEventListener('menuStateChanged', (event) => {
-         const { currentMenu, showMenu } = event.detail;
+      this.gameStateManager.addEventListener('menuStateChanged', event => {
+         const {currentMenu, showMenu} = event.detail;
          console.log(
             `Menu state changed: ${currentMenu} (visible: ${showMenu})`
          );
@@ -528,14 +524,14 @@ export class GameEngine {
       });
 
       // Listen for button state changes
-      this.gameStateManager.addEventListener('buttonStateChanged', (event) => {
-         const { from, to } = event.detail;
+      this.gameStateManager.addEventListener('buttonStateChanged', event => {
+         const {from, to} = event.detail;
          console.log(`Button state changed from ${from} to ${to}`);
       });
 
       // Listen for network state changes
-      this.gameStateManager.addEventListener('networkStateChanged', (event) => {
-         const { isConnected, isReconnecting } = event.detail;
+      this.gameStateManager.addEventListener('networkStateChanged', event => {
+         const {isConnected, isReconnecting} = event.detail;
          console.log(
             `Network state: connected=${isConnected}, reconnecting=${isReconnecting}`
          );
@@ -564,8 +560,8 @@ export class GameEngine {
       });
 
       // Multiplayer game joining
-      this.uiRenderer.addEventListener('multiJoin', (event) => {
-         const { roomId } = event.detail;
+      this.uiRenderer.addEventListener('multiJoin', event => {
+         const {roomId} = event.detail;
          this.joinMultiplayerGame(roomId);
       });
 
@@ -642,7 +638,7 @@ export class GameEngine {
             player,
             this.cameraController.scale
          );
-         this.placedMarks.set(coordKey, { player, graphics: markGraphics });
+         this.placedMarks.set(coordKey, {player, graphics: markGraphics});
 
          // Highlight the move
          this.gridRenderer.highlightLastMove(cellX, cellY, player);
@@ -730,7 +726,7 @@ export class GameEngine {
 
       // Reset to menu
       if (this.gameStateManager) {
-         this.gameStateManager.resetGame({ returnToMenu: true });
+         this.gameStateManager.resetGame({returnToMenu: true});
       }
 
       // Reset GameLogic to single player or stop
@@ -770,7 +766,7 @@ export class GameEngine {
       }
 
       // Clean up component classes
-      Object.values(this.components).forEach((component) => {
+      Object.values(this.components).forEach(component => {
          if (component && typeof component.destroy === 'function') {
             component.destroy();
          }

@@ -11,9 +11,17 @@
       "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
       "build": "vite build",
       "preview": "vite preview",
-      "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "format": "prettier --write .",
+      "format:check": "prettier --check .",
+      "prepare": "husky install"
    },
    "license": "ISC",
+   "lint-staged": {
+      "*.{js,jsx,ts,tsx,json,css,md}": [
+         "prettier --write"
+      ]
+   },
    "dependencies": {
       "express": "^4.21.1",
       "react": "^19.1.1",
@@ -23,6 +31,10 @@
    "devDependencies": {
       "@vitejs/plugin-react": "^4.7.0",
       "concurrently": "^9.2.0",
+      "globals": "^16.3.0",
+      "husky": "^8.0.0",
+      "lint-staged": "^16.1.5",
+      "prettier": "3.6.2",
       "vite": "^7.0.6"
    }
 }

@@ -5,7 +5,7 @@ const gameState = {
    isMyTurn: false,
    currentPlayer: 'X',
    isGameOver: false,
-   hasOpponent: false
+   hasOpponent: false,
 };
 
 const BUTTON_STATES = {
@@ -13,7 +13,7 @@ const BUTTON_STATES = {
    GAME_OVER: 'game_over',
    REMATCH_REQUEST: 'rematch_request',
    WAITING_REMATCH: 'waiting_rematch',
-   OPPONENT_LEFT: 'opponent_left'
+   OPPONENT_LEFT: 'opponent_left',
 };
 
 function updateButtonState(state) {
@@ -22,7 +22,7 @@ function updateButtonState(state) {
       acceptRematchButton: false,
       declineRematchButton: false,
       cancelRematchButton: false,
-      exitGameButton: false
+      exitGameButton: false,
    };
 
    switch (state) {
@@ -48,7 +48,9 @@ function updateButtonState(state) {
    }
 
    Object.entries(buttons).forEach(([buttonId, isVisible]) => {
-      document.getElementById(buttonId).style.display = isVisible ? 'block' : 'none';
+      document.getElementById(buttonId).style.display = isVisible
+         ? 'block'
+         : 'none';
    });
 }
 
@@ -58,10 +60,10 @@ function resetGameState(options = {}) {
       showMenu: true,
       updateStatus: true,
       redrawGrid: true,
-      keepGameState: false
+      keepGameState: false,
    };
 
-   const settings = { ...defaults, ...options };
+   const settings = {...defaults, ...options};
 
    if (settings.clearMarks) {
       placedMarks.forEach(mark => {

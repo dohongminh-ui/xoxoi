@@ -27,8 +27,8 @@ export const GAME_CONSTANTS = {
       GRID_LINE: '#52575D',
       PLAYER_X: '#ff6961',
       PLAYER_O: '#a2bffe',
-      HOVER: '#888888'
-   }
+      HOVER: '#888888',
+   },
 };
 
 // Export individual constants for convenience
@@ -45,7 +45,6 @@ export const {
    VELOCITY_DAMPING,
    CAMERA_SPEED,
    MARK_PADDING,
-   WINNING_LENGTH
+   WINNING_LENGTH,
+   COLORS,
 } = GAME_CONSTANTS;
-
-export const { COLORS } = GAME_CONSTANTS;

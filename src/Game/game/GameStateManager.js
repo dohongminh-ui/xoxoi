@@ -1,4 +1,4 @@
-import { GAME_CONSTANTS } from "../core/constants.js";
+import {GAME_CONSTANTS} from '../core/constants.js';
 
 /**
  * GameStateManager centralizes all game state management
@@ -12,11 +12,11 @@ export class GameStateManager extends EventTarget {
       this.state = {
          // Game mode and type
          gameMode: null, // 'single', 'bot', 'multi'
-         gamePhase: "menu", // 'menu', 'playing', 'paused', 'ended'
+         gamePhase: 'menu', // 'menu', 'playing', 'paused', 'ended'
 
          // Player information
-         currentPlayer: "X",
-         playerMark: "", // For multiplayer
+         currentPlayer: 'X',
+         playerMark: '', // For multiplayer
          isMyTurn: true,
 
          // Game status
@@ -26,7 +26,7 @@ export class GameStateManager extends EventTarget {
          winningCells: null,
 
          // Multiplayer state
-         roomId: "",
+         roomId: '',
          hasOpponent: false,
          isHost: false,
 
@@ -36,9 +36,9 @@ export class GameStateManager extends EventTarget {
          gameDuration: 0,
 
          // UI state
-         currentMenu: "main", // 'main', 'lobby', 'game', 'settings'
+         currentMenu: 'main', // 'main', 'lobby', 'game', 'settings'
          buttonState: null,
-         statusMessage: "toe",
+         statusMessage: 'toe',
          showMenu: true,
 
          // Network state
@@ -62,31 +62,31 @@ export class GameStateManager extends EventTarget {
 
       // Button state constants
       this.BUTTON_STATES = {
-         IN_GAME: "in_game",
-         GAME_OVER: "game_over",
-         REMATCH_REQUEST: "rematch_request",
-         WAITING_REMATCH: "waiting_rematch",
-         OPPONENT_LEFT: "opponent_left",
-         MENU: "menu",
-         LOBBY: "lobby",
+         IN_GAME: 'in_game',
+         GAME_OVER: 'game_over',
+         REMATCH_REQUEST: 'rematch_request',
+         WAITING_REMATCH: 'waiting_rematch',
+         OPPONENT_LEFT: 'opponent_left',
+         MENU: 'menu',
+         LOBBY: 'lobby',
       };
 
       // Menu state constants
       this.MENU_STATES = {
-         MAIN: "main",
-         LOBBY: "lobby",
-         GAME: "game",
-         SETTINGS: "settings",
-         ABOUT: "about",
+         MAIN: 'main',
+         LOBBY: 'lobby',
+         GAME: 'game',
+         SETTINGS: 'settings',
+         ABOUT: 'about',
       };
 
       // Game phase constants
       this.GAME_PHASES = {
-         MENU: "menu",
-         LOBBY: "lobby",
-         PLAYING: "playing",
-         PAUSED: "paused",
-         ENDED: "ended",
+         MENU: 'menu',
+         LOBBY: 'lobby',
+         PLAYING: 'playing',
+         PAUSED: 'paused',
+         ENDED: 'ended',
       };
 
       this.initializeState();
@@ -100,8 +100,8 @@ export class GameStateManager extends EventTarget {
       this.state.lastUpdate = Date.now();
 
       this.dispatchEvent(
-         new CustomEvent("stateInitialized", {
-            detail: { state: this.getState() },
+         new CustomEvent('stateInitialized', {
+            detail: {state: this.getState()},
          })
       );
    }
@@ -120,11 +120,11 @@ export class GameStateManager extends EventTarget {
     * @returns {*} State property value
     */
    get(key) {
-      if (key.includes(".")) {
-         const keys = key.split(".");
+      if (key.includes('.')) {
+         const keys = key.split('.');
          let value = this.state;
          for (const k of keys) {
-            if (value && typeof value === "object") {
+            if (value && typeof value === 'object') {
                value = value[k];
             } else {
                return undefined;
@@ -142,7 +142,7 @@ export class GameStateManager extends EventTarget {
     * @param {Object} options - Update options
     */
    set(keyOrState, value = undefined, options = {}) {
-      const { silent = false, saveToHistory = true, merge = true } = options;
+      const {silent = false, saveToHistory = true, merge = true} = options;
 
       // Save current state to history before changes
       if (saveToHistory) {
@@ -152,41 +152,41 @@ export class GameStateManager extends EventTarget {
       const oldState = this.getState();
       let changes = {};
 
-      if (typeof keyOrState === "string") {
+      if (typeof keyOrState === 'string') {
          // Single property update
-         if (keyOrState.includes(".")) {
+         if (keyOrState.includes('.')) {
             // Dot notation support
-            const keys = keyOrState.split(".");
+            const keys = keyOrState.split('.');
             let current = this.state;
             for (let i = 0; i < keys.length - 1; i++) {
-               if (!current[keys[i]] || typeof current[keys[i]] !== "object") {
+               if (!current[keys[i]] || typeof current[keys[i]] !== 'object') {
                   current[keys[i]] = {};
                }
                current = current[keys[i]];
             }
             const oldValue = current[keys[keys.length - 1]];
             current[keys[keys.length - 1]] = value;
-            changes[keyOrState] = { from: oldValue, to: value };
+            changes[keyOrState] = {from: oldValue, to: value};
          } else {
             const oldValue = this.state[keyOrState];
             this.state[keyOrState] = value;
-            changes[keyOrState] = { from: oldValue, to: value };
+            changes[keyOrState] = {from: oldValue, to: value};
          }
-      } else if (typeof keyOrState === "object") {
+      } else if (typeof keyOrState === 'object') {
          // Multiple properties update
          for (const [key, val] of Object.entries(keyOrState)) {
             const oldValue = this.state[key];
             if (
                merge &&
-               typeof val === "object" &&
-               typeof oldValue === "object" &&
+               typeof val === 'object' &&
+               typeof oldValue === 'object' &&
                !Array.isArray(val)
             ) {
-               this.state[key] = { ...oldValue, ...val };
+               this.state[key] = {...oldValue, ...val};
             } else {
                this.state[key] = val;
             }
-            changes[key] = { from: oldValue, to: this.state[key] };
+            changes[key] = {from: oldValue, to: this.state[key]};
          }
       }
 
@@ -195,7 +195,7 @@ export class GameStateManager extends EventTarget {
 
       if (!silent) {
          this.dispatchEvent(
-            new CustomEvent("stateChanged", {
+            new CustomEvent('stateChanged', {
                detail: {
                   changes,
                   oldState,
@@ -218,7 +218,7 @@ export class GameStateManager extends EventTarget {
       // Game mode changes
       if (changes.gameMode) {
          this.dispatchEvent(
-            new CustomEvent("stateGameModeChanged", {
+            new CustomEvent('stateGameModeChanged', {
                detail: {
                   from: changes.gameMode.from,
                   to: changes.gameMode.to,
@@ -231,7 +231,7 @@ export class GameStateManager extends EventTarget {
       // Game phase changes
       if (changes.gamePhase) {
          this.dispatchEvent(
-            new CustomEvent("stateGamePhaseChanged", {
+            new CustomEvent('stateGamePhaseChanged', {
                detail: {
                   from: changes.gamePhase.from,
                   to: changes.gamePhase.to,
@@ -244,7 +244,7 @@ export class GameStateManager extends EventTarget {
       // Player turn changes
       if (changes.currentPlayer || changes.isMyTurn) {
          this.dispatchEvent(
-            new CustomEvent("turnChange", {
+            new CustomEvent('turnChange', {
                detail: {
                   currentPlayer: this.state.currentPlayer,
                   isMyTurn: this.state.isMyTurn,
@@ -257,7 +257,7 @@ export class GameStateManager extends EventTarget {
       // Game over state
       if (changes.isGameOver && this.state.isGameOver) {
          this.dispatchEvent(
-            new CustomEvent("stateGameEnded", {
+            new CustomEvent('stateGameEnded', {
                detail: {
                   winner: this.state.winner,
                   winningCells: this.state.winningCells,
@@ -270,7 +270,7 @@ export class GameStateManager extends EventTarget {
       // Menu state changes
       if (changes.currentMenu || changes.showMenu) {
          this.dispatchEvent(
-            new CustomEvent("stateMenuStateChanged", {
+            new CustomEvent('stateMenuStateChanged', {
                detail: {
                   currentMenu: this.state.currentMenu,
                   showMenu: this.state.showMenu,
@@ -283,7 +283,7 @@ export class GameStateManager extends EventTarget {
       // Button state changes
       if (changes.buttonState) {
          this.dispatchEvent(
-            new CustomEvent("stateButtonStateChanged", {
+            new CustomEvent('stateButtonStateChanged', {
                detail: {
                   from: changes.buttonState.from,
                   to: changes.buttonState.to,
@@ -296,7 +296,7 @@ export class GameStateManager extends EventTarget {
       // Network state changes
       if (changes.isConnected || changes.isReconnecting) {
          this.dispatchEvent(
-            new CustomEvent("stateNetworkStateChanged", {
+            new CustomEvent('stateNetworkStateChanged', {
                detail: {
                   isConnected: this.state.isConnected,
                   isReconnecting: this.state.isReconnecting,
@@ -315,8 +315,8 @@ export class GameStateManager extends EventTarget {
     */
    startGame(mode, options = {}) {
       const {
-         playerMark = "X",
-         roomId = "",
+         playerMark = 'X',
+         roomId = '',
          isMyTurn = true,
          hasOpponent = false,
          isHost = false,
@@ -325,41 +325,41 @@ export class GameStateManager extends EventTarget {
       this.set({
          gameMode: mode,
          gamePhase: this.GAME_PHASES.PLAYING,
-         currentPlayer: "X",
-         playerMark: mode === "multi" ? playerMark : "",
+         currentPlayer: 'X',
+         playerMark: mode === 'multi' ? playerMark : '',
          isMyTurn,
          isGameOver: false,
          isPaused: false,
          winner: null,
          winningCells: null,
-         roomId: mode === "multi" ? roomId : "",
-         hasOpponent: mode === "multi" ? hasOpponent : false,
-         isHost: mode === "multi" ? isHost : false,
+         roomId: mode === 'multi' ? roomId : '',
+         hasOpponent: mode === 'multi' ? hasOpponent : false,
+         isHost: mode === 'multi' ? isHost : false,
          moveCount: 0,
          gameStartTime: Date.now(),
          currentMenu: this.MENU_STATES.GAME,
          buttonState: this.BUTTON_STATES.IN_GAME,
-         statusMessage: this.getStatusMessage(mode, "X", isMyTurn),
+         statusMessage: this.getStatusMessage(mode, 'X', isMyTurn),
          showMenu: false,
       });
 
-      let modeString = "";
+      let modeString = '';
       switch (this.state.gameMode) {
-         case "single":
-            modeString = "Single Player mode";
+         case 'single':
+            modeString = 'Single Player mode';
             break;
-         case "bot":
-            modeString = "Bot mode";
+         case 'bot':
+            modeString = 'Bot mode';
             break;
-         case "multi":
+         case 'multi':
             modeString = `Multiplayer (Room: ${this.state.roomId})`;
             break;
          default:
-            modeString = "This shit break 🥀 mode";
+            modeString = 'This shit break 🥀 mode';
             break;
       }
       this.dispatchEvent(
-         new CustomEvent("gameStarted", {
+         new CustomEvent('gameStarted', {
             detail: {
                mode: modeString,
             },
@@ -372,11 +372,7 @@ export class GameStateManager extends EventTarget {
     * @param {Object} result - Game result
     */
    endGame(result = {}) {
-      const {
-         winner = null,
-         winningCells = null,
-         reason = "completed",
-      } = result;
+      const {winner = null, winningCells = null, reason = 'completed'} = result;
 
       this.set({
          isGameOver: true,
@@ -389,7 +385,7 @@ export class GameStateManager extends EventTarget {
       });
 
       this.dispatchEvent(
-         new CustomEvent("gameEnded", {
+         new CustomEvent('gameEnded', {
             detail: {
                winner: winner,
                reason: reason,
@@ -402,24 +398,24 @@ export class GameStateManager extends EventTarget {
     * Switch player turns
     */
    switchTurn() {
-      const newPlayer = this.state.currentPlayer === "X" ? "O" : "X";
+      const newPlayer = this.state.currentPlayer === 'X' ? 'O' : 'X';
       this.set({
          currentPlayer: newPlayer,
          isMyTurn:
-            this.state.gameMode === "multi"
+            this.state.gameMode === 'multi'
                ? newPlayer === this.state.playerMark
                : true,
          statusMessage: this.getStatusMessage(
             this.state.gameMode,
             newPlayer,
-            this.state.gameMode === "multi"
+            this.state.gameMode === 'multi'
                ? newPlayer === this.state.playerMark
                : true
          ),
       });
 
       this.dispatchEvent(
-         new CustomEvent("turnChange", {
+         new CustomEvent('turnChange', {
             detail: {
                currentPlayer: this.state.currentPlayer,
                isMyTurn: this.state.isMyTurn,
@@ -445,10 +441,10 @@ export class GameStateManager extends EventTarget {
          gamePhase: returnToMenu
             ? this.GAME_PHASES.MENU
             : this.GAME_PHASES.PLAYING,
-         currentPlayer: "X",
+         currentPlayer: 'X',
          isMyTurn:
-            this.state.gameMode === "multi"
-               ? this.state.playerMark === "X"
+            this.state.gameMode === 'multi'
+               ? this.state.playerMark === 'X'
                : true,
          isGameOver: false,
          isPaused: false,
@@ -463,22 +459,22 @@ export class GameStateManager extends EventTarget {
             ? this.BUTTON_STATES.MENU
             : this.BUTTON_STATES.IN_GAME,
          statusMessage: returnToMenu
-            ? "toe"
+            ? 'toe'
             : this.getStatusMessage(
                  this.state.gameMode,
-                 "X",
-                 this.state.gameMode === "multi"
-                    ? this.state.playerMark === "X"
+                 'X',
+                 this.state.gameMode === 'multi'
+                    ? this.state.playerMark === 'X'
                     : true
               ),
          showMenu: returnToMenu,
       };
 
       if (!keepNetworkState || clearAll) {
-         newState.roomId = "";
+         newState.roomId = '';
          newState.hasOpponent = false;
          newState.isHost = false;
-         newState.playerMark = "";
+         newState.playerMark = '';
          newState.isConnected = false;
          newState.isReconnecting = false;
          newState.connectionAttempts = 0;
@@ -505,7 +501,7 @@ export class GameStateManager extends EventTarget {
             cameraY: cameraState.y || this.state.cameraY,
          },
          undefined,
-         { silent: true }
+         {silent: true}
       ); // Silent to avoid excessive events
    }
 
@@ -525,24 +521,24 @@ export class GameStateManager extends EventTarget {
     * @returns {string} Status message
     */
    getStatusMessage(gameMode, currentPlayer, isMyTurn) {
-      if (!gameMode) return "toe";
+      if (!gameMode) return 'toe';
 
       switch (gameMode) {
-         case "single":
+         case 'single':
             return `${currentPlayer}'s turn`;
-         case "bot":
-            return currentPlayer === "X" ? "Your turn" : "Bot is thinking...";
-         case "multi":
+         case 'bot':
+            return currentPlayer === 'X' ? 'Your turn' : 'Bot is thinking...';
+         case 'multi':
             if (!this.state.hasOpponent) {
                return `Room ID: ${this.state.roomId} - Waiting for opponent...`;
             }
             return isMyTurn
                ? `(${this.state.playerMark}) Your turn`
                : `(${
-                    this.state.playerMark === "X" ? "O" : "X"
+                    this.state.playerMark === 'X' ? 'O' : 'X'
                  }) Opponent's turn`;
          default:
-            return "toe";
+            return 'toe';
       }
    }
 
@@ -555,26 +551,26 @@ export class GameStateManager extends EventTarget {
    getGameEndMessage(winner, reason) {
       if (!winner) {
          switch (reason) {
-            case "draw":
-               return "Game ended in a draw!";
-            case "abandoned":
-               return "Game abandoned";
-            case "opponent_left":
-               return "Opponent left the game";
+            case 'draw':
+               return 'Game ended in a draw!';
+            case 'abandoned':
+               return 'Game abandoned';
+            case 'opponent_left':
+               return 'Opponent left the game';
             default:
-               return "Game ended";
+               return 'Game ended';
          }
       }
 
       switch (this.state.gameMode) {
-         case "single":
+         case 'single':
             return `${winner} wins!`;
-         case "bot":
-            return winner === "X" ? "You win!" : "Bot wins!";
-         case "multi":
+         case 'bot':
+            return winner === 'X' ? 'You win!' : 'Bot wins!';
+         case 'multi':
             return winner === this.state.playerMark
-               ? "You win!"
-               : "Opponent wins!";
+               ? 'You win!'
+               : 'Opponent wins!';
          default:
             return `${winner} wins!`;
       }
@@ -613,7 +609,7 @@ export class GameStateManager extends EventTarget {
       this.state.lastUpdate = Date.now();
 
       this.dispatchEvent(
-         new CustomEvent("stateRestored", {
+         new CustomEvent('stateRestored', {
             detail: {
                stepsBack,
                state: this.getState(),
@@ -664,7 +660,7 @@ export class GameStateManager extends EventTarget {
     * @returns {boolean} True if multiplayer
     */
    isMultiplayer() {
-      return this.state.gameMode === "multi";
+      return this.state.gameMode === 'multi';
    }
 
    /**
@@ -687,7 +683,7 @@ export class GameStateManager extends EventTarget {
     * Increment move count
     */
    incrementMoveCount() {
-      this.set({ moveCount: this.state.moveCount + 1 });
+      this.set({moveCount: this.state.moveCount + 1});
    }
 
    /**

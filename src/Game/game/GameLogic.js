@@ -1,5 +1,5 @@
-import { GAME_CONSTANTS, WINNING_LENGTH, CELL_SIZE } from '../core/constants.js';
-import { coordKey, parseCoordKey } from '../core/utils.js';
+import {GAME_CONSTANTS, WINNING_LENGTH, CELL_SIZE} from '../core/constants.js';
+import {coordKey, parseCoordKey} from '../core/utils.js';
 
 /**
  * GameLogic handles all game rules, validation, and state management
@@ -54,13 +54,15 @@ export class GameLogic extends EventTarget {
             break;
       }
 
-      this.dispatchEvent(new CustomEvent('gameStarted', {
-         detail: {
-            mode: this.gameMode,
-            currentPlayer: this.currentPlayer,
-            gameState: this.getGameState()
-         }
-      }));
+      this.dispatchEvent(
+         new CustomEvent('gameStarted', {
+            detail: {
+               mode: this.gameMode,
+               currentPlayer: this.currentPlayer,
+               gameState: this.getGameState(),
+            },
+         })
+      );
    }
 
    /**
@@ -71,19 +73,24 @@ export class GameLogic extends EventTarget {
     * @returns {Object} Result of the move attempt
     */
    placeMark(cellX, cellY, options = {}) {
-      console.log('placeMark called:', { cellX, cellY, gameMode: this.gameMode, isGameOver: this.isGameOver });
-      
+      console.log('placeMark called:', {
+         cellX,
+         cellY,
+         gameMode: this.gameMode,
+         isGameOver: this.isGameOver,
+      });
+
       // Validate move
       const validation = this.validateMove(cellX, cellY);
       console.log('Move validation result:', validation);
-      
+
       if (!validation.isValid) {
          console.warn('Move validation failed:', validation.reason);
          return {
             success: false,
             reason: validation.reason,
             cellX,
-            cellY
+            cellY,
          };
       }
 
@@ -92,20 +99,22 @@ export class GameLogic extends EventTarget {
 
       // For multiplayer, emit to server instead of placing directly
       if (this.gameMode === 'multi') {
-         this.dispatchEvent(new CustomEvent('multiplayerMove', {
-            detail: {
-               roomId: this.roomId,
-               cellX,
-               cellY,
-               player
-            }
-         }));
+         this.dispatchEvent(
+            new CustomEvent('multiplayerMove', {
+               detail: {
+                  roomId: this.roomId,
+                  cellX,
+                  cellY,
+                  player,
+               },
+            })
+         );
          return {
             success: true,
             multiplayer: true,
             cellX,
             cellY,
-            player
+            player,
          };
       }
 
@@ -131,7 +140,7 @@ export class GameLogic extends EventTarget {
             reason: 'Cell already occupied',
             cellX,
             cellY,
-            player
+            player,
          };
       }
 
@@ -140,21 +149,23 @@ export class GameLogic extends EventTarget {
          player,
          cellX,
          cellY,
-         timestamp: Date.now()
+         timestamp: Date.now(),
       });
 
       // Add to move history
-      this.moveHistory.push({ cellX, cellY, player, timestamp: Date.now() });
+      this.moveHistory.push({cellX, cellY, player, timestamp: Date.now()});
 
       // Emit move placed event
-      this.dispatchEvent(new CustomEvent('movePlaced', {
-         detail: {
-            cellX,
-            cellY,
-            player,
-            gameState: this.getGameState()
-         }
-      }));
+      this.dispatchEvent(
+         new CustomEvent('movePlaced', {
+            detail: {
+               cellX,
+               cellY,
+               player,
+               gameState: this.getGameState(),
+            },
+         })
+      );
 
       // Check for win
       const winningCells = this.checkWin(cellX, cellY, player);
@@ -162,13 +173,15 @@ export class GameLogic extends EventTarget {
          this.isGameOver = true;
          this.winningCells = winningCells;
 
-         this.dispatchEvent(new CustomEvent('gameWon', {
-            detail: {
-               winner: player,
-               winningCells,
-               gameState: this.getGameState()
-            }
-         }));
+         this.dispatchEvent(
+            new CustomEvent('gameWon', {
+               detail: {
+                  winner: player,
+                  winningCells,
+                  gameState: this.getGameState(),
+               },
+            })
+         );
 
          return {
             success: true,
@@ -177,7 +190,7 @@ export class GameLogic extends EventTarget {
             winningCells,
             cellX,
             cellY,
-            player
+            player,
          };
       }
 
@@ -185,16 +198,18 @@ export class GameLogic extends EventTarget {
       if (this.checkDraw()) {
          this.isGameOver = true;
 
-         this.dispatchEvent(new CustomEvent('gameDraw', {
-            detail: { gameState: this.getGameState() }
-         }));
+         this.dispatchEvent(
+            new CustomEvent('gameDraw', {
+               detail: {gameState: this.getGameState()},
+            })
+         );
 
          return {
             success: true,
             gameDraw: true,
             cellX,
             cellY,
-            player
+            player,
          };
       }
 
@@ -202,12 +217,14 @@ export class GameLogic extends EventTarget {
       if (this.gameMode === 'single' || this.gameMode === 'bot') {
          this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
 
-         this.dispatchEvent(new CustomEvent('turnChange', {
-            detail: {
-               currentPlayer: this.currentPlayer,
-               gameState: this.getGameState()
-            }
-         }));
+         this.dispatchEvent(
+            new CustomEvent('turnChange', {
+               detail: {
+                  currentPlayer: this.currentPlayer,
+                  gameState: this.getGameState(),
+               },
+            })
+         );
       }
 
       return {
@@ -215,7 +232,7 @@ export class GameLogic extends EventTarget {
          cellX,
          cellY,
          player,
-         nextPlayer: this.currentPlayer
+         nextPlayer: this.currentPlayer,
       };
    }
 
@@ -228,36 +245,36 @@ export class GameLogic extends EventTarget {
    validateMove(cellX, cellY) {
       // Check if game is over
       if (this.isGameOver) {
-         return { isValid: false, reason: 'Game is over' };
+         return {isValid: false, reason: 'Game is over'};
       }
 
       // Check if game mode is set
       if (!this.gameMode) {
-         return { isValid: false, reason: 'No game mode set' };
+         return {isValid: false, reason: 'No game mode set'};
       }
 
       // Check coordinates are valid numbers
       if (!Number.isInteger(cellX) || !Number.isInteger(cellY)) {
-         return { isValid: false, reason: 'Invalid coordinates' };
+         return {isValid: false, reason: 'Invalid coordinates'};
       }
 
       // Check if cell is already occupied
       const key = coordKey(cellX, cellY);
       if (this.placedMarks.has(key)) {
-         return { isValid: false, reason: 'Cell already occupied' };
+         return {isValid: false, reason: 'Cell already occupied'};
       }
 
       // Check multiplayer-specific conditions
       if (this.gameMode === 'multi') {
          if (!this.isMyTurn) {
-            return { isValid: false, reason: 'Not your turn' };
+            return {isValid: false, reason: 'Not your turn'};
          }
          if (!this.hasOpponent) {
-            return { isValid: false, reason: 'No opponent' };
+            return {isValid: false, reason: 'No opponent'};
          }
       }
 
-      return { isValid: true };
+      return {isValid: true};
    }
 
    /**
@@ -269,10 +286,10 @@ export class GameLogic extends EventTarget {
     */
    checkWin(cellX, cellY, player) {
       const directions = [
-         [1, 0],   // horizontal
-         [0, 1],   // vertical
-         [1, 1],   // diagonal right
-         [1, -1]   // diagonal left
+         [1, 0], // horizontal
+         [0, 1], // vertical
+         [1, 1], // diagonal right
+         [1, -1], // diagonal left
       ];
 
       for (const [dx, dy] of directions) {
@@ -298,9 +315,14 @@ export class GameLogic extends EventTarget {
 
                   // Update potential wins map for AI analysis
                   const lineKey = `${dirKey},${newX},${newY}`;
-                  const existing = this.potentialWins.get(lineKey) || { count: 0, cells: [] };
+                  const existing = this.potentialWins.get(lineKey) || {
+                     count: 0,
+                     cells: [],
+                  };
                   existing.count = Math.max(existing.count, consecutive + 1);
-                  existing.cells = [...new Set([...existing.cells, [newX, newY]])];
+                  existing.cells = [
+                     ...new Set([...existing.cells, [newX, newY]]),
+                  ];
                   this.potentialWins.set(lineKey, existing);
                } else {
                   blocked++;
@@ -358,7 +380,7 @@ export class GameLogic extends EventTarget {
 
       // Default bounds if no marks placed yet
       if (!bounds) {
-         bounds = { minX: -5, maxX: 5, minY: -5, maxY: 5 };
+         bounds = {minX: -5, maxX: 5, minY: -5, maxY: 5};
       }
 
       // Check each cell in bounds
@@ -366,7 +388,7 @@ export class GameLogic extends EventTarget {
          for (let y = bounds.minY; y <= bounds.maxY; y++) {
             const key = coordKey(x, y);
             if (!this.placedMarks.has(key)) {
-               validMoves.push({ x, y });
+               validMoves.push({x, y});
             }
          }
       }
@@ -380,14 +402,16 @@ export class GameLogic extends EventTarget {
     */
    calculateGameBounds() {
       if (this.placedMarks.size === 0) {
-         return { minX: -2, maxX: 2, minY: -2, maxY: 2 };
+         return {minX: -2, maxX: 2, minY: -2, maxY: 2};
       }
 
-      let minX = Infinity, maxX = -Infinity;
-      let minY = Infinity, maxY = -Infinity;
+      let minX = Infinity,
+         maxX = -Infinity;
+      let minY = Infinity,
+         maxY = -Infinity;
 
       for (const [key] of this.placedMarks) {
-         const { x, y } = parseCoordKey(key);
+         const {x, y} = parseCoordKey(key);
          minX = Math.min(minX, x);
          maxX = Math.max(maxX, x);
          minY = Math.min(minY, y);
@@ -399,7 +423,7 @@ export class GameLogic extends EventTarget {
          minX: minX - 2,
          maxX: maxX + 2,
          minY: minY - 2,
-         maxY: maxY + 2
+         maxY: maxY + 2,
       };
    }
 
@@ -420,7 +444,7 @@ export class GameLogic extends EventTarget {
          potentialWins: new Map(this.potentialWins),
          winningCells: this.winningCells,
          moveHistory: [...this.moveHistory],
-         moveCount: this.placedMarks.size
+         moveCount: this.placedMarks.size,
       };
    }
 
@@ -438,9 +462,11 @@ export class GameLogic extends EventTarget {
          }
       });
 
-      this.dispatchEvent(new CustomEvent('gameStateUpdated', {
-         detail: { oldState, newState: this.getGameState() }
-      }));
+      this.dispatchEvent(
+         new CustomEvent('gameStateUpdated', {
+            detail: {oldState, newState: this.getGameState()},
+         })
+      );
    }
 
    /**
@@ -460,9 +486,11 @@ export class GameLogic extends EventTarget {
       this.winningCells = null;
       this.moveHistory = [];
 
-      this.dispatchEvent(new CustomEvent('gameReset', {
-         detail: { gameState: this.getGameState() }
-      }));
+      this.dispatchEvent(
+         new CustomEvent('gameReset', {
+            detail: {gameState: this.getGameState()},
+         })
+      );
    }
 
    /**
@@ -496,8 +524,8 @@ export class GameLogic extends EventTarget {
       const marks = [];
       for (const [key, mark] of this.placedMarks) {
          if (mark.player === player) {
-            const { x, y } = parseCoordKey(key);
-            marks.push({ x, y, ...mark });
+            const {x, y} = parseCoordKey(key);
+            marks.push({x, y, ...mark});
          }
       }
       return marks;

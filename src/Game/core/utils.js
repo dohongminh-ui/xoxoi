@@ -19,7 +19,7 @@ export function coordKey(x, y) {
  */
 export function parseCoordKey(key) {
    const [x, y] = key.split(',').map(Number);
-   return { x, y };
+   return {x, y};
 }
 
 /**
