@@ -1,4 +1,3 @@
-// Game constants extracted from game.js
 export const GAME_CONSTANTS = {
    // Grid and rendering
    CELL_SIZE: 50,
@@ -31,7 +30,6 @@ export const GAME_CONSTANTS = {
    },
 };
 
-// Export individual constants for convenience
 export const {
    CELL_SIZE,
    MIN_SCALE,

@@ -52,10 +52,8 @@ export class GridRenderer {
       // Calculate visible grid bounds with padding
       const startX = Math.floor(-gridX / (CELL_SIZE * scale)) - 20;
       const startY = Math.floor(-gridY / (CELL_SIZE * scale)) - 20;
-      const endX =
-         startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
-      const endY =
-         startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
+      const endX = startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
+      const endY = startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
 
       // Draw vertical lines
       for (let x = startX; x <= endX; x++) {
@@ -200,12 +198,7 @@ export class GridRenderer {
 
       highlight.lineStyle(2, color, 0.5);
       highlight.beginFill(color, 0.2);
-      highlight.drawRect(
-         cellX * CELL_SIZE,
-         cellY * CELL_SIZE,
-         CELL_SIZE,
-         CELL_SIZE
-      );
+      highlight.drawRect(cellX * CELL_SIZE, cellY * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       highlight.endFill();
 
       highlight.isHighlight = true;
@@ -237,11 +230,7 @@ export class GridRenderer {
 
       // Disable hover when not in an active game or when menu overlays are shown
       if (gameState?.gamePhase && gameState.gamePhase !== 'playing') return;
-      if (
-         typeof gameState?.isGameActive === 'boolean' &&
-         !gameState.isGameActive
-      )
-         return;
+      if (typeof gameState?.isGameActive === 'boolean' && !gameState.isGameActive) return;
       if (gameState?.showMenu) return;
       if (gameState.isGameOver) return;
       if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
@@ -273,12 +262,7 @@ export class GridRenderer {
 
       this.hoverGraphics.lineStyle(1, COLORS.HOVER, 0.3);
       this.hoverGraphics.beginFill(COLORS.HOVER, 0.3);
-      this.hoverGraphics.drawRect(
-         worldX,
-         worldY,
-         CELL_SIZE * scale,
-         CELL_SIZE * scale
-      );
+      this.hoverGraphics.drawRect(worldX, worldY, CELL_SIZE * scale, CELL_SIZE * scale);
       this.hoverGraphics.endFill();
    }
 
@@ -306,7 +290,7 @@ export class GridRenderer {
     * @param {string} player - Player ('X' or 'O')
     * @param {number} scale - Current grid scale for sizing
     */
-   addPlayerMark(cellX, cellY, player, scale) {
+   addPlayerMark(cellX, cellY, player) {
       const text = new PIXI.Text(player, {
          fontSize: 40,
          fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,

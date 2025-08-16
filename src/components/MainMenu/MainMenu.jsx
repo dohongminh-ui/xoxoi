@@ -29,21 +29,15 @@ const MainMenu = ({
    return (
       <MenuOverlay isVisible={isVisible}>
          <div className='menu-content'>
-            <button
-               className='menu-button single-player-btn'
-               onClick={onStartSinglePlayer}>
+            <button className='menu-button single-player-btn' onClick={onStartSinglePlayer}>
                Singleplayer
             </button>
 
-            <button
-               className='menu-button bot-game-btn'
-               onClick={onStartBotGame}>
+            <button className='menu-button bot-game-btn' onClick={onStartBotGame}>
                Play with Bot
             </button>
 
-            <button
-               className='menu-button multiplayer-btn'
-               onClick={onCreateMultiplayer}>
+            <button className='menu-button multiplayer-btn' onClick={onCreateMultiplayer}>
                Create Multiplayer Game
             </button>
 
@@ -56,9 +50,7 @@ const MainMenu = ({
                   onChange={e => setRoomId(e.target.value)}
                   onKeyDown={handleKeyDown}
                />
-               <button
-                  className='menu-button join-game-btn'
-                  onClick={handleJoinGame}>
+               <button className='menu-button join-game-btn' onClick={handleJoinGame}>
                   Join Game
                </button>
             </div>

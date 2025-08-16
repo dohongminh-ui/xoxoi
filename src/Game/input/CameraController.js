@@ -44,10 +44,7 @@ export class CameraController extends EventTarget {
       this.app.stage.on('pointerdown', this.handlePointerDown.bind(this));
       this.app.stage.on('pointermove', this.handlePointerMove.bind(this));
       this.app.stage.on('pointerup', this.handlePointerUp.bind(this));
-      this.app.stage.on(
-         'pointerupoutside',
-         this.handlePointerUpOutside.bind(this)
-      );
+      this.app.stage.on('pointerupoutside', this.handlePointerUpOutside.bind(this));
    }
 
    /**
@@ -63,19 +60,12 @@ export class CameraController extends EventTarget {
       };
 
       const zoomFactor =
-         event.deltaY < 0
-            ? 1 + GAME_CONSTANTS.ZOOM_SPEED
-            : 1 - GAME_CONSTANTS.ZOOM_SPEED;
+         event.deltaY < 0 ? 1 + GAME_CONSTANTS.ZOOM_SPEED : 1 - GAME_CONSTANTS.ZOOM_SPEED;
 
       const newScale = this.scale * zoomFactor;
 
       // Clamp scale to valid range
-      if (
-         !(
-            newScale >= GAME_CONSTANTS.MIN_SCALE &&
-            newScale <= GAME_CONSTANTS.MAX_SCALE
-         )
-      ) {
+      if (!(newScale >= GAME_CONSTANTS.MIN_SCALE && newScale <= GAME_CONSTANTS.MAX_SCALE)) {
          return;
       }
 
@@ -290,10 +280,8 @@ export class CameraController extends EventTarget {
       this.velocity.y *= GAME_CONSTANTS.FRICTION;
 
       // Stop small velocities
-      if (Math.abs(this.velocity.x) < GAME_CONSTANTS.MIN_VELOCITY)
-         this.velocity.x = 0;
-      if (Math.abs(this.velocity.y) < GAME_CONSTANTS.MIN_VELOCITY)
-         this.velocity.y = 0;
+      if (Math.abs(this.velocity.x) < GAME_CONSTANTS.MIN_VELOCITY) this.velocity.x = 0;
+      if (Math.abs(this.velocity.y) < GAME_CONSTANTS.MIN_VELOCITY) this.velocity.y = 0;
 
       // Emit camera update for grid redraw and hover updates
       this.dispatchEvent(
@@ -309,8 +297,7 @@ export class CameraController extends EventTarget {
 
       // Emit hover update for momentum movement
       // Get current mouse position from PIXI
-      const mousePosition = this.app.renderer.plugins.interaction?.mouse
-         ?.global ||
+      const mousePosition = this.app.renderer.plugins.interaction?.mouse?.global ||
          this.app.renderer.events?.pointer || {x: 0, y: 0};
 
       this.dispatchEvent(
@@ -321,12 +308,8 @@ export class CameraController extends EventTarget {
                      getLocalPosition: container => {
                         return container === this.gridContainer
                            ? {
-                                x:
-                                   (mousePosition.x - this.gridContainer.x) /
-                                   this.scale,
-                                y:
-                                   (mousePosition.y - this.gridContainer.y) /
-                                   this.scale,
+                                x: (mousePosition.x - this.gridContainer.x) / this.scale,
+                                y: (mousePosition.y - this.gridContainer.y) / this.scale,
                              }
                            : mousePosition;
                      },
@@ -356,13 +339,10 @@ export class CameraController extends EventTarget {
                return;
             }
 
-            const markWorldX =
-               targetX * CELL_SIZE * this.scale + this.gridContainer.x;
-            const markWorldY =
-               targetY * CELL_SIZE * this.scale + this.gridContainer.y;
+            const markWorldX = targetX * CELL_SIZE * this.scale + this.gridContainer.x;
+            const markWorldY = targetY * CELL_SIZE * this.scale + this.gridContainer.y;
             const markSize = CELL_SIZE * this.scale;
-            const statusBarHeight =
-               (document.getElementById('statusBar')?.offsetHeight || 0) + 40;
+            const statusBarHeight = (document.getElementById('statusBar')?.offsetHeight || 0) + 40;
 
             let needsAdjustment = false;
             const adjustments = {x: 0, y: 0};
@@ -373,30 +353,23 @@ export class CameraController extends EventTarget {
                needsAdjustment = true;
             } else if (markWorldX + markSize > window.innerWidth) {
                adjustments.x =
-                  window.innerWidth -
-                  (markWorldX + markSize) -
-                  GAME_CONSTANTS.MARK_PADDING;
+                  window.innerWidth - (markWorldX + markSize) - GAME_CONSTANTS.MARK_PADDING;
                needsAdjustment = true;
             }
 
             if (markWorldY < statusBarHeight) {
-               adjustments.y =
-                  statusBarHeight - markWorldY + GAME_CONSTANTS.MARK_PADDING;
+               adjustments.y = statusBarHeight - markWorldY + GAME_CONSTANTS.MARK_PADDING;
                needsAdjustment = true;
             } else if (markWorldY + markSize > window.innerHeight) {
                adjustments.y =
-                  window.innerHeight -
-                  (markWorldY + markSize) -
-                  GAME_CONSTANTS.MARK_PADDING;
+                  window.innerHeight - (markWorldY + markSize) - GAME_CONSTANTS.MARK_PADDING;
                needsAdjustment = true;
             }
 
             if (needsAdjustment) {
                // Apply smooth movement
-               this.gridContainer.x +=
-                  adjustments.x * GAME_CONSTANTS.CAMERA_SPEED;
-               this.gridContainer.y +=
-                  adjustments.y * GAME_CONSTANTS.CAMERA_SPEED;
+               this.gridContainer.x += adjustments.x * GAME_CONSTANTS.CAMERA_SPEED;
+               this.gridContainer.y += adjustments.y * GAME_CONSTANTS.CAMERA_SPEED;
 
                this.dispatchEvent(
                   new CustomEvent('cameraUpdate', {
@@ -410,8 +383,7 @@ export class CameraController extends EventTarget {
                );
 
                // Update hover during camera adjustment
-               const mousePosition = this.app.renderer.plugins.interaction
-                  ?.mouse?.global ||
+               const mousePosition = this.app.renderer.plugins.interaction?.mouse?.global ||
                   this.app.renderer.events?.pointer || {x: 0, y: 0};
 
                this.dispatchEvent(
@@ -422,14 +394,8 @@ export class CameraController extends EventTarget {
                               getLocalPosition: container => {
                                  return container === this.gridContainer
                                     ? {
-                                         x:
-                                            (mousePosition.x -
-                                               this.gridContainer.x) /
-                                            this.scale,
-                                         y:
-                                            (mousePosition.y -
-                                               this.gridContainer.y) /
-                                            this.scale,
+                                         x: (mousePosition.x - this.gridContainer.x) / this.scale,
+                                         y: (mousePosition.y - this.gridContainer.y) / this.scale,
                                       }
                                     : mousePosition;
                               },
@@ -475,11 +441,7 @@ export class CameraController extends EventTarget {
     * @param {number} scale - Scale factor
     */
    setCameraState(x, y, scale) {
-      this.scale = clamp(
-         scale,
-         GAME_CONSTANTS.MIN_SCALE,
-         GAME_CONSTANTS.MAX_SCALE
-      );
+      this.scale = clamp(scale, GAME_CONSTANTS.MIN_SCALE, GAME_CONSTANTS.MAX_SCALE);
       this.gridContainer.x = x;
       this.gridContainer.y = y;
       this.gridContainer.scale.set(this.scale);
@@ -496,8 +458,7 @@ export class CameraController extends EventTarget {
       );
 
       // Update hover after manual camera change
-      const mousePosition = this.app.renderer.plugins.interaction?.mouse
-         ?.global ||
+      const mousePosition = this.app.renderer.plugins.interaction?.mouse?.global ||
          this.app.renderer.events?.pointer || {x: 0, y: 0};
 
       this.dispatchEvent(
@@ -508,12 +469,8 @@ export class CameraController extends EventTarget {
                      getLocalPosition: container => {
                         return container === this.gridContainer
                            ? {
-                                x:
-                                   (mousePosition.x - this.gridContainer.x) /
-                                   this.scale,
-                                y:
-                                   (mousePosition.y - this.gridContainer.y) /
-                                   this.scale,
+                                x: (mousePosition.x - this.gridContainer.x) / this.scale,
+                                y: (mousePosition.y - this.gridContainer.y) / this.scale,
                              }
                            : mousePosition;
                      },

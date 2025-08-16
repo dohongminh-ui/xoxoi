@@ -1,5 +1,3 @@
-import {GAME_CONSTANTS} from '../core/constants.js';
-
 /**
  * NetworkManager handles all multiplayer networking functionality
  * Including socket connections, room management, move synchronization, and reconnection
@@ -174,10 +172,7 @@ export class NetworkManager extends EventTarget {
          this.isGameOver = false;
 
          if (this.roomId) {
-            localStorage.setItem(
-               `room_${this.roomId}_playerId`,
-               this.socket.id
-            );
+            localStorage.setItem(`room_${this.roomId}_playerId`, this.socket.id);
          }
 
          this.dispatchEvent(
@@ -434,9 +429,7 @@ export class NetworkManager extends EventTarget {
 
       this.socket.emit('checkRoom', {roomId: this.roomId}, exists => {
          if (exists) {
-            const playerId =
-               localStorage.getItem(`room_${this.roomId}_playerId`) ||
-               this.socket.id;
+            const playerId = localStorage.getItem(`room_${this.roomId}_playerId`) || this.socket.id;
             this.socket.emit('rejoinRoom', {
                roomId: this.roomId,
                playerId,

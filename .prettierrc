@@ -5,6 +5,9 @@
    "trailingComma": "es5",
    "bracketSpacing": false,
    "bracketSameLine": true,
+   "tabWidth": 3,
+   "useTabs": false,
    "arrowParens": "avoid",
-   "proseWrap": "always"
+   "printWidth": 100,
+   "endOfLine": "lf"
 }
