@@ -80,121 +80,7 @@ export class UIRenderer extends EventTarget {
       this.elements.createGameBtn = document.getElementById('createGameBtn');
       this.elements.joinGameBtn = document.getElementById('joinGameBtn');
       this.elements.roomIdInput = document.getElementById('roomIdInput');
-
-      // Create menu if it doesn't exist (deprecated)
-      // if (!this.elements.menuOverlay) {
-      //    this.createMenuOverlay();
-      // }
    }
-
-   /**
-    * Create menu overlay if it doesn't exist
-    * Deprecated, TODO: create a React component for the menu
-    * @deprecated
-   createMenuOverlay() {
-      const menuOverlay = document.createElement('div');
-      menuOverlay.id = 'menuOverlay';
-      menuOverlay.style.cssText = `
-         position: fixed;
-         top: 0;
-         left: 0;
-         width: 100%;
-         height: 100%;
-         background: rgba(0, 0, 0, 0.8);
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         z-index: 1000;
-      `;
-
-      const menuContent = document.createElement('div');
-      menuContent.id = 'menuContent';
-      menuContent.style.cssText = `
-         background: white;
-         padding: 30px;
-         border-radius: 10px;
-         display: flex;
-         flex-direction: column;
-         gap: 15px;
-         min-width: 300px;
-         text-align: center;
-      `;
-
-      // Create menu buttons
-      const singlePlayerBtn = document.createElement('button');
-      singlePlayerBtn.id = 'singlePlayerBtn';
-      singlePlayerBtn.textContent = 'Local Game';
-      singlePlayerBtn.style.cssText = `
-         padding: 12px 24px;
-         font-size: 16px;
-         border: none;
-         border-radius: 5px;
-         background: #007bff;
-         color: white;
-         cursor: pointer;
-         transition: background-color 0.2s;
-      `;
-
-      const playWithBotBtn = document.createElement('button');
-      playWithBotBtn.id = 'playWithBotBtn';
-      playWithBotBtn.textContent = 'Play with Bot';
-      playWithBotBtn.style.cssText = singlePlayerBtn.style.cssText.replace('#007bff', '#28a745');
-
-      const createGameBtn = document.createElement('button');
-      createGameBtn.id = 'createGameBtn';
-      createGameBtn.textContent = 'Create Multiplayer Game';
-      createGameBtn.style.cssText = singlePlayerBtn.style.cssText.replace('#007bff', '#17a2b8');
-
-      const joinGameDiv = document.createElement('div');
-      joinGameDiv.id = 'joinGame';
-      joinGameDiv.style.cssText = 'display: flex; gap: 10px; margin-top: 10px;';
-
-      const roomIdInput = document.createElement('input');
-      roomIdInput.id = 'roomIdInput';
-      roomIdInput.type = 'text';
-      roomIdInput.placeholder = 'Enter Room ID';
-      roomIdInput.style.cssText = `
-         flex: 1;
-         padding: 8px 12px;
-         border: 1px solid #ddd;
-         border-radius: 4px;
-         font-size: 14px;
-      `;
-
-      const joinGameBtn = document.createElement('button');
-      joinGameBtn.id = 'joinGameBtn';
-      joinGameBtn.textContent = 'Join Game';
-      joinGameBtn.style.cssText = `
-         padding: 8px 16px;
-         border: none;
-         border-radius: 4px;
-         background: #ffc107;
-         color: black;
-         cursor: pointer;
-         font-size: 14px;
-      `;
-
-      // Assemble menu
-      joinGameDiv.appendChild(roomIdInput);
-      joinGameDiv.appendChild(joinGameBtn);
-      
-      menuContent.appendChild(singlePlayerBtn);
-      menuContent.appendChild(playWithBotBtn);
-      menuContent.appendChild(createGameBtn);
-      menuContent.appendChild(joinGameDiv);
-      
-      menuOverlay.appendChild(menuContent);
-      document.body.appendChild(menuOverlay);
-
-      // Cache the created elements
-      this.elements.menuOverlay = menuOverlay;
-      this.elements.menuContent = menuContent;
-      this.elements.singlePlayerBtn = singlePlayerBtn;
-      this.elements.playWithBotBtn = playWithBotBtn;
-      this.elements.createGameBtn = createGameBtn;
-      this.elements.joinGameBtn = joinGameBtn;
-      this.elements.roomIdInput = roomIdInput;
-   } */
 
    /**
     * Setup event listeners for UI interactions
@@ -280,62 +166,42 @@ export class UIRenderer extends EventTarget {
     */
    setupGameStateListeners() {
       if (!this.gameStateManager) return;
-      // Listen for game state changes
-      this.gameStateManager.addEventListener('gameStarted', e => {
+      const gsm = this.gameStateManager;
+
+      gsm.addEventListener('stateInitialized', () => {
+         this.updateUI();
+      });
+      gsm.addEventListener('stateChanged', () => {
+         this.updateUI();
+      });
+      gsm.addEventListener('gameStarted', e => {
          this.updateGameStatus(`Game Started - ${e.detail.mode}`);
          this.hideMenu();
          this.updateButtonState(this.buttonStates.IN_GAME);
       });
-
-      this.gameStateManager.addEventListener('gameEnded', e => {
-         const {winner, reason} = e.detail;
-         if (winner) {
-            this.updateGameStatus(`Game Over - Player ${winner} wins!`);
-         } else {
-            this.updateGameStatus('Game Over - Draw!');
-         }
+      gsm.addEventListener('gameEnded', e => {
+         const {winner} = e.detail;
+         this.updateGameStatus(
+            winner ? `Game Over - Player ${winner} wins!` : 'Game Over - Draw!'
+         );
          this.updateButtonState(this.buttonStates.GAME_OVER);
       });
 
-      this.gameStateManager.addEventListener('turnChange', e => {
-         const {currentPlayer, isMyTurn} = e.detail;
-         if (isMyTurn) {
-            this.updateGameStatus(`Your turn (${currentPlayer})`);
-         } else {
-            this.updateGameStatus(`Opponent's turn (${currentPlayer})`);
-         }
+      gsm.addEventListener('turnChange', () => {
+         this.updateUI();
       });
 
-      this.gameStateManager.addEventListener('multiJoin', e => {
-         const {roomId} = e.detail;
-         this.updateGameStatus(`Joined room: ${roomId}`);
-         this.hideMenu();
+      gsm.addEventListener('stateMenuStateChanged', e => {
+         const {showMenu} = e.detail;
+         if (showMenu) this.showMenu();
+         else this.hideMenu();
       });
-
-      this.gameStateManager.addEventListener('multiWait', e => {
-         const {roomId} = e.detail;
-         this.updateGameStatus(`Waiting for opponent... Room: ${roomId}`);
+      gsm.addEventListener('stateButtonStateChanged', e => {
+         const {to} = e.detail;
+         this.updateButtonState(to);
       });
-
-      this.gameStateManager.addEventListener('opponentLeft', () => {
-         this.updateGameStatus('Opponent left the game');
-         this.updateButtonState(this.buttonStates.OPPONENT_LEFT);
-      });
-
-      this.gameStateManager.addEventListener('rematchRequest', () => {
-         this.updateGameStatus('Rematch requested by opponent');
-         this.updateButtonState(this.buttonStates.REMATCH_REQUEST);
-      });
-
-      this.gameStateManager.addEventListener('rematchWait', () => {
-         this.updateGameStatus('Waiting for rematch response...');
-         this.updateButtonState(this.buttonStates.WAITING_REMATCH);
-      });
-
-      this.gameStateManager.addEventListener('reset', () => {
-         this.showMenu();
-         this.updateGameStatus('toe');
-         this.updateButtonState(null);
+      gsm.addEventListener('stateGameEnded', () => {
+         this.updateUI();
       });
    }
 
@@ -481,25 +347,31 @@ export class UIRenderer extends EventTarget {
    updateUI() {
       if (!this.gameStateManager) return;
 
-      const gameState = this.gameStateManager.getState('game');
-      const uiState = this.gameStateManager.getState('ui');
+      const state = this.gameStateManager.getState?.() || {
+         showMenu: true,
+         isGameOver: false,
+         gameMode: null,
+      };
 
       // Update menu visibility
-      if (uiState.showMenu) {
-         this.showMenu();
-      } else {
-         this.hideMenu();
-      }
+      if (state.showMenu) this.showMenu();
+      else this.hideMenu();
 
-      // Update button state based on game state
-      if (gameState.isGameOver) {
+      // Update buttons from explicit buttonState when available; fallback to derived
+      if (state.buttonState) {
+         this.updateButtonState(state.buttonState);
+      } else if (state.isGameOver) {
          this.updateButtonState(this.buttonStates.GAME_OVER);
-      } else if (gameState.gameMode && gameState.gameMode !== 'menu') {
+      } else if (state.gameMode && state.gameMode !== 'menu') {
          this.updateButtonState(this.buttonStates.IN_GAME);
+      } else {
+         this.updateButtonState(null);
       }
 
-      // Update status text
-      if (gameState.gameMode === 'menu' || !gameState.gameMode) {
+      // Update status text from centralized statusMessage when present
+      if (state.statusMessage) {
+         this.updateGameStatus(state.statusMessage);
+      } else if (!state.gameMode || state.gameMode === 'menu') {
          this.updateGameStatus('toe');
       }
    }

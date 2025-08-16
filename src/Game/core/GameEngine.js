@@ -483,13 +483,13 @@ export class GameEngine {
       if (!this.gameStateManager) return;
 
       // Listen for game mode changes
-      this.gameStateManager.addEventListener('gameModeChanged', event => {
+      this.gameStateManager.addEventListener('stateGameModeChanged', event => {
          const {from, to} = event.detail;
          console.log(`Game mode changed from ${from} to ${to}`);
       });
 
       // Listen for game phase changes
-      this.gameStateManager.addEventListener('gamePhaseChanged', event => {
+      this.gameStateManager.addEventListener('stateGamePhaseChanged', event => {
          const {from, to} = event.detail;
          console.log(`Game phase changed from ${from} to ${to}`);
          if (this.gridRenderer) {
@@ -513,7 +513,7 @@ export class GameEngine {
       });
 
       // Listen for menu state changes
-      this.gameStateManager.addEventListener('menuStateChanged', event => {
+      this.gameStateManager.addEventListener('stateMenuStateChanged', event => {
          const {currentMenu, showMenu} = event.detail;
          console.log(
             `Menu state changed: ${currentMenu} (visible: ${showMenu})`
@@ -524,18 +524,24 @@ export class GameEngine {
       });
 
       // Listen for button state changes
-      this.gameStateManager.addEventListener('buttonStateChanged', event => {
-         const {from, to} = event.detail;
-         console.log(`Button state changed from ${from} to ${to}`);
-      });
+      this.gameStateManager.addEventListener(
+         'stateButtonStateChanged',
+         event => {
+            const {from, to} = event.detail;
+            console.log(`Button state changed from ${from} to ${to}`);
+         }
+      );
 
       // Listen for network state changes
-      this.gameStateManager.addEventListener('networkStateChanged', event => {
-         const {isConnected, isReconnecting} = event.detail;
-         console.log(
-            `Network state: connected=${isConnected}, reconnecting=${isReconnecting}`
-         );
-      });
+      this.gameStateManager.addEventListener(
+         'stateNetworkStateChanged',
+         event => {
+            const {isConnected, isReconnecting} = event.detail;
+            console.log(
+               `Network state: connected=${isConnected}, reconnecting=${isReconnecting}`
+            );
+         }
+      );
    }
 
    /**

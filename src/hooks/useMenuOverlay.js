@@ -7,36 +7,34 @@ import {useState, useEffect} from 'react';
 export const useMenuOverlay = (gameEngine = null) => {
    const [isMenuVisible, setIsMenuVisible] = useState(true);
 
-   // Listen for game events to show/hide menu
    useEffect(() => {
-      if (!gameEngine) return;
+      const gsm = gameEngine?.gameStateManager;
+      if (!gsm) return;
 
-      const handleGameStart = () => {
-         setIsMenuVisible(false);
+      const sync = () => {
+         const state = gsm.getState ? gsm.getState() : {};
+         setIsMenuVisible(!!state.showMenu);
       };
 
-      const handleGameEnd = () => {
-         // Could show menu again after game ends, or keep it hidden
-         setIsMenuVisible(true);
-      };
+      sync();
 
-      // Listen to game engine events if available
-      if (gameEngine.gameLogic) {
-         gameEngine.gameLogic.addEventListener('gameStarted', handleGameStart);
-         gameEngine.gameLogic.addEventListener('gameEnded', handleGameEnd);
-      }
+      const onStateChanged = () => sync();
+      const onMenuChanged = () => sync();
+      const onGameStarted = () => sync();
+      const onGameEnded = () => sync();
+
+      gsm.addEventListener('stateInitialized', onStateChanged);
+      gsm.addEventListener('stateChanged', onStateChanged);
+      gsm.addEventListener('stateMenuStateChanged', onMenuChanged);
+      gsm.addEventListener('gameStarted', onGameStarted);
+      gsm.addEventListener('gameEnded', onGameEnded);
 
       return () => {
-         if (gameEngine.gameLogic) {
-            gameEngine.gameLogic.removeEventListener(
-               'gameStarted',
-               handleGameStart
-            );
-            gameEngine.gameLogic.removeEventListener(
-               'gameEnded',
-               handleGameEnd
-            );
-         }
+         gsm.removeEventListener('stateInitialized', onStateChanged);
+         gsm.removeEventListener('stateChanged', onStateChanged);
+         gsm.removeEventListener('stateMenuStateChanged', onMenuChanged);
+         gsm.removeEventListener('gameStarted', onGameStarted);
+         gsm.removeEventListener('gameEnded', onGameEnded);
       };
    }, [gameEngine]);
 
@@ -47,22 +45,32 @@ export const useMenuOverlay = (gameEngine = null) => {
             gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startSingle'));
          }
          gameEngine.startSinglePlayerGame();
-         setIsMenuVisible(false);
-      } else {
-         console.warn(
-            'Game engine or startSinglePlayerGame method not available'
-         );
+         if (gameEngine?.gameStateManager) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+         return;
       }
+      console.warn('Game engine or startSinglePlayerGame method not available');
    };
 
    const handleStartBotGame = () => {
       console.log('Start bot game clicked');
       if (gameEngine?.startBotGame) {
          gameEngine.startBotGame();
-         setIsMenuVisible(false);
+         if (gameEngine?.gameStateManager) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
       } else if (gameEngine?.uiRenderer) {
          gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startBot'));
-         setIsMenuVisible(false);
+         if (gameEngine?.gameStateManager) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
       } else {
          console.warn('Game engine or startBotGame method not available');
       }
@@ -72,7 +80,11 @@ export const useMenuOverlay = (gameEngine = null) => {
       console.log('Create multiplayer clicked');
       if (gameEngine?.uiRenderer) {
          gameEngine.uiRenderer.dispatchEvent(new CustomEvent('multiCreate'));
-         setIsMenuVisible(false);
+         if (gameEngine?.gameStateManager) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
       } else {
          console.warn('Game engine or uiRenderer not available');
       }
@@ -86,18 +98,30 @@ export const useMenuOverlay = (gameEngine = null) => {
                detail: {roomId},
             })
          );
-         setIsMenuVisible(false);
+         if (gameEngine?.gameStateManager) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
       } else {
          console.warn('Game engine or uiRenderer not available');
       }
    };
 
    const showMenu = () => {
-      setIsMenuVisible(true);
+      if (gameEngine?.gameStateManager) {
+         gameEngine.gameStateManager.set('showMenu', true);
+      } else {
+         setIsMenuVisible(true);
+      }
    };
 
    const hideMenu = () => {
-      setIsMenuVisible(false);
+      if (gameEngine?.gameStateManager) {
+         gameEngine.gameStateManager.set('showMenu', false);
+      } else {
+         setIsMenuVisible(false);
+      }
    };
 
    return {

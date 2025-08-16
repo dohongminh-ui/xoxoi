@@ -176,16 +176,13 @@ export class GameStateManager extends EventTarget {
          // Multiple properties update
          for (const [key, val] of Object.entries(keyOrState)) {
             const oldValue = this.state[key];
-            if (
+            this.state[key] =
                merge &&
                typeof val === 'object' &&
                typeof oldValue === 'object' &&
                !Array.isArray(val)
-            ) {
-               this.state[key] = {...oldValue, ...val};
-            } else {
-               this.state[key] = val;
-            }
+                  ? {...oldValue, ...val}
+                  : val;
             changes[key] = {from: oldValue, to: this.state[key]};
          }
       }

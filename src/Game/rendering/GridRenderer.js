@@ -163,7 +163,7 @@ export class GridRenderer {
 
             if (progress < 1) {
                requestAnimationFrame(animate);
-            }
+            } else return resolve();
          };
 
          animate();
