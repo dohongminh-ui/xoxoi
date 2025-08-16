@@ -2,7 +2,8 @@
 
 ## Project Overview
 
-> [!IMPORTANT] All of the things here are subject to change
+> [!IMPORTANT]
+> All of the things here are subject to change
 
 This project is a feature-rich, multiplayer Tic-Tac-Toe game with advanced AI,
 real-time multiplayer capabilities, and comprehensive user management. The game
@@ -11,7 +12,8 @@ win conditions.
 
 ## Getting Started
 
-> [!TIP] Recommended to use pnpm.
+> [!TIP]
+> Recommended to use pnpm.
 
 ```bash
 npm i
