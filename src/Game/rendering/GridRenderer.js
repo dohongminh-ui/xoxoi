@@ -196,7 +196,7 @@ export class GridRenderer {
       const highlight = new PIXI.Graphics();
       const color = player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O;
 
-      highlight.lineStyle(2, color, 0.5);
+      highlight.lineStyle(2, color, 0.7);
       highlight.beginFill(color, 0.2);
       highlight.drawRect(cellX * CELL_SIZE, cellY * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       highlight.endFill();
@@ -255,13 +255,18 @@ export class GridRenderer {
       const cellY = Math.floor(pos.y / CELL_SIZE);
       const key = coordKey(cellX, cellY);
 
-      if (placedMarks.has(key)) return;
+      let hoverColor = COLORS.HOVER;
+      if (placedMarks.has(key)) {
+         placedMarks.get(key).player == 'X'
+            ? (hoverColor = COLORS.HOVER_X)
+            : (hoverColor = COLORS.HOVER_O);
+      }
 
       const worldX = cellX * CELL_SIZE * scale + this.gridContainer.x;
       const worldY = cellY * CELL_SIZE * scale + this.gridContainer.y;
 
-      this.hoverGraphics.lineStyle(1, COLORS.HOVER, 0.3);
-      this.hoverGraphics.beginFill(COLORS.HOVER, 0.3);
+      this.hoverGraphics.lineStyle(1, hoverColor, 0.3);
+      this.hoverGraphics.beginFill(hoverColor, 0.3);
       this.hoverGraphics.drawRect(worldX, worldY, CELL_SIZE * scale, CELL_SIZE * scale);
       this.hoverGraphics.endFill();
    }

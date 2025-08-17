@@ -24,9 +24,11 @@ export const GAME_CONSTANTS = {
    COLORS: {
       BACKGROUND: '#FEF9F2',
       GRID_LINE: '#52575D',
-      PLAYER_X: '#ff6961',
+      PLAYER_X: '#ff6969',
       PLAYER_O: '#a2bffe',
       HOVER: '#888888',
+      HOVER_X: '#ff6969',
+      HOVER_O: '#a2bffe',
    },
 };
 
