@@ -10,7 +10,7 @@ export class GameLogic extends EventTarget {
       super();
 
       // Game state
-      this.gameMode = null; // 'single', 'bot', 'multi'
+      this.gameMode = null; // 'null', 'single', 'bot', 'multi'
       this.currentPlayer = 'X';
       this.isGameOver = false;
       this.playerMark = ''; // For multiplayer
@@ -526,6 +526,30 @@ export class GameLogic extends EventTarget {
          }
       }
       return marks;
+   }
+
+   /**
+    * Handle rematch request based on current mode
+    */
+   requestRematch() {
+      const currentState = this.getGameState();
+
+      if (!currentState.isGameOver) return;
+
+      switch (currentState.gameMode) {
+         case 'single':
+            gameEngine?.startSinglePlayerGame();
+            break;
+         case 'bot':
+            gameEngine?.startBotGame();
+            break;
+         case 'multi':
+            //idk update status bar or smt
+            break;
+         default:
+            gameEngine?.leaveMultiplayerGame();
+            break;
+      }
    }
 
    /**

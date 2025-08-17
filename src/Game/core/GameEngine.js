@@ -535,9 +535,7 @@ export class GameEngine {
 
       // Game restart/rematch
       this.uiRenderer.addEventListener('rematchRequest', () => {
-         if (this.gameLogic) {
-            this.gameLogic.requestRematch();
-         }
+         this.gameLogic.requestRematch();
       });
 
       // Accept rematch

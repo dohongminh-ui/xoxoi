@@ -9,7 +9,7 @@ export class GameStateManager extends EventTarget {
       // Core game state
       this.state = {
          // Game mode and type
-         gameMode: null, // 'single', 'bot', 'multi'
+         gameMode: null, // 'null', 'single', 'bot', 'multi'
          gamePhase: 'menu', // 'menu', 'playing', 'paused', 'ended'
 
          // Player information
