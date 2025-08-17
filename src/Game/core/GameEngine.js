@@ -627,18 +627,9 @@ export class GameEngine {
     * Start a single player game
     */
    startSinglePlayerGame() {
-      if (this.gameStateManager) {
-         this.gameStateManager.startGame('single');
-      }
-      if (this.gameLogic) {
-         this.gameLogic.startGame('single');
-      }
-
-      // reset the grid
-      if (this.gridRenderer) {
-         this.gridRenderer.restart();
-         this.gridRenderer.drawGrid(1, 0, 0);
-      }
+      this.gameStateManager?.startGame('single');
+      this.gameLogic?.startGame('single');
+      this.gridRenderer?.restart();
       this.placedMarks = new Map();
    }
 
@@ -646,18 +637,9 @@ export class GameEngine {
     * Start a bot game
     */
    startBotGame() {
-      if (this.gameStateManager) {
-         this.gameStateManager.startGame('bot');
-      }
-      if (this.gameLogic) {
-         this.gameLogic.startGame('bot');
-      }
-
-      // reset the grid
-      if (this.gridRenderer) {
-         this.gridRenderer.restart();
-         this.gridRenderer.drawGrid(1, 0, 0);
-      }
+      this.gameStateManager?.startGame('bot');
+      this.gameLogic?.startGame('bot');
+      this.gridRenderer?.restart();
       this.placedMarks = new Map();
    }
 
