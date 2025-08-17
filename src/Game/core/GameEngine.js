@@ -324,8 +324,8 @@ export class GameEngine {
 
          // end the game after win
          this.gameStateManager.endGame({
-            winner: winner,
-            winningCells: winningCells,
+            winner,
+            winningCells,
             reason: 'game finished',
          });
          this.gameLogic.dispatchEvent(new CustomEvent('gameEnded'));
@@ -410,6 +410,7 @@ export class GameEngine {
          console.log('Opponent left');
 
          // Update GameLogic state
+         // TODO: unless opponent leaves on will, disconnected opponent can rejoin the room
          if (this.gameLogic) {
             this.gameLogic.updateGameState({
                hasOpponent: false,
@@ -630,6 +631,7 @@ export class GameEngine {
       this.gameStateManager?.startGame('single');
       this.gameLogic?.startGame('single');
       this.gridRenderer?.restart();
+      this.cameraController?.resetCamera();
       this.placedMarks = new Map();
    }
 
@@ -640,6 +642,7 @@ export class GameEngine {
       this.gameStateManager?.startGame('bot');
       this.gameLogic?.startGame('bot');
       this.gridRenderer?.restart();
+      this.cameraController?.resetCamera();
       this.placedMarks = new Map();
    }
 

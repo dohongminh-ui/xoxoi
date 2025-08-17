@@ -488,8 +488,18 @@ export class CameraController extends EventTarget {
     * Reset camera to default position and scale
     */
    resetCamera() {
-      this.setCameraState(0, 0, 1);
       this.velocity = {x: 0, y: 0};
+      this.setCameraState(0, 0, 1);
+
+      this.dispatchEvent(
+         new CustomEvent('cameraReset', {
+            detail: {
+               scale: this.scale,
+               x: this.gridContainer.x,
+               y: this.gridContainer.y,
+            },
+         })
+      );
    }
 
    /**
