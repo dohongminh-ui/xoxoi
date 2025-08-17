@@ -529,6 +529,30 @@ export class GameLogic extends EventTarget {
    }
 
    /**
+    * Handle rematch request based on current mode
+    */
+   requestRematch() {
+      const currentState = this.getGameState();
+
+      if (!currentState.isGameOver) return;
+
+      switch (currentState.gameMode) {
+         case 'single':
+            gameEngine?.startSinglePlayerGame();
+            break;
+         case 'bot':
+            gameEngine?.startBotGame();
+            break;
+         case 'multi':
+            //idk update status bar or smt
+            break;
+         default:
+            gameEngine?.leaveMultiplayerGame();
+            break;
+      }
+   }
+
+   /**
     * Clean up resources
     */
    destroy() {
