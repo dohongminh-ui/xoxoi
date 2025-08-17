@@ -1,5 +1,3 @@
-import {GAME_CONSTANTS} from '../core/constants.js';
-
 /**
  * GameStateManager centralizes all game state management
  * Provides a unified interface for accessing and updating game state across components
@@ -352,7 +350,7 @@ export class GameStateManager extends EventTarget {
             modeString = `Multiplayer (Room: ${this.state.roomId})`;
             break;
          default:
-            modeString = 'This shit break 🥀 mode';
+            modeString = 'This shit break 🥀 mode (on god)';
             break;
       }
       this.dispatchEvent(
@@ -384,8 +382,8 @@ export class GameStateManager extends EventTarget {
       this.dispatchEvent(
          new CustomEvent('gameEnded', {
             detail: {
-               winner: winner,
-               reason: reason,
+               winner,
+               reason,
             },
          })
       );
@@ -398,16 +396,11 @@ export class GameStateManager extends EventTarget {
       const newPlayer = this.state.currentPlayer === 'X' ? 'O' : 'X';
       this.set({
          currentPlayer: newPlayer,
-         isMyTurn:
-            this.state.gameMode === 'multi'
-               ? newPlayer === this.state.playerMark
-               : true,
+         isMyTurn: this.state.gameMode === 'multi' ? newPlayer === this.state.playerMark : true,
          statusMessage: this.getStatusMessage(
             this.state.gameMode,
             newPlayer,
-            this.state.gameMode === 'multi'
-               ? newPlayer === this.state.playerMark
-               : true
+            this.state.gameMode === 'multi' ? newPlayer === this.state.playerMark : true
          ),
       });
 
@@ -435,34 +428,23 @@ export class GameStateManager extends EventTarget {
 
       const newState = {
          gameMode: returnToMenu ? null : this.state.gameMode,
-         gamePhase: returnToMenu
-            ? this.GAME_PHASES.MENU
-            : this.GAME_PHASES.PLAYING,
+         gamePhase: returnToMenu ? this.GAME_PHASES.MENU : this.GAME_PHASES.PLAYING,
          currentPlayer: 'X',
-         isMyTurn:
-            this.state.gameMode === 'multi'
-               ? this.state.playerMark === 'X'
-               : true,
+         isMyTurn: this.state.gameMode === 'multi' ? this.state.playerMark === 'X' : true,
          isGameOver: false,
          isPaused: false,
          winner: null,
          winningCells: null,
          moveCount: 0,
          gameStartTime: Date.now(),
-         currentMenu: returnToMenu
-            ? this.MENU_STATES.MAIN
-            : this.MENU_STATES.GAME,
-         buttonState: returnToMenu
-            ? this.BUTTON_STATES.MENU
-            : this.BUTTON_STATES.IN_GAME,
+         currentMenu: returnToMenu ? this.MENU_STATES.MAIN : this.MENU_STATES.GAME,
+         buttonState: returnToMenu ? this.BUTTON_STATES.MENU : this.BUTTON_STATES.IN_GAME,
          statusMessage: returnToMenu
             ? 'toe'
             : this.getStatusMessage(
                  this.state.gameMode,
                  'X',
-                 this.state.gameMode === 'multi'
-                    ? this.state.playerMark === 'X'
-                    : true
+                 this.state.gameMode === 'multi' ? this.state.playerMark === 'X' : true
               ),
          showMenu: returnToMenu,
       };
@@ -531,9 +513,7 @@ export class GameStateManager extends EventTarget {
             }
             return isMyTurn
                ? `(${this.state.playerMark}) Your turn`
-               : `(${
-                    this.state.playerMark === 'X' ? 'O' : 'X'
-                 }) Opponent's turn`;
+               : `(${this.state.playerMark === 'X' ? 'O' : 'X'}) Opponent's turn`;
          default:
             return 'toe';
       }
@@ -565,9 +545,7 @@ export class GameStateManager extends EventTarget {
          case 'bot':
             return winner === 'X' ? 'You win!' : 'Bot wins!';
          case 'multi':
-            return winner === this.state.playerMark
-               ? 'You win!'
-               : 'Opponent wins!';
+            return winner === this.state.playerMark ? 'You win!' : 'Opponent wins!';
          default:
             return `${winner} wins!`;
       }
@@ -667,8 +645,7 @@ export class GameStateManager extends EventTarget {
    getGameStats() {
       return {
          gameMode: this.state.gameMode,
-         duration:
-            this.state.gameDuration || Date.now() - this.state.gameStartTime,
+         duration: this.state.gameDuration || Date.now() - this.state.gameStartTime,
          moveCount: this.state.moveCount,
          isGameOver: this.state.isGameOver,
          winner: this.state.winner,

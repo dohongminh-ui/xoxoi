@@ -47,9 +47,6 @@ export class GameEngine {
          resolution: window.devicePixelRatio || 1,
       });
 
-      // Don't auto-append to body - let React handle mounting
-      // document.body.appendChild(this.app.view);
-
       // Create main grid container
       this.gridContainer = new PIXI.Container();
       this.app.stage.addChild(this.gridContainer);
@@ -76,9 +73,7 @@ export class GameEngine {
 
       // Load CameraController component
       try {
-         const {CameraController} = await import(
-            '../input/CameraController.js'
-         );
+         const {CameraController} = await import('../input/CameraController.js');
          this.components.CameraController = CameraController;
          console.log('CameraController loaded successfully');
       } catch (error) {
@@ -131,26 +126,15 @@ export class GameEngine {
     * Initialize all game components
     */
    initializeComponents() {
-      console.log('Initializing components...');
-      console.log('App available:', !!this.app);
-      console.log('GridContainer available:', !!this.gridContainer);
-      console.log('App stage available:', !!this.app?.stage);
-
       // Initialize GridRenderer if available
       if (this.components.GridRenderer) {
-         this.gridRenderer = new this.components.GridRenderer(
-            this.app,
-            this.gridContainer
-         );
+         this.gridRenderer = new this.components.GridRenderer(this.app, this.gridContainer);
          console.log('GridRenderer initialized');
       }
 
       // Initialize CameraController if available
       if (this.components.CameraController) {
-         this.cameraController = new this.components.CameraController(
-            this.app,
-            this.gridContainer
-         );
+         this.cameraController = new this.components.CameraController(this.app, this.gridContainer);
          console.log('CameraController initialized');
 
          // Setup camera event listeners
@@ -189,9 +173,7 @@ export class GameEngine {
 
       // Initialize UIRenderer if available
       if (this.components.UIRenderer && this.gameStateManager) {
-         this.uiRenderer = new this.components.UIRenderer(
-            this.gameStateManager
-         );
+         this.uiRenderer = new this.components.UIRenderer(this.gameStateManager);
          this.uiRenderer.initialize();
          console.log('UIRenderer initialized');
 
@@ -295,11 +277,7 @@ export class GameEngine {
       // Listen for move attempts
       this.gameLogic.addEventListener('moveAttempted', event => {
          const {x, y, player, success, reason} = event.detail;
-         console.log(
-            `Move attempt: ${player} at (${x}, ${y}) - ${
-               success ? 'Success' : reason
-            }`
-         );
+         console.log(`Move attempt: ${player} at (${x}, ${y}) - ${success ? 'Success' : reason}`);
       });
 
       // Listen for successful moves
@@ -341,9 +319,7 @@ export class GameEngine {
             console.log('Calling animateWinningLine with:', winningCells);
             await this.gridRenderer.animateWinningLine(winningCells);
          } else {
-            console.log(
-               'GridRenderer or animateWinningLine method not available'
-            );
+            console.log('GridRenderer or animateWinningLine method not available');
          }
 
          // end the game after win
@@ -383,11 +359,7 @@ export class GameEngine {
       });
 
       this.networkManager.addEventListener('reconnected', event => {
-         console.log(
-            'Network reconnected after',
-            event.detail.attempts,
-            'attempts'
-         );
+         console.log('Network reconnected after', event.detail.attempts, 'attempts');
       });
 
       this.networkManager.addEventListener('reconnectFailed', event => {
@@ -515,33 +487,23 @@ export class GameEngine {
       // Listen for menu state changes
       this.gameStateManager.addEventListener('stateMenuStateChanged', event => {
          const {currentMenu, showMenu} = event.detail;
-         console.log(
-            `Menu state changed: ${currentMenu} (visible: ${showMenu})`
-         );
+         console.log(`Menu state changed: ${currentMenu} (visible: ${showMenu})`);
          if (this.gridRenderer) {
             this.gridRenderer.clearHover();
          }
       });
 
       // Listen for button state changes
-      this.gameStateManager.addEventListener(
-         'stateButtonStateChanged',
-         event => {
-            const {from, to} = event.detail;
-            console.log(`Button state changed from ${from} to ${to}`);
-         }
-      );
+      this.gameStateManager.addEventListener('stateButtonStateChanged', event => {
+         const {from, to} = event.detail;
+         console.log(`Button state changed from ${from} to ${to}`);
+      });
 
       // Listen for network state changes
-      this.gameStateManager.addEventListener(
-         'stateNetworkStateChanged',
-         event => {
-            const {isConnected, isReconnecting} = event.detail;
-            console.log(
-               `Network state: connected=${isConnected}, reconnecting=${isReconnecting}`
-            );
-         }
-      );
+      this.gameStateManager.addEventListener('stateNetworkStateChanged', event => {
+         const {isConnected, isReconnecting} = event.detail;
+         console.log(`Network state: connected=${isConnected}, reconnecting=${isReconnecting}`);
+      });
    }
 
    /**

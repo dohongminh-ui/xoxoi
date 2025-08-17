@@ -32,9 +32,7 @@ const StatusBar = ({
          )}
 
          {showDeclineRematchButton && (
-            <button
-               className='decline-rematch-button'
-               onClick={onDeclineRematch}>
+            <button className='decline-rematch-button' onClick={onDeclineRematch}>
                Decline
             </button>
          )}

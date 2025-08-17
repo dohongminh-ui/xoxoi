@@ -3,17 +3,13 @@ import {useEffect, useState} from 'react';
 /**
  * Custom hook for managing status bar state and actions
  * Centralizes all status bar logic and provides clean interface
- * Updated to work with migrated React-based game engine
  */
 export const useStatusBar = (gameEngine = null) => {
    const [gameStatus, setGameStatus] = useState('toe');
    const [showRestartButton, setShowRestartButton] = useState(false);
-   const [showAcceptRematchButton, setShowAcceptRematchButton] =
-      useState(false);
-   const [showDeclineRematchButton, setShowDeclineRematchButton] =
-      useState(false);
-   const [showCancelRematchButton, setShowCancelRematchButton] =
-      useState(false);
+   const [showAcceptRematchButton, setShowAcceptRematchButton] = useState(false);
+   const [showDeclineRematchButton, setShowDeclineRematchButton] = useState(false);
+   const [showCancelRematchButton, setShowCancelRematchButton] = useState(false);
    const [showExitGameButton, setShowExitGameButton] = useState(false);
 
    // Helper: map GameStateManager buttonState to local flags

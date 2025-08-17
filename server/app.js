@@ -220,14 +220,9 @@ io.on('connection', socket => {
       }
 
       for (const [existingRoomId, existingRoom] of rooms.entries()) {
-         if (
-            existingRoom.players.includes(socket.id) &&
-            existingRoomId !== roomId
-         ) {
+         if (existingRoom.players.includes(socket.id) && existingRoomId !== roomId) {
             socket.leave(existingRoomId);
-            existingRoom.players = existingRoom.players.filter(
-               id => id !== socket.id
-            );
+            existingRoom.players = existingRoom.players.filter(id => id !== socket.id);
             existingRoom.playerMarks.delete(socket.id);
             existingRoom.rematchRequested.delete(socket.id);
          }
@@ -249,20 +244,15 @@ io.on('connection', socket => {
          room.playerMarks.set(socket.id, playerMark);
       } else {
          room.players.push(socket.id);
-         room.playerMarks.set(
-            socket.id,
-            currentPlayerCount === 0 ? MARKS.X : MARKS.O
-         );
+         room.playerMarks.set(socket.id, currentPlayerCount === 0 ? MARKS.X : MARKS.O);
       }
 
       socket.join(roomId);
 
-      const placedMarks = Array.from(room.placedMarks.entries()).map(
-         ([coord, player]) => {
-            const [x, y] = coord.split(',').map(Number);
-            return {x, y, player};
-         }
-      );
+      const placedMarks = Array.from(room.placedMarks.entries()).map(([coord, player]) => {
+         const [x, y] = coord.split(',').map(Number);
+         return {x, y, player};
+      });
 
       const otherPlayer = room.players.find(id => id !== socket.id);
       if (otherPlayer) {

@@ -34,7 +34,6 @@ export const useGameEngine = containerRef => {
 
             setGameInitialized(true);
             console.log('Game engine initialized successfully');
-            console.log(gameEngineRef.current);
             window.gameEngine = gameEngineRef.current;
          } catch (err) {
             console.error('❌ Failed to initialize game:', err);

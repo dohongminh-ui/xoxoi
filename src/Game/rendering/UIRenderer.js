@@ -62,20 +62,13 @@ export class UIRenderer extends EventTarget {
       this.elements.statusBar = document.getElementById('statusBar');
       this.elements.gameStatus = document.getElementById('gameStatus');
       this.elements.restartButton = document.getElementById('restartButton');
-      this.elements.acceptRematchButton = document.getElementById(
-         'acceptRematchButton'
-      );
-      this.elements.declineRematchButton = document.getElementById(
-         'declineRematchButton'
-      );
-      this.elements.cancelRematchButton = document.getElementById(
-         'cancelRematchButton'
-      );
+      this.elements.acceptRematchButton = document.getElementById('acceptRematchButton');
+      this.elements.declineRematchButton = document.getElementById('declineRematchButton');
+      this.elements.cancelRematchButton = document.getElementById('cancelRematchButton');
       this.elements.exitGameButton = document.getElementById('exitGameButton');
       this.elements.menuOverlay = document.getElementById('menuOverlay');
       this.elements.menuContent = document.getElementById('menuContent');
-      this.elements.singlePlayerBtn =
-         document.getElementById('singlePlayerBtn');
+      this.elements.singlePlayerBtn = document.getElementById('singlePlayerBtn');
       this.elements.playWithBotBtn = document.getElementById('playWithBotBtn');
       this.elements.createGameBtn = document.getElementById('createGameBtn');
       this.elements.joinGameBtn = document.getElementById('joinGameBtn');
@@ -181,9 +174,7 @@ export class UIRenderer extends EventTarget {
       });
       gsm.addEventListener('gameEnded', e => {
          const {winner} = e.detail;
-         this.updateGameStatus(
-            winner ? `Game Over - Player ${winner} wins!` : 'Game Over - Draw!'
-         );
+         this.updateGameStatus(winner ? `Game Over - Player ${winner} wins!` : 'Game Over - Draw!');
          this.updateButtonState(this.buttonStates.GAME_OVER);
       });
 

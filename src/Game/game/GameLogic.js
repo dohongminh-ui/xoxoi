@@ -1,4 +1,4 @@
-import {GAME_CONSTANTS, WINNING_LENGTH, CELL_SIZE} from '../core/constants.js';
+import {WINNING_LENGTH} from '../core/constants.js';
 import {coordKey, parseCoordKey} from '../core/utils.js';
 
 /**
@@ -95,7 +95,6 @@ export class GameLogic extends EventTarget {
       }
 
       const player = this.currentPlayer;
-      const key = coordKey(cellX, cellY);
 
       // For multiplayer, emit to server instead of placing directly
       if (this.gameMode === 'multi') {
@@ -320,9 +319,7 @@ export class GameLogic extends EventTarget {
                      cells: [],
                   };
                   existing.count = Math.max(existing.count, consecutive + 1);
-                  existing.cells = [
-                     ...new Set([...existing.cells, [newX, newY]]),
-                  ];
+                  existing.cells = [...new Set([...existing.cells, [newX, newY]])];
                   this.potentialWins.set(lineKey, existing);
                } else {
                   blocked++;
@@ -357,9 +354,9 @@ export class GameLogic extends EventTarget {
     */
    checkDraw() {
       // For an infinite grid, we don't check for draws the traditional way
-      // Instead, we could implement a move limit or other draw conditions
-      // For now, return false as draws are rare in infinite tic-tac-toe
-      // Could be used when custom grid sizes are implemented
+      // Instead, we could implement an user's specified time limit or other draw conditions
+      // For now, return false as draws are impossible in infinite tic-tac-toe
+      // Could be used when custom grid sizes are implemented or when a game hits the specified time limit
       return false;
    }
 
