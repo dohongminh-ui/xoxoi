@@ -226,10 +226,18 @@ export class GameEngine {
          this.gridRenderer.drawGrid(scale, x, y);
       });
 
+      let placeX = 0;
+      let placeY = 0;
+      // Listen for mouse down
+      this.cameraController.addEventListener('dragStart', event => {
+         const {cellX, cellY} = event.detail;
+         placeX = cellX;
+         placeY = cellY;
+      });
+
       // Listen for cell clicks
       this.cameraController.addEventListener('cellClick', event => {
-         const {cellX, cellY} = event.detail;
-         this.handleCellClick(cellX, cellY);
+         this.handleCellClick(placeX, placeY);
       });
 
       // Listen for pointer moves to update hover

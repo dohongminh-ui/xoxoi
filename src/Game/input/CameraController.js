@@ -133,9 +133,13 @@ export class CameraController extends EventTarget {
       this.lastDragTime = Date.now();
       this.velocity = {x: 0, y: 0};
 
+      const pos = event.data.getLocalPosition(this.gridContainer);
+      const cellX = Math.floor(pos.x / CELL_SIZE);
+      const cellY = Math.floor(pos.y / CELL_SIZE);
+
       this.dispatchEvent(
          new CustomEvent('dragStart', {
-            detail: {position: this.dragStart},
+            detail: {position: this.dragStart, cellX: cellX, cellY: cellY},
          })
       );
    }
@@ -222,13 +226,9 @@ export class CameraController extends EventTarget {
 
       // Emit click event if it was a click rather than a drag
       if (wasClick) {
-         const pos = event.data.getLocalPosition(this.gridContainer);
-         const cellX = Math.floor(pos.x / CELL_SIZE);
-         const cellY = Math.floor(pos.y / CELL_SIZE);
-
          this.dispatchEvent(
             new CustomEvent('cellClick', {
-               detail: {cellX, cellY, event},
+               detail: {event},
             })
          );
       }
