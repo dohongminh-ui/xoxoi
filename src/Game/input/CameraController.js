@@ -20,6 +20,7 @@ export class CameraController extends EventTarget {
       this.hasMoved = false;
       this.totalMovement = 0;
       this.dragStart = {x: 0, y: 0};
+      this.initialDown = {x: 0, y: 0};
       this.lastDragPosition = null;
       this.lastDragTime = 0;
 
@@ -127,6 +128,7 @@ export class CameraController extends EventTarget {
       this.hasMoved = false;
       this.totalMovement = 0;
       this.dragStart = event.data.getLocalPosition(this.app.stage);
+      this.initialDown = {...this.dragStart};
       this.lastDragPosition = {...this.dragStart};
       this.lastDragTime = Date.now();
       this.velocity = {x: 0, y: 0};
@@ -165,8 +167,11 @@ export class CameraController extends EventTarget {
          const dy = newPosition.y - this.dragStart.y;
          this.totalMovement += Math.sqrt(dx * dx + dy * dy);
 
-         // Determine if this counts as significant movement
-         if (this.totalMovement > 10) {
+         // Use deadzone from the original pointer down to avoid false drags
+         const netDx = newPosition.x - this.initialDown.x;
+         const netDy = newPosition.y - this.initialDown.y;
+         const netDistance = Math.hypot(netDx, netDy);
+         if (netDistance > GAME_CONSTANTS.DRAG_DEADZONE) {
             this.hasMoved = true;
          }
 
@@ -213,6 +218,7 @@ export class CameraController extends EventTarget {
       const wasClick = this.isDragging && !this.hasMoved;
 
       this.isDragging = false;
+      this.initialDown = {x: 0, y: 0};
 
       // Emit click event if it was a click rather than a drag
       if (wasClick) {

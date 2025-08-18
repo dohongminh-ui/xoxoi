@@ -567,18 +567,31 @@ export class GameEngine {
     * Handle cell click events
     */
    handleCellClick(cellX, cellY) {
-      console.log(`Cell clicked: ${cellX}, ${cellY}`);
-      console.log('GameLogic available:', !!this.gameLogic);
-
-      if (this.gameLogic) {
-         console.log('GameLogic gameMode:', this.gameLogic.gameMode);
-         console.log('GameLogic isGameOver:', this.gameLogic.isGameOver);
+      try {
+         let gameEnded = false;
+         if (this.gameStateManager) {
+            const state = this.gameStateManager.getState();
+            gameEnded = !!(
+               state?.isGameOver || state?.gamePhase === this.gameStateManager.GAME_PHASES.ENDED
+            );
+         } else if (this.gameLogic) {
+            gameEnded = !!this.gameLogic.isGameOver;
+         }
+         if (gameEnded) {
+            console.log('Cell click ignored: game has ended');
+            return false;
+         }
+      } catch (e) {
+         // Non-fatal; proceed with best effort
       }
+
+      let moveSucceeded = false;
 
       // Use GameLogic for move validation and placement
       if (this.gameLogic) {
          const result = this.gameLogic.placeMark(cellX, cellY);
          console.log('placeMark result:', result);
+         moveSucceeded = !!result?.success;
       } else {
          // Fallback to test code if GameLogic isn't available
          const player = Math.random() > 0.5 ? 'X' : 'O';
@@ -592,7 +605,7 @@ export class GameEngine {
          // Don't place if cell is already occupied
          if (this.placedMarks.has(coordKey)) {
             console.log('Cell already occupied');
-            return;
+            return false;
          }
 
          // Add the mark
@@ -606,12 +619,16 @@ export class GameEngine {
 
          // Highlight the move
          this.gridRenderer.highlightLastMove(cellX, cellY, player);
+
+         moveSucceeded = true;
       }
 
       // Adjust camera to ensure mark is visible
-      if (this.cameraController) {
+      if (moveSucceeded && this.cameraController) {
          this.cameraController.adjustToCell(cellX, cellY);
       }
+
+      return moveSucceeded;
    }
 
    /**

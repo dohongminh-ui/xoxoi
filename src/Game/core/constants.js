@@ -16,6 +16,8 @@ export const GAME_CONSTANTS = {
    VELOCITY_DAMPING: 0.3,
    CAMERA_SPEED: 0.1,
    MARK_PADDING: 20,
+   // Input thresholds
+   DRAG_DEADZONE: 15,
 
    // Game rules
    WINNING_LENGTH: 5,
@@ -45,6 +47,7 @@ export const {
    VELOCITY_DAMPING,
    CAMERA_SPEED,
    MARK_PADDING,
+   DRAG_DEADZONE,
    WINNING_LENGTH,
    COLORS,
 } = GAME_CONSTANTS;
