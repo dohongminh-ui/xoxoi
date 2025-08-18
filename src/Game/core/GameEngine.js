@@ -314,26 +314,23 @@ export class GameEngine {
          const {winner, winningCells} = event.detail;
          console.log(`Game won by ${winner}!`, 'Winning cells:', winningCells);
 
-         // Show winning animation if renderer supports it
-         if (this.gridRenderer && this.gridRenderer.animateWinningLine) {
-            console.log('Calling animateWinningLine with:', winningCells);
-            await this.gridRenderer.animateWinningLine(winningCells);
-         } else {
-            console.log('GridRenderer or animateWinningLine method not available');
-         }
-
          // end the game after win
          this.gameStateManager.endGame({
             winner,
             winningCells,
             reason: 'game finished',
          });
+
          this.gameLogic.dispatchEvent(new CustomEvent('gameEnded'));
+
+         if (this.gridRenderer?.animateWinningLine) {
+            await this.gridRenderer.animateWinningLine(winningCells);
+         }
       });
 
       // Listen for draws
       this.gameLogic.addEventListener('gameDraw', event => {
-         console.log('Game ended in a draw!');
+         console.log('Game ended in a draw?');
       });
 
       // Listen for game state changes

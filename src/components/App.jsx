@@ -6,16 +6,13 @@ import {GameUI} from './index.js';
 function App() {
    const pixiContainerRef = useRef(null);
    const {gameEngine, gameInitialized, error} = useGameEngine(pixiContainerRef);
-   const {statusBarState, statusBarActions, updateGameStatus, showButtons} =
-      useStatusBar(gameEngine);
+   const {statusBarState, statusBarActions} = useStatusBar(gameEngine);
    const {
       isMenuVisible,
       handleStartSinglePlayer,
       handleStartBotGame,
       handleCreateMultiplayer,
       handleJoinMultiplayer,
-      showMenu,
-      hideMenu,
    } = useMenuOverlay(gameEngine);
 
    React.useEffect(() => {

@@ -172,10 +172,8 @@ export class UIRenderer extends EventTarget {
          this.hideMenu();
          this.updateButtonState(this.buttonStates.IN_GAME);
       });
-      gsm.addEventListener('gameEnded', e => {
-         const {winner} = e.detail;
-         this.updateGameStatus(winner ? `Game Over - Player ${winner} wins!` : 'Game Over - Draw!');
-         this.updateButtonState(this.buttonStates.GAME_OVER);
+      gsm.addEventListener('gameEnded', () => {
+         this.updateUI();
       });
 
       gsm.addEventListener('turnChange', () => {
