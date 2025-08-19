@@ -1,57 +1,48 @@
 import {WINNING_LENGTH} from '../core/constants';
 import {coordKey, parseCoordKey} from '../core/utils';
+import type {Mark, MoveRecord, PotentialWinLine} from '../../types/engine';
+import type {
+   GameStartOptions,
+   PlacedMarkEntry,
+   Bounds,
+   MoveValidationResult,
+   PlaceMarkResult,
+   GameLogicState,
+} from '../../types/logic';
 
 /**
  * GameLogic handles all game rules, validation, and state management
  * Including move placement, win detection, turn management, and game state
  */
-type GameStartOptions = {
-   playerMark?: 'X' | 'O';
-   roomId?: string;
-   isMyTurn?: boolean;
-   hasOpponent?: boolean;
-   currentPlayer?: 'X' | 'O';
-};
 
 export class GameLogic extends EventTarget {
    gameMode: 'single' | 'bot' | 'multi' | null;
-   currentPlayer: 'X' | 'O';
+   currentPlayer: Mark;
    isGameOver: boolean;
-   playerMark: string;
+   playerMark: Mark | '';
    roomId: string;
    isMyTurn: boolean;
    hasOpponent: boolean;
-   placedMarks: Map<string, any>;
-   potentialWins: Map<string, any>;
+   placedMarks: Map<string, PlacedMarkEntry>;
+   potentialWins: Map<string, PotentialWinLine>;
    winningCells: Array<[number, number]> | null;
-   moveHistory: Array<any>;
+   moveHistory: Array<MoveRecord>;
    constructor() {
       super();
 
       // Game state
-
       this.gameMode = null; // 'null', 'single', 'bot', 'multi'
-
       this.currentPlayer = 'X';
-
       this.isGameOver = false;
-
       this.playerMark = ''; // For multiplayer
-
       this.roomId = ''; // For multiplayer
-
       this.isMyTurn = false; // For multiplayer
-
       this.hasOpponent = false; // For multiplayer
 
       // Game data
-
-      this.placedMarks = new Map(); // coordKey -> { player, graphics }
-
+      this.placedMarks = new Map(); // coordKey -> { player, coords, timestamp }
       this.potentialWins = new Map(); // For AI analysis
-
       this.winningCells = null;
-
       this.moveHistory = []; // Array of moves for replay/undo
    }
 
@@ -62,19 +53,16 @@ export class GameLogic extends EventTarget {
     */
    startGame(mode: 'single' | 'bot' | 'multi', options: GameStartOptions = {}) {
       this.resetGame();
-
       this.gameMode = mode;
 
       switch (mode) {
          case 'single':
             this.currentPlayer = 'X';
-
             this.isMyTurn = true;
             break;
 
          case 'bot':
             this.currentPlayer = 'X';
-
             this.isMyTurn = true;
             break;
 
@@ -86,7 +74,6 @@ export class GameLogic extends EventTarget {
                hasOpponent = false,
                currentPlayer = 'X',
             } = options;
-
             this.playerMark = playerMark;
             this.roomId = roomId;
             this.isMyTurn = isMyTurn;
@@ -100,7 +87,6 @@ export class GameLogic extends EventTarget {
          new CustomEvent('gameStarted', {
             detail: {
                mode: this.gameMode,
-
                currentPlayer: this.currentPlayer,
                gameState: this.getGameState(),
             },
@@ -115,13 +101,11 @@ export class GameLogic extends EventTarget {
     * @param {Object} options - Additional options
     * @returns {Object} Result of the move attempt
     */
-   placeMark(cellX: any, cellY: any, options = {}) {
+   placeMark(cellX: number, cellY: number, options: Record<string, unknown> = {}): PlaceMarkResult {
       console.log('placeMark called:', {
          cellX,
          cellY,
-
          gameMode: this.gameMode,
-
          isGameOver: this.isGameOver,
       });
 
@@ -142,7 +126,6 @@ export class GameLogic extends EventTarget {
       const player = this.currentPlayer;
 
       // For multiplayer, emit to server instead of placing directly
-
       if (this.gameMode === 'multi') {
          this.dispatchEvent(
             new CustomEvent('multiplayerMove', {
@@ -175,23 +158,25 @@ export class GameLogic extends EventTarget {
     * @param {Object} options - Additional options
     * @returns {Object} Result of the move
     */
-   executeMove(cellX: number, cellY: number, player: 'X' | 'O', options: any = {}) {
+   executeMove(
+      cellX: number,
+      cellY: number,
+      player: Mark,
+      options: Record<string, unknown> = {}
+   ): PlaceMarkResult {
       const key = coordKey(cellX, cellY);
 
       // Double-check the cell isn't occupied (safety check)
-
       if (this.placedMarks.has(key)) {
          return {
             success: false,
             reason: 'Cell already occupied',
             cellX,
             cellY,
-            player,
          };
       }
 
       // Store the move
-
       this.placedMarks.set(key, {
          player,
          cellX,
@@ -200,7 +185,6 @@ export class GameLogic extends EventTarget {
       });
 
       // Add to move history
-
       this.moveHistory.push({cellX, cellY, player, timestamp: Date.now()});
 
       // Emit move placed event
@@ -219,7 +203,6 @@ export class GameLogic extends EventTarget {
       const winningCells = this.checkWin(cellX, cellY, player);
       if (winningCells) {
          this.isGameOver = true;
-
          this.winningCells = winningCells as [number, number][];
 
          this.dispatchEvent(
@@ -263,7 +246,6 @@ export class GameLogic extends EventTarget {
       }
 
       // Switch turns (for local games)
-
       if (this.gameMode === 'single' || this.gameMode === 'bot') {
          this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
 
@@ -293,15 +275,13 @@ export class GameLogic extends EventTarget {
     * @param {number} cellY - Cell Y coordinate
     * @returns {Object} Validation result
     */
-   validateMove(cellX: any, cellY: any) {
+   validateMove(cellX: number, cellY: number): MoveValidationResult {
       // Check if game is over
-
       if (this.isGameOver) {
          return {isValid: false, reason: 'Game is over'};
       }
 
       // Check if game mode is set
-
       if (!this.gameMode) {
          return {isValid: false, reason: 'No game mode set'};
       }
@@ -313,13 +293,11 @@ export class GameLogic extends EventTarget {
 
       // Check if cell is already occupied
       const key = coordKey(cellX, cellY);
-
       if (this.placedMarks.has(key)) {
          return {isValid: false, reason: 'Cell already occupied'};
       }
 
       // Check multiplayer-specific conditions
-
       if (this.gameMode === 'multi') {
          if (!this.isMyTurn) {
             return {isValid: false, reason: 'Not your turn'};
@@ -340,7 +318,7 @@ export class GameLogic extends EventTarget {
     * @param {string} player - Player who made the move
     * @returns {Array|false} Array of winning cells or false if no win
     */
-   checkWin(cellX: number, cellY: number, player: 'X' | 'O'): [number, number][] | false {
+   checkWin(cellX: number, cellY: number, player: Mark): [number, number][] | false {
       const directions = [
          [1, 0], // horizontal
          [0, 1], // vertical
@@ -352,7 +330,6 @@ export class GameLogic extends EventTarget {
          let count = 1;
          let blocked = 0;
          const cells: [number, number][] = [[cellX, cellY]];
-
          const dirKey = `${dx},${dy}`;
 
          // Check both directions from the placed mark
@@ -360,10 +337,8 @@ export class GameLogic extends EventTarget {
             let consecutive = 0;
             for (let i = 1; i < WINNING_LENGTH; i++) {
                const newX = cellX + dx * i * dir;
-
                const newY = cellY + dy * i * dir;
                const checkKey = coordKey(newX, newY);
-
                const cell = this.placedMarks.get(checkKey);
 
                if (cell?.player === player) {
@@ -373,13 +348,16 @@ export class GameLogic extends EventTarget {
 
                   // Update potential wins map for AI analysis
                   const lineKey = `${dirKey},${newX},${newY}`;
-
                   const existing = this.potentialWins.get(lineKey) || {
                      count: 0,
-                     cells: [],
+                     cells: [] as [number, number][],
                   };
                   existing.count = Math.max(existing.count, consecutive + 1);
-                  existing.cells = [...new Set([...existing.cells, [newX, newY]])];
+                  const nextCell: [number, number] = [newX, newY];
+                  const seen = new Set(existing.cells.map(c => `${c[0]},${c[1]}`));
+                  if (!seen.has(`${nextCell[0]},${nextCell[1]}`)) {
+                     existing.cells = [...existing.cells, nextCell];
+                  }
 
                   this.potentialWins.set(lineKey, existing);
                } else {
@@ -402,7 +380,6 @@ export class GameLogic extends EventTarget {
          // Clean up potential wins that are now blocked
          if (blocked === 2 && count < WINNING_LENGTH) {
             const lineKey = `${dirKey},${cellX},${cellY}`;
-
             this.potentialWins.delete(lineKey);
          }
       }
@@ -414,7 +391,7 @@ export class GameLogic extends EventTarget {
     * Check if the game is a draw (board full with no winner)
     * @returns {boolean} True if the game is a draw
     */
-   checkDraw() {
+   checkDraw(): boolean {
       // For an infinite grid, we don't check for draws the traditional way
       // Instead, we could implement an user's specified time limit or other draw conditions
       // For now, return false as draws are impossible in infinite tic-tac-toe
@@ -427,9 +404,7 @@ export class GameLogic extends EventTarget {
     * @param {Object} bounds - Optional bounds to limit the search area
     * @returns {Array} Array of valid move coordinates
     */
-   getValidMoves(
-      bounds: {minX: number; maxX: number; minY: number; maxY: number} | null = null
-   ): Array<any> {
+   getValidMoves(bounds: Bounds | null = null): Array<{x: number; y: number}> {
       if (this.isGameOver) return [];
 
       const validMoves: Array<{x: number; y: number}> = [];
@@ -458,7 +433,7 @@ export class GameLogic extends EventTarget {
     * Calculate reasonable game bounds based on placed marks
     * @returns {Object} Bounds object with minX, maxX, minY, maxY
     */
-   calculateGameBounds() {
+   calculateGameBounds(): Bounds {
       if (this.placedMarks.size === 0) {
          return {minX: -2, maxX: 2, minY: -2, maxY: 2};
       }
@@ -489,30 +464,19 @@ export class GameLogic extends EventTarget {
     * Get current game state
     * @returns {Object} Current game state
     */
-   getGameState() {
+   getGameState(): GameLogicState {
       return {
          gameMode: this.gameMode,
-
          currentPlayer: this.currentPlayer,
-
          isGameOver: this.isGameOver,
-
          playerMark: this.playerMark,
-
          roomId: this.roomId,
-
          isMyTurn: this.isMyTurn,
-
          hasOpponent: this.hasOpponent,
-
          placedMarks: new Map(this.placedMarks),
-
          potentialWins: new Map(this.potentialWins),
-
          winningCells: this.winningCells,
-
          moveHistory: [...this.moveHistory],
-
          moveCount: this.placedMarks.size,
       };
    }
@@ -521,7 +485,7 @@ export class GameLogic extends EventTarget {
     * Update game state (for multiplayer updates)
     * @param {Object} newState - New state to merge
     */
-   updateGameState(newState: any) {
+   updateGameState(newState: Partial<GameLogicState>) {
       const oldState = this.getGameState();
 
       // Update properties
@@ -543,25 +507,15 @@ export class GameLogic extends EventTarget {
     */
    resetGame() {
       this.gameMode = null;
-
       this.currentPlayer = 'X';
-
       this.isGameOver = false;
-
       this.playerMark = '';
-
       this.roomId = '';
-
       this.isMyTurn = false;
-
       this.hasOpponent = false;
-
       this.placedMarks.clear();
-
       this.potentialWins.clear();
-
       this.winningCells = null;
-
       this.moveHistory = [];
 
       this.dispatchEvent(
@@ -577,9 +531,8 @@ export class GameLogic extends EventTarget {
     * @param {number} cellY - Cell Y coordinate
     * @returns {Object|null} Mark data or null if empty
     */
-   getMarkAt(cellX: any, cellY: any) {
+   getMarkAt(cellX: number, cellY: number): PlacedMarkEntry | null {
       const key = coordKey(cellX, cellY);
-
       return this.placedMarks.get(key) || null;
    }
 
@@ -589,9 +542,8 @@ export class GameLogic extends EventTarget {
     * @param {number} cellY - Cell Y coordinate
     * @returns {boolean} True if cell is empty
     */
-   isCellEmpty(cellX: any, cellY: any) {
+   isCellEmpty(cellX: number, cellY: number): boolean {
       const key = coordKey(cellX, cellY);
-
       return !this.placedMarks.has(key);
    }
 
@@ -600,8 +552,8 @@ export class GameLogic extends EventTarget {
     * @param {string} player - Player to get marks for
     * @returns {Array} Array of mark coordinates
     */
-   getPlayerMarks(player: any) {
-      const marks = [];
+   getPlayerMarks(player: Mark): Array<PlacedMarkEntry & {x: number; y: number}> {
+      const marks: Array<PlacedMarkEntry & {x: number; y: number}> = [];
 
       for (const [key, mark] of this.placedMarks) {
          if (mark.player === player) {
@@ -617,21 +569,21 @@ export class GameLogic extends EventTarget {
     */
    requestRematch() {
       const currentState = this.getGameState();
-
       if (!currentState.isGameOver) return;
 
       switch (currentState.gameMode) {
          case 'single':
-            (window as any).gameEngine?.startSinglePlayerGame();
+            window.gameEngine?.startSinglePlayerGame();
             break;
          case 'bot':
-            (window as any).gameEngine?.startBotGame();
+            window.gameEngine?.startBotGame();
             break;
          case 'multi':
             //idk update status bar or smt
+            // we dont even have a server for this yet lmao
             break;
          default:
-            (window as any).gameEngine?.leaveMultiplayerGame();
+            window.gameEngine?.leaveMultiplayerGame();
             break;
       }
    }

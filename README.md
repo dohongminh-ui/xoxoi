@@ -349,5 +349,4 @@ result.
 ## Contribute
 
 - slavery: [todo list in trello](https://trello.com/b/e5EF2jcw/xoxo)
-- and someone to help me convert this project to typescript
-  :sob::wilted_flower::broken_heart::pray:
+- and someone to help me convert this project to typescript :sob::wilted_flower::broken_heart::pray:

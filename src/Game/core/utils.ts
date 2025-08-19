@@ -8,7 +8,7 @@
  * @param {number} y - Y coordinate
  * @returns {string} Coordinate key
  */
-export function coordKey(x: any, y: any) {
+export function coordKey(x: number, y: number): string {
    return `${x},${y}`;
 }
 
@@ -17,9 +17,11 @@ export function coordKey(x: any, y: any) {
  * @param {string} key - Coordinate key
  * @returns {Object} Object with x, y properties
  */
-export function parseCoordKey(key: any) {
-   const [x, y] = key.split(',').map(Number);
-   return {x, y};
+export function parseCoordKey(key: string): {x: number; y: number} {
+   const [xs, ys] = key.split(',');
+   const x = Number(xs);
+   const y = Number(ys);
+   return {x: Number.isFinite(x) ? x : 0, y: Number.isFinite(y) ? y : 0};
 }
 
 /**
@@ -29,7 +31,7 @@ export function parseCoordKey(key: any) {
  * @param {number} max - Maximum value
  * @returns {number} Clamped value
  */
-export function clamp(value: any, min: any, max: any) {
+export function clamp(value: number, min: number, max: number): number {
    return Math.min(Math.max(value, min), max);
 }
 
@@ -40,7 +42,7 @@ export function clamp(value: any, min: any, max: any) {
  * @param {number} t - Interpolation factor (0-1)
  * @returns {number} Interpolated value
  */
-export function lerp(start: any, end: any, t: any) {
+export function lerp(start: number, end: number, t: number): number {
    return start + (end - start) * t;
 }
 
@@ -50,7 +52,7 @@ export function lerp(start: any, end: any, t: any) {
  * @param {Object} point2 - Second point {x, y}
  * @returns {number} Distance between points
  */
-export function distance(point1: any, point2: any) {
+export function distance(point1: {x: number; y: number}, point2: {x: number; y: number}): number {
    const dx = point2.x - point1.x;
    const dy = point2.y - point1.y;
    return Math.sqrt(dx * dx + dy * dy);
@@ -62,14 +64,14 @@ export function distance(point1: any, point2: any) {
  * @param {number} wait - Wait time in milliseconds
  * @returns {Function} Debounced function
  */
-export function debounce(func: any, wait: any) {
-   let timeout: any;
-   return function executedFunction(...args: any[]) {
+export function debounce<T extends (...args: any[]) => void>(func: T, wait: number): Function {
+   let timeout: ReturnType<typeof setTimeout> | undefined;
+   return function executedFunction(this: ThisParameterType<T>, ...args: Parameters<T>) {
       const later = () => {
-         clearTimeout(timeout);
-         func(...args);
+         if (timeout) clearTimeout(timeout);
+         func.apply(this, args);
       };
-      clearTimeout(timeout);
+      if (timeout) clearTimeout(timeout);
       timeout = setTimeout(later, wait);
    };
 }

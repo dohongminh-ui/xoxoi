@@ -1,5 +1,19 @@
 import './StatusBar.css';
 
+type StatusBarProps = {
+   gameStatus?: string;
+   showRestartButton?: boolean;
+   showAcceptRematchButton?: boolean;
+   showDeclineRematchButton?: boolean;
+   showCancelRematchButton?: boolean;
+   showExitGameButton?: boolean;
+   onRestart?: () => void;
+   onAcceptRematch?: () => void;
+   onDeclineRematch?: () => void;
+   onCancelRematch?: () => void;
+   onExitGame?: () => void;
+};
+
 const StatusBar = ({
    gameStatus = 'toe',
    showRestartButton = false,
@@ -12,7 +26,7 @@ const StatusBar = ({
    onDeclineRematch,
    onCancelRematch,
    onExitGame,
-}: any) => {
+}: StatusBarProps) => {
    return (
       <div className='status-bar noselect' id='statusBar'>
          <span className='game-status' id='gameStatus'>

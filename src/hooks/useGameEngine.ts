@@ -34,9 +34,7 @@ export const useGameEngine = (
             gameEngineRef.current = new GameEngine();
             await gameEngineRef.current.init();
 
-            const pixiCanvas = (gameEngineRef.current as any).app?.view as
-               | HTMLCanvasElement
-               | undefined;
+            const pixiCanvas = gameEngineRef.current?.app?.view as HTMLCanvasElement | undefined;
             if (containerRef.current && pixiCanvas) {
                containerRef.current.innerHTML = '';
                containerRef.current.appendChild(pixiCanvas);
@@ -55,8 +53,8 @@ export const useGameEngine = (
 
       return () => {
          clearTimeout(timeoutId);
-         if (gameEngineRef.current && (gameEngineRef.current as any).app) {
-            (gameEngineRef.current as any).app.destroy(true, true);
+         if (gameEngineRef.current?.app) {
+            gameEngineRef.current.app.destroy?.(true);
          }
       };
    }, [containerRef]);

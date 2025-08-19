@@ -1,4 +1,5 @@
 // Augment GameEngine surface for UI hooks usage without depending on internals
+
 import type {GameEngine as _GameEngine} from '../Game/core/GameEngine';
 import type {
    GridRendererLike,

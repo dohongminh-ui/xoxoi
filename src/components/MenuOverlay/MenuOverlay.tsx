@@ -1,6 +1,11 @@
 import './MenuOverlay.css';
 
-const MenuOverlay = ({isVisible = true, children}: any) => {
+type MenuOverlayProps = {
+   isVisible?: boolean;
+   children?: React.ReactNode;
+};
+
+const MenuOverlay = ({isVisible = true, children}: MenuOverlayProps) => {
    if (!isVisible) {
       return null;
    }

@@ -1,4 +1,5 @@
-// PIXI is loaded via CDN in index.html; provide minimal-but-useful typings for the parts we use.
+// PIXI is loaded via CDN in index.html; provide minimal-but-useful typings for the parts we use
+
 declare namespace PIXI {
    interface PointLike {
       x: number;

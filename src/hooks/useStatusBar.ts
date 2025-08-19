@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import type {GameEngine} from '../Game/core/GameEngine';
+import type {ButtonState} from '../types/engine';
 
 /**
  * Custom hook for managing status bar state and actions
@@ -13,8 +14,7 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
    const [showCancelRematchButton, setShowCancelRematchButton] = useState(false);
    const [showExitGameButton, setShowExitGameButton] = useState(false);
 
-   // Helper: map GameStateManager buttonState to local flags
-   const applyButtonState = (buttonState: any) => {
+   const applyButtonState = (buttonState: ButtonState) => {
       const flags = {
          restart: false,
          acceptRematch: false,
@@ -60,7 +60,10 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       if (!gsm) return;
 
       const sync = () => {
-         const state: any = gsm.getState ? gsm.getState() : {};
+         const state = (gsm.getState ? gsm.getState() : {}) as {
+            statusMessage?: string;
+            buttonState?: ButtonState;
+         };
          setGameStatus(state.statusMessage || 'toe');
          applyButtonState(state.buttonState);
       };
@@ -68,7 +71,8 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       sync();
 
       const onStateChanged = () => sync();
-      const onButtonChanged = (e: any) => applyButtonState(e.detail?.to);
+      const onButtonChanged = (e: CustomEvent<{from?: ButtonState; to?: ButtonState}>) =>
+         applyButtonState(e.detail?.to);
       const onTurnChange = () => sync();
       const onGameStarted = () => sync();
       const onGameEnded = () => sync();
@@ -76,7 +80,7 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
 
       gsm.addEventListener('stateInitialized', onStateChanged);
       gsm.addEventListener('stateChanged', onStateChanged);
-      gsm.addEventListener('stateButtonStateChanged', onButtonChanged);
+      gsm.addEventListener('stateButtonStateChanged', onButtonChanged as EventListener);
       gsm.addEventListener('turnChange', onTurnChange);
       gsm.addEventListener('gameStarted', onGameStarted);
       gsm.addEventListener('gameEnded', onGameEnded);
@@ -86,7 +90,7 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       return () => {
          gsm.removeEventListener('stateInitialized', onStateChanged);
          gsm.removeEventListener('stateChanged', onStateChanged);
-         gsm.removeEventListener('stateButtonStateChanged', onButtonChanged);
+         gsm.removeEventListener('stateButtonStateChanged', onButtonChanged as EventListener);
          gsm.removeEventListener('turnChange', onTurnChange);
          gsm.removeEventListener('gameStarted', onGameStarted);
          gsm.removeEventListener('gameEnded', onGameEnded);
@@ -145,7 +149,7 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       }
    };
 
-   const updateGameStatus = (status: any) => setGameStatus(status);
+   const updateGameStatus = (status: string) => setGameStatus(status);
 
    const showButtons = ({
       restart = false,
@@ -153,6 +157,12 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       declineRematch = false,
       cancelRematch = false,
       exitGame = false,
+   }: {
+      restart?: boolean;
+      acceptRematch?: boolean;
+      declineRematch?: boolean;
+      cancelRematch?: boolean;
+      exitGame?: boolean;
    }) => {
       setShowRestartButton(restart);
       setShowAcceptRematchButton(acceptRematch);

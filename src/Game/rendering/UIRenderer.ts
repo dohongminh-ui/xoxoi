@@ -71,31 +71,18 @@ export class UIRenderer extends EventTarget {
     */
    cacheElements() {
       this.elements.statusBar = document.getElementById('statusBar');
-
       this.elements.gameStatus = document.getElementById('gameStatus');
-
       this.elements.restartButton = document.getElementById('restartButton');
-
       this.elements.acceptRematchButton = document.getElementById('acceptRematchButton');
-
       this.elements.declineRematchButton = document.getElementById('declineRematchButton');
-
       this.elements.cancelRematchButton = document.getElementById('cancelRematchButton');
-
       this.elements.exitGameButton = document.getElementById('exitGameButton');
-
       this.elements.menuOverlay = document.getElementById('menuOverlay');
-
       this.elements.menuContent = document.getElementById('menuContent');
-
       this.elements.singlePlayerBtn = document.getElementById('singlePlayerBtn');
-
       this.elements.playWithBotBtn = document.getElementById('playWithBotBtn');
-
       this.elements.createGameBtn = document.getElementById('createGameBtn');
-
       this.elements.joinGameBtn = document.getElementById('joinGameBtn');
-
       this.elements.roomIdInput = document.getElementById('roomIdInput');
    }
 
@@ -227,7 +214,7 @@ export class UIRenderer extends EventTarget {
     * Update button visibility based on game state
     * @param {string} state - Button state constant
     */
-   updateButtonState(state: any) {
+   updateButtonState(state: string | null) {
       const buttons = {
          restartButton: false,
          acceptRematchButton: false,
@@ -274,7 +261,7 @@ export class UIRenderer extends EventTarget {
     * Update game status text
     * @param {string} text - Status text to display
     */
-   updateGameStatus(text: any) {
+   updateGameStatus(text: string) {
       if (this.elements.gameStatus) {
          this.elements.gameStatus.textContent = text;
       }
@@ -289,7 +276,6 @@ export class UIRenderer extends EventTarget {
       }
 
       // Clear room ID input when showing menu
-
       if (this.elements.roomIdInput) {
          this.elements.roomIdInput.value = '';
       }
@@ -309,7 +295,7 @@ export class UIRenderer extends EventTarget {
     * @param {string} message - Message to display
     * @param {number} duration - Duration in milliseconds
     */
-   showMessage(message: any, duration = 3000) {
+   showMessage(message: string, duration: number = 3000) {
       // Create temporary message element
       const messageEl = document.createElement('div');
       messageEl.textContent = message;
@@ -341,7 +327,7 @@ export class UIRenderer extends EventTarget {
     * Update room ID display in various places
     * @param {string} roomId - Room ID to display
     */
-   updateRoomIdDisplay(roomId: any) {
+   updateRoomIdDisplay(roomId: string) {
       if (roomId) {
          this.updateGameStatus(`Room: ${roomId}`);
       }
@@ -360,7 +346,7 @@ export class UIRenderer extends EventTarget {
     * Get current room ID from input
     * @returns {string} Room ID
     */
-   getRoomIdInput() {
+   getRoomIdInput(): string {
       return this.elements.roomIdInput?.value?.trim() || '';
    }
 
@@ -404,7 +390,6 @@ export class UIRenderer extends EventTarget {
     */
    destroy() {
       // Remove event listeners and clean up resources
-
       this.initialized = false;
    }
 
@@ -412,7 +397,7 @@ export class UIRenderer extends EventTarget {
     * Get current initialization status
     * @returns {boolean} Whether the renderer is initialized
     */
-   isInitialized() {
+   isInitialized(): boolean {
       return this.initialized;
    }
 }

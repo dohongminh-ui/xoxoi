@@ -11,6 +11,29 @@ export interface PlacedMark {
 
 export type PlacedMarksMap = Map<string, PlacedMark>;
 
+// Game/logic specific shapes
+export interface MoveRecord {
+   cellX: number;
+   cellY: number;
+   player: Mark;
+   timestamp: number;
+}
+
+export interface PotentialWinLine {
+   count: number;
+   cells: [number, number][];
+}
+
+export type ButtonState =
+   | 'in_game'
+   | 'game_over'
+   | 'rematch_request'
+   | 'waiting_rematch'
+   | 'opponent_left'
+   | 'menu'
+   | 'lobby'
+   | undefined;
+
 export interface GameStateShape {
    gameMode?: ('single' | 'bot' | 'multi' | string) | undefined;
    gamePhase?: ('menu' | 'playing' | 'ended' | string) | undefined;

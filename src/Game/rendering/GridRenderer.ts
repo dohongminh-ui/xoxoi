@@ -25,15 +25,10 @@ export class GridRenderer {
       }
 
       this.app = app;
-
       this.gridContainer = gridContainer;
-
       this.hoverGraphics = new PIXI.Graphics();
-
       this.currentHighlight = null;
-
       this.winningCells = null;
-
       this.app.stage.addChild(this.hoverGraphics);
    }
 
@@ -65,9 +60,7 @@ export class GridRenderer {
       // Calculate visible grid bounds with padding
       const startX = Math.floor(-gridX / (CELL_SIZE * scale)) - 20;
       const startY = Math.floor(-gridY / (CELL_SIZE * scale)) - 20;
-
       const endX = startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
-
       const endY = startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
 
       // Draw vertical lines
@@ -214,7 +207,6 @@ export class GridRenderer {
    highlightLastMove(cellX: number, cellY: number, player: Mark) {
       if (this.currentHighlight) {
          this.gridContainer.removeChild(this.currentHighlight);
-
          this.currentHighlight = null;
       }
 
@@ -230,9 +222,7 @@ export class GridRenderer {
       highlight.endFill();
 
       highlight.isHighlight = true;
-
       this.gridContainer.addChild(highlight);
-
       this.currentHighlight = highlight;
    }
 
@@ -242,7 +232,6 @@ export class GridRenderer {
    clearHighlight() {
       if (this.currentHighlight) {
          this.gridContainer.removeChild(this.currentHighlight);
-
          this.currentHighlight = null;
       }
    }
@@ -305,7 +294,6 @@ export class GridRenderer {
          : (0x000000 as number);
 
       const worldX = cellX * CELL_SIZE * scale + this.gridContainer.x;
-
       const worldY = cellY * CELL_SIZE * scale + this.gridContainer.y;
 
       this.hoverGraphics.lineStyle(1, hoverColor, 0.3);
@@ -326,9 +314,7 @@ export class GridRenderer {
     */
    onResize() {
       const scale = this.gridContainer.scale.x;
-
       const gridX = this.gridContainer.x;
-
       const gridY = this.gridContainer.y;
       this.drawGrid(scale, gridX, gridY);
    }
@@ -338,9 +324,8 @@ export class GridRenderer {
     * @param {number} cellX - Cell X coordinate
     * @param {number} cellY - Cell Y coordinate
     * @param {string} player - Player ('X' or 'O')
-    * @param {number} scale - Current grid scale for sizing
     */
-   addPlayerMark(cellX: any, cellY: any, player: any) {
+   addPlayerMark(cellX: number, cellY: number, player: Mark): PIXI.Text {
       const text = new PIXI.Text(player, {
          fontSize: 40,
          fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,
@@ -357,7 +342,6 @@ export class GridRenderer {
       text.scale.set(textScale);
 
       text.isPlayerMark = true;
-
       this.gridContainer.addChild(text);
 
       return text;

@@ -2,13 +2,21 @@ import {useState} from 'react';
 import MenuOverlay from '../MenuOverlay/MenuOverlay';
 import './MainMenu.css';
 
+type MainMenuProps = {
+   isVisible?: boolean;
+   onStartSinglePlayer?: () => void;
+   onStartBotGame?: () => void;
+   onCreateMultiplayer?: () => void;
+   onJoinMultiplayer?: (roomId: string) => void;
+};
+
 const MainMenu = ({
    isVisible = true,
    onStartSinglePlayer,
    onStartBotGame,
    onCreateMultiplayer,
    onJoinMultiplayer,
-}: any) => {
+}: MainMenuProps) => {
    const [roomId, setRoomId] = useState('');
 
    const handleJoinGame = () => {
@@ -20,7 +28,7 @@ const MainMenu = ({
       }
    };
 
-   const handleKeyDown = (e: any) => {
+   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
          handleJoinGame();
       }
@@ -47,7 +55,7 @@ const MainMenu = ({
                   className='room-id-input'
                   placeholder='Enter Room ID'
                   value={roomId}
-                  onChange={(e: any) => setRoomId(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRoomId(e.target.value)}
                   onKeyDown={handleKeyDown}
                />
                <button className='menu-button join-game-btn' onClick={handleJoinGame}>

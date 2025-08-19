@@ -16,6 +16,7 @@ export const GAME_CONSTANTS = {
    VELOCITY_DAMPING: 0.3,
    CAMERA_SPEED: 0.1,
    MARK_PADDING: 20,
+
    // Input thresholds
    DRAG_DEADZONE: 15,
 
