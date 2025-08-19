@@ -1,12 +1,14 @@
 // Shared engine types used across engine, renderers, and controllers
 
-export type Mark = 'X' | 'O';
+import type {Mark, GameMode, GamePhase, ButtonState, GameState, CameraStateUpdate} from './state';
+
+export type {Mark, GameMode, GamePhase, ButtonState};
 
 export interface PlacedMark {
    player: Mark;
    x?: number;
    y?: number;
-   graphics?: any; // PIXI.Text
+   graphics?: any; // PIXI.Text or other graphics object
 }
 
 export type PlacedMarksMap = Map<string, PlacedMark>;
@@ -24,27 +26,17 @@ export interface PotentialWinLine {
    cells: [number, number][];
 }
 
-export type ButtonState =
-   | 'in_game'
-   | 'game_over'
-   | 'rematch_request'
-   | 'waiting_rematch'
-   | 'opponent_left'
-   | 'menu'
-   | 'lobby'
-   | undefined;
-
-export interface GameStateShape {
-   gameMode?: ('single' | 'bot' | 'multi' | string) | undefined;
-   gamePhase?: ('menu' | 'playing' | 'ended' | string) | undefined;
-   isGameOver?: boolean | undefined;
-   isMyTurn?: boolean | undefined;
-   hasOpponent?: boolean | undefined;
-   showMenu?: boolean | undefined;
-   isGameActive?: boolean | undefined;
+export interface GameStateShape extends Partial<GameState> {
+   gameMode?: GameMode;
+   gamePhase?: GamePhase;
+   isGameOver?: boolean;
+   isMyTurn?: boolean;
+   hasOpponent?: boolean;
+   showMenu?: boolean;
+   isGameActive?: boolean; // Computed property
 }
 
-export interface CameraStateShape {
+export interface CameraStateShape extends Required<CameraStateUpdate> {
    scale: number;
    x: number;
    y: number;
@@ -85,7 +77,7 @@ export interface GameLogicLike extends EventTarget {
    isGameOver?: boolean;
    getGameState?(): GameStateShape;
    placeMark?(x: number, y: number): {success: boolean} | undefined;
-   startGame(mode: 'single' | 'bot' | 'multi', options?: Record<string, any>): void;
+   startGame(mode: GameMode, options?: Record<string, any>): void;
    updateGameState?(state: Partial<GameStateShape>): void;
    executeMove?(x: number, y: number, player: Mark): void;
    resetGame?(): void;
@@ -117,7 +109,7 @@ export interface GameStateManagerLike extends EventTarget {
    isGameActive(): boolean;
    switchTurn?(): void;
    endGame?(opts: any): void;
-   startGame(mode: 'single' | 'bot' | 'multi', options?: any): void;
+   startGame(mode: GameMode, options?: any): void;
    resetGame?(opts?: any): void;
    set?(key: string, value: any): void;
    addEventListener(

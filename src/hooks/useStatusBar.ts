@@ -62,7 +62,7 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       const sync = () => {
          const state = (gsm.getState ? gsm.getState() : {}) as {
             statusMessage?: string;
-            buttonState?: ButtonState;
+            buttonState: ButtonState;
          };
          setGameStatus(state.statusMessage || 'toe');
          applyButtonState(state.buttonState);
@@ -71,8 +71,8 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       sync();
 
       const onStateChanged = () => sync();
-      const onButtonChanged = (e: CustomEvent<{from?: ButtonState; to?: ButtonState}>) =>
-         applyButtonState(e.detail?.to);
+      const onButtonChanged = (e: CustomEvent<{from: ButtonState; to: ButtonState}>) =>
+         applyButtonState(e.detail.to);
       const onTurnChange = () => sync();
       const onGameStarted = () => sync();
       const onGameEnded = () => sync();

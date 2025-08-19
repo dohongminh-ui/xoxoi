@@ -7,6 +7,7 @@ import type {
    GameStateManagerLike,
    UIRendererLike,
    PlacedMarksMap,
+   GameStateShape,
 } from '../../types/engine';
 
 /**
@@ -288,16 +289,16 @@ export class GameEngine {
             const gsmState = this.gameStateManager.getState();
             gameState = {
                ...gameState,
-               gamePhase: gsmState.gamePhase as any,
-               showMenu: gsmState.showMenu as any,
+               gamePhase: gsmState.gamePhase,
+               showMenu: gsmState.showMenu,
                isGameActive: this.gameStateManager.isGameActive(),
-            };
+            } as GameStateShape;
          }
 
          this.gridRenderer?.updateHoverCell(
             pointerEvent,
             cameraState?.scale ?? 1,
-            (gameState ?? {}) as any,
+            (gameState ?? {}) as GameStateShape,
             isDragging,
             hasMoved,
             this.placedMarks || new Map()
