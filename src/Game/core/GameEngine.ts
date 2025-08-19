@@ -1,23 +1,51 @@
-import {GAME_CONSTANTS} from './constants.js';
+import {GAME_CONSTANTS} from './constants';
+import type {
+   GridRendererLike,
+   CameraControllerLike,
+   GameLogicLike,
+   NetworkManagerLike,
+   GameStateManagerLike,
+   UIRendererLike,
+   PlacedMarksMap,
+} from '../../types/engine';
 
 /**
  * Main game engine that orchestrates all game components
  * Might need more optimization as components are added
  */
 export class GameEngine {
+   // Core PIXI objects
+   app: PIXI.Application | undefined;
+   gridContainer: PIXI.Container | undefined;
+
+   // Component instances
+   gridRenderer: GridRendererLike | undefined;
+   cameraController: CameraControllerLike | undefined;
+   inputHandler?: any;
+   gameLogic: GameLogicLike | undefined;
+   networkManager: NetworkManagerLike | undefined;
+   botController?: any;
+   gameStateManager: GameStateManagerLike | undefined;
+   uiRenderer: UIRendererLike | undefined;
+
+   // Dynamic component class registry
+   components: Record<string, any>;
+
+   // Tracking of placed marks on the grid (used by hover/highlight logic)
+   placedMarks: PlacedMarksMap | undefined;
    constructor() {
-      this.app = null;
-      this.gridContainer = null;
+      this.app = undefined;
+      this.gridContainer = undefined;
 
       // Component instances
-      this.gridRenderer = null;
-      this.cameraController = null;
-      this.inputHandler = null;
-      this.gameLogic = null;
-      this.networkManager = null;
-      this.botController = null;
-      this.gameStateManager = null;
-      this.uiRenderer = null;
+      this.gridRenderer = undefined;
+      this.cameraController = undefined;
+      this.inputHandler = undefined;
+      this.gameLogic = undefined;
+      this.networkManager = undefined;
+      this.botController = undefined;
+      this.gameStateManager = undefined;
+      this.uiRenderer = undefined;
 
       // Component classes (to be imported as we create them)
       this.components = {};
@@ -64,7 +92,7 @@ export class GameEngine {
 
       // Load GridRenderer component
       try {
-         const {GridRenderer} = await import('../rendering/GridRenderer.js');
+         const {GridRenderer} = await import('../rendering/GridRenderer');
          this.components.GridRenderer = GridRenderer;
          console.log('GridRenderer loaded successfully');
       } catch (error) {
@@ -73,7 +101,7 @@ export class GameEngine {
 
       // Load CameraController component
       try {
-         const {CameraController} = await import('../input/CameraController.js');
+         const {CameraController} = await import('../input/CameraController');
          this.components.CameraController = CameraController;
          console.log('CameraController loaded successfully');
       } catch (error) {
@@ -82,7 +110,7 @@ export class GameEngine {
 
       // Load GameLogic component
       try {
-         const {GameLogic} = await import('../game/GameLogic.js');
+         const {GameLogic} = await import('../game/GameLogic');
          this.components.GameLogic = GameLogic;
          console.log('GameLogic loaded successfully');
       } catch (error) {
@@ -91,7 +119,7 @@ export class GameEngine {
 
       // Load NetworkManager component
       try {
-         const {NetworkManager} = await import('../network/NetworkManager.js');
+         const {NetworkManager} = await import('../network/NetworkManager');
          this.components.NetworkManager = NetworkManager;
          console.log('NetworkManager loaded successfully');
       } catch (error) {
@@ -100,7 +128,7 @@ export class GameEngine {
 
       // Load GameStateManager component
       try {
-         const {GameStateManager} = await import('../game/GameStateManager.js');
+         const {GameStateManager} = await import('../game/GameStateManager');
          this.components.GameStateManager = GameStateManager;
          console.log('GameStateManager loaded successfully');
       } catch (error) {
@@ -109,7 +137,7 @@ export class GameEngine {
 
       // Load UIRenderer component
       try {
-         const {UIRenderer} = await import('../rendering/UIRenderer.js');
+         const {UIRenderer} = await import('../rendering/UIRenderer');
          this.components.UIRenderer = UIRenderer;
          console.log('UIRenderer loaded successfully');
       } catch (error) {
@@ -117,8 +145,8 @@ export class GameEngine {
       }
 
       // Future components will be loaded here as they're created
-      // this.components.InputHandler = (await import('../input/InputHandler.js')).InputHandler;
-      // this.components.CameraController = (await import('../input/CameraController.js')).CameraController;
+      // this.components.InputHandler = (await import('../input/InputHandler')).InputHandler;
+      // this.components.CameraController = (await import('../input/CameraController')).CameraController;
       // etc.
    }
 
@@ -174,7 +202,7 @@ export class GameEngine {
       // Initialize UIRenderer if available
       if (this.components.UIRenderer && this.gameStateManager) {
          this.uiRenderer = new this.components.UIRenderer(this.gameStateManager);
-         this.uiRenderer.initialize();
+         this.uiRenderer?.initialize();
          console.log('UIRenderer initialized');
 
          // Setup UI event listeners
@@ -195,7 +223,8 @@ export class GameEngine {
    setupEventListeners() {
       // Window resize handler
       window.addEventListener('resize', () => {
-         this.app.renderer.resize(window.innerWidth, window.innerHeight);
+         if (!this.app) return;
+         (this.app.renderer as any).resize(window.innerWidth, window.innerHeight);
          this.app.stage.hitArea = this.app.screen;
 
          // Notify components of resize if they exist
@@ -221,33 +250,33 @@ export class GameEngine {
       if (!this.cameraController || !this.gridRenderer) return;
 
       // Listen for camera updates to redraw grid
-      this.cameraController.addEventListener('cameraUpdate', event => {
+      this.cameraController.addEventListener('cameraUpdate', (event: any) => {
          const {scale, x, y} = event.detail;
-         this.gridRenderer.drawGrid(scale, x, y);
+         this.gridRenderer?.drawGrid(scale, x, y);
       });
 
       let placeX = 0;
       let placeY = 0;
       // Listen for mouse down
-      this.cameraController.addEventListener('dragStart', event => {
+      this.cameraController.addEventListener('dragStart', (event: any) => {
          const {cellX, cellY} = event.detail;
          placeX = cellX;
          placeY = cellY;
       });
 
       // Listen for cell clicks
-      this.cameraController.addEventListener('cellClick', event => {
+      this.cameraController.addEventListener('cellClick', (event: any) => {
          this.handleCellClick(placeX, placeY);
       });
 
       // Listen for pointer moves to update hover
-      this.cameraController.addEventListener('pointerMove', event => {
+      this.cameraController.addEventListener('pointerMove', (event: any) => {
          const {event: pointerEvent, isDragging, hasMoved} = event.detail;
-         const cameraState = this.cameraController.getCameraState();
+         const cameraState = this.cameraController?.getCameraState?.();
 
          // Get real game state
          let gameState = this.gameLogic
-            ? this.gameLogic.getGameState()
+            ? this.gameLogic.getGameState?.()
             : {
                  isGameOver: false,
                  gameMode: 'test',
@@ -259,16 +288,16 @@ export class GameEngine {
             const gsmState = this.gameStateManager.getState();
             gameState = {
                ...gameState,
-               gamePhase: gsmState.gamePhase,
-               showMenu: gsmState.showMenu,
+               gamePhase: gsmState.gamePhase as any,
+               showMenu: gsmState.showMenu as any,
                isGameActive: this.gameStateManager.isGameActive(),
             };
          }
 
-         this.gridRenderer.updateHoverCell(
+         this.gridRenderer?.updateHoverCell(
             pointerEvent,
-            cameraState.scale,
-            gameState,
+            cameraState?.scale ?? 1,
+            (gameState ?? {}) as any,
             isDragging,
             hasMoved,
             this.placedMarks || new Map()
@@ -283,18 +312,19 @@ export class GameEngine {
       if (!this.gameLogic) return;
 
       // Listen for move attempts
-      this.gameLogic.addEventListener('moveAttempted', event => {
+      this.gameLogic.addEventListener('moveAttempted', (event: any) => {
          const {x, y, player, success, reason} = event.detail;
          console.log(`Move attempt: ${player} at (${x}, ${y}) - ${success ? 'Success' : reason}`);
       });
 
       // Listen for successful moves
-      this.gameLogic.addEventListener('movePlaced', event => {
+      this.gameLogic.addEventListener('movePlaced', (event: any) => {
          const {cellX, cellY, player} = event.detail;
 
          // Update the visual representation
          if (this.gridRenderer && this.cameraController) {
-            const scale = this.cameraController.getCameraState().scale;
+            const scale = this.cameraController?.getCameraState?.().scale ?? 1;
+
             this.gridRenderer.addPlayerMark(cellX, cellY, player, scale);
 
             // Also highlight the last move
@@ -314,22 +344,22 @@ export class GameEngine {
          });
 
          // update game state
-         this.gameStateManager.switchTurn();
+         this.gameStateManager?.switchTurn?.();
       });
 
       // Listen for wins
-      this.gameLogic.addEventListener('gameWon', async event => {
+      this.gameLogic.addEventListener('gameWon', async (event: any) => {
          const {winner, winningCells} = event.detail;
          console.log(`Game won by ${winner}!`, 'Winning cells:', winningCells);
 
          // end the game after win
-         this.gameStateManager.endGame({
+         this.gameStateManager?.endGame?.({
             winner,
             winningCells,
             reason: 'game finished',
          });
 
-         this.gameLogic.dispatchEvent(new CustomEvent('gameEnded'));
+         this.gameLogic?.dispatchEvent(new CustomEvent('gameEnded'));
 
          if (this.gridRenderer?.animateWinningLine) {
             await this.gridRenderer.animateWinningLine(winningCells);
@@ -337,12 +367,12 @@ export class GameEngine {
       });
 
       // Listen for draws
-      this.gameLogic.addEventListener('gameDraw', event => {
+      this.gameLogic.addEventListener('gameDraw', (event: any) => {
          console.log('Game ended in a draw?');
       });
 
       // Listen for game state changes
-      this.gameLogic.addEventListener('stateChanged', event => {
+      this.gameLogic.addEventListener('stateChanged', (event: any) => {
          const {gameState} = event.detail;
          console.log('Game state changed:', gameState);
       });
@@ -355,24 +385,24 @@ export class GameEngine {
       if (!this.networkManager) return;
 
       // Connection events
-      this.networkManager.addEventListener('connected', event => {
+      this.networkManager.addEventListener('connected', (event: any) => {
          console.log('Network connected:', event.detail);
       });
 
-      this.networkManager.addEventListener('disconnected', event => {
+      this.networkManager.addEventListener('disconnected', (event: any) => {
          console.log('Network disconnected:', event.detail);
       });
 
-      this.networkManager.addEventListener('reconnected', event => {
+      this.networkManager.addEventListener('reconnected', (event: any) => {
          console.log('Network reconnected after', event.detail.attempts, 'attempts');
       });
 
-      this.networkManager.addEventListener('reconnectFailed', event => {
+      this.networkManager.addEventListener('reconnectFailed', (event: any) => {
          console.log('Network reconnection failed');
       });
 
       // Room events
-      this.networkManager.addEventListener('roomCreated', event => {
+      this.networkManager.addEventListener('roomCreated', (event: any) => {
          const {roomId, playerMark, inviteUrl} = event.detail;
          console.log('Room created:', roomId, 'Player mark:', playerMark);
 
@@ -387,7 +417,7 @@ export class GameEngine {
          }
       });
 
-      this.networkManager.addEventListener('gameJoined', event => {
+      this.networkManager.addEventListener('gameJoined', (event: any) => {
          const {roomId, playerMark, isMyTurn} = event.detail;
          console.log('Joined game:', roomId, 'Player mark:', playerMark);
 
@@ -402,22 +432,22 @@ export class GameEngine {
          }
       });
 
-      this.networkManager.addEventListener('opponentJoined', event => {
+      this.networkManager.addEventListener('opponentJoined', (event: any) => {
          console.log('Opponent joined');
 
          // Update GameLogic state
          if (this.gameLogic) {
-            this.gameLogic.updateGameState({hasOpponent: true});
+            this.gameLogic?.updateGameState?.({hasOpponent: true});
          }
       });
 
-      this.networkManager.addEventListener('opponentLeft', event => {
+      this.networkManager.addEventListener('opponentLeft', (event: any) => {
          console.log('Opponent left');
 
          // Update GameLogic state
          // TODO: unless opponent leaves on will, disconnected opponent can rejoin the room
          if (this.gameLogic) {
-            this.gameLogic.updateGameState({
+            this.gameLogic?.updateGameState?.({
                hasOpponent: false,
                isGameOver: true,
             });
@@ -425,31 +455,32 @@ export class GameEngine {
       });
 
       // Move synchronization
-      this.networkManager.addEventListener('moveReceived', event => {
+      this.networkManager.addEventListener('moveReceived', (event: any) => {
          const {cellX, cellY, player, isMyTurn} = event.detail;
          console.log('Move received:', cellX, cellY, 'by', player);
 
          // Execute the move in GameLogic
          if (this.gameLogic) {
-            this.gameLogic.executeMove(cellX, cellY, player);
-            this.gameLogic.updateGameState({isMyTurn});
+            this.gameLogic?.executeMove?.(cellX, cellY, player);
+
+            this.gameLogic?.updateGameState?.({isMyTurn});
          }
       });
 
       // Listen for multiplayer moves from GameLogic
       if (this.gameLogic) {
-         this.gameLogic.addEventListener('multiplayerMove', event => {
+         this.gameLogic.addEventListener('multiplayerMove', (event: any) => {
             const {cellX, cellY} = event.detail;
-            this.networkManager.sendMove(cellX, cellY);
+            this.networkManager?.sendMove?.(cellX, cellY);
          });
       }
 
       // Error handling
-      this.networkManager.addEventListener('error', event => {
+      this.networkManager.addEventListener('error', (event: any) => {
          console.error('Network error:', event.detail.error);
       });
 
-      this.networkManager.addEventListener('roomNotFound', event => {
+      this.networkManager.addEventListener('roomNotFound', (event: any) => {
          console.warn('Room not found:', event.detail.roomId);
       });
    }
@@ -461,13 +492,13 @@ export class GameEngine {
       if (!this.gameStateManager) return;
 
       // Listen for game mode changes
-      this.gameStateManager.addEventListener('stateGameModeChanged', event => {
+      this.gameStateManager.addEventListener('stateGameModeChanged', (event: any) => {
          const {from, to} = event.detail;
          console.log(`Game mode changed from ${from} to ${to}`);
       });
 
       // Listen for game phase changes
-      this.gameStateManager.addEventListener('stateGamePhaseChanged', event => {
+      this.gameStateManager.addEventListener('stateGamePhaseChanged', (event: any) => {
          const {from, to} = event.detail;
          console.log(`Game phase changed from ${from} to ${to}`);
          if (this.gridRenderer) {
@@ -476,13 +507,13 @@ export class GameEngine {
       });
 
       // Listen for turn changes
-      this.gameStateManager.addEventListener('turnChange', event => {
+      this.gameStateManager.addEventListener('turnChange', (event: any) => {
          const {currentPlayer, isMyTurn} = event.detail;
          console.log(`Turn changed: ${currentPlayer} (my turn: ${isMyTurn})`);
       });
 
       // Listen for game end
-      this.gameStateManager.addEventListener('gameEnded', event => {
+      this.gameStateManager.addEventListener('gameEnded', (event: any) => {
          const {winner} = event.detail;
          console.log(`Game ended. Winner: ${winner || 'Draw'}`);
          if (this.gridRenderer) {
@@ -491,7 +522,7 @@ export class GameEngine {
       });
 
       // Listen for menu state changes
-      this.gameStateManager.addEventListener('stateMenuStateChanged', event => {
+      this.gameStateManager.addEventListener('stateMenuStateChanged', (event: any) => {
          const {currentMenu, showMenu} = event.detail;
          console.log(`Menu state changed: ${currentMenu} (visible: ${showMenu})`);
          if (this.gridRenderer) {
@@ -500,13 +531,13 @@ export class GameEngine {
       });
 
       // Listen for button state changes
-      this.gameStateManager.addEventListener('stateButtonStateChanged', event => {
+      this.gameStateManager.addEventListener('stateButtonStateChanged', (event: any) => {
          const {from, to} = event.detail;
          console.log(`Button state changed from ${from} to ${to}`);
       });
 
       // Listen for network state changes
-      this.gameStateManager.addEventListener('stateNetworkStateChanged', event => {
+      this.gameStateManager.addEventListener('stateNetworkStateChanged', (event: any) => {
          const {isConnected, isReconnecting} = event.detail;
          console.log(`Network state: connected=${isConnected}, reconnecting=${isReconnecting}`);
       });
@@ -534,34 +565,34 @@ export class GameEngine {
       });
 
       // Multiplayer game joining
-      this.uiRenderer.addEventListener('multiJoin', event => {
+      this.uiRenderer.addEventListener('multiJoin', (event: any) => {
          const {roomId} = event.detail;
          this.joinMultiplayerGame(roomId);
       });
 
       // Game restart/rematch
       this.uiRenderer.addEventListener('rematchRequest', () => {
-         this.gameLogic.requestRematch();
+         this.gameLogic?.requestRematch?.();
       });
 
       // Accept rematch
       this.uiRenderer.addEventListener('rematchAccept', () => {
          if (this.networkManager) {
-            this.networkManager.acceptRematch();
+            this.networkManager?.acceptRematch?.();
          }
       });
 
       // Decline rematch
       this.uiRenderer.addEventListener('rematchDecline', () => {
          if (this.networkManager) {
-            this.networkManager.declineRematch();
+            this.networkManager?.declineRematch?.();
          }
       });
 
       // Cancel rematch
       this.uiRenderer.addEventListener('rematchCancel', () => {
          if (this.networkManager) {
-            this.networkManager.cancelRematch();
+            this.networkManager?.cancelRematch?.();
          }
       });
 
@@ -574,13 +605,15 @@ export class GameEngine {
    /**
     * Handle cell click events
     */
-   handleCellClick(cellX, cellY) {
+   handleCellClick(cellX: any, cellY: any) {
       try {
          let gameEnded = false;
          if (this.gameStateManager) {
             const state = this.gameStateManager.getState();
             gameEnded = !!(
-               state?.isGameOver || state?.gamePhase === this.gameStateManager.GAME_PHASES.ENDED
+               state?.isGameOver ||
+               (this.gameStateManager?.GAME_PHASES?.ENDED &&
+                  state?.gamePhase === this.gameStateManager.GAME_PHASES.ENDED)
             );
          } else if (this.gameLogic) {
             gameEnded = !!this.gameLogic.isGameOver;
@@ -597,7 +630,7 @@ export class GameEngine {
 
       // Use GameLogic for move validation and placement
       if (this.gameLogic) {
-         const result = this.gameLogic.placeMark(cellX, cellY);
+         const result = this.gameLogic?.placeMark?.(cellX, cellY);
          console.log('placeMark result:', result);
          moveSucceeded = !!result?.success;
       } else {
@@ -617,16 +650,16 @@ export class GameEngine {
          }
 
          // Add the mark
-         const markGraphics = this.gridRenderer.addPlayerMark(
+         const markGraphics = this.gridRenderer?.addPlayerMark(
             cellX,
             cellY,
             player,
-            this.cameraController.scale
+            this.cameraController?.scale ?? 1
          );
          this.placedMarks.set(coordKey, {player, graphics: markGraphics});
 
          // Highlight the move
-         this.gridRenderer.highlightLastMove(cellX, cellY, player);
+         this.gridRenderer?.highlightLastMove(cellX, cellY, player);
 
          moveSucceeded = true;
       }
@@ -652,8 +685,8 @@ export class GameEngine {
    startSinglePlayerGame() {
       this.gameStateManager?.startGame('single');
       this.gameLogic?.startGame('single');
-      this.gridRenderer?.restart();
-      this.cameraController?.resetCamera();
+      this.gridRenderer?.restart?.();
+      this.cameraController?.resetCamera?.();
       this.placedMarks = new Map();
    }
 
@@ -663,8 +696,8 @@ export class GameEngine {
    startBotGame() {
       this.gameStateManager?.startGame('bot');
       this.gameLogic?.startGame('bot');
-      this.gridRenderer?.restart();
-      this.cameraController?.resetCamera();
+      this.gridRenderer?.restart?.();
+      this.cameraController?.resetCamera?.();
       this.placedMarks = new Map();
    }
 
@@ -682,7 +715,7 @@ export class GameEngine {
     * Join a multiplayer room
     * @param {string} roomId - Room ID to join
     */
-   joinMultiplayerGame(roomId) {
+   joinMultiplayerGame(roomId: any) {
       if (this.networkManager) {
          return this.networkManager.joinRoom(roomId);
       }
@@ -699,12 +732,12 @@ export class GameEngine {
 
       // Reset to menu
       if (this.gameStateManager) {
-         this.gameStateManager.resetGame({returnToMenu: true});
+         this.gameStateManager?.resetGame?.({returnToMenu: true});
       }
 
       // Reset GameLogic to single player or stop
       if (this.gameLogic) {
-         this.gameLogic.resetGame();
+         this.gameLogic?.resetGame?.();
       }
    }
 
@@ -712,7 +745,7 @@ export class GameEngine {
     * Get network state
     */
    getNetworkState() {
-      return this.networkManager ? this.networkManager.getNetworkState() : null;
+      return this.networkManager ? this.networkManager.getNetworkState?.() : null;
    }
 
    /**
@@ -721,16 +754,16 @@ export class GameEngine {
    destroy() {
       // Clean up component instances
       if (this.gridRenderer) {
-         this.gridRenderer.destroy();
+         this.gridRenderer.destroy?.();
       }
       if (this.cameraController) {
-         this.cameraController.destroy();
+         this.cameraController.destroy?.();
       }
       if (this.gameLogic) {
-         this.gameLogic.destroy();
+         this.gameLogic.destroy?.();
       }
       if (this.networkManager) {
-         this.networkManager.destroy();
+         this.networkManager.destroy?.();
       }
       // Add cleanup for other components as they're added
 

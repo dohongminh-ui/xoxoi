@@ -8,7 +8,7 @@ const MainMenu = ({
    onStartBotGame,
    onCreateMultiplayer,
    onJoinMultiplayer,
-}) => {
+}: any) => {
    const [roomId, setRoomId] = useState('');
 
    const handleJoinGame = () => {
@@ -20,7 +20,7 @@ const MainMenu = ({
       }
    };
 
-   const handleKeyDown = e => {
+   const handleKeyDown = (e: any) => {
       if (e.key === 'Enter') {
          handleJoinGame();
       }
@@ -47,7 +47,7 @@ const MainMenu = ({
                   className='room-id-input'
                   placeholder='Enter Room ID'
                   value={roomId}
-                  onChange={e => setRoomId(e.target.value)}
+                  onChange={(e: any) => setRoomId(e.target.value)}
                   onKeyDown={handleKeyDown}
                />
                <button className='menu-button join-game-btn' onClick={handleJoinGame}>

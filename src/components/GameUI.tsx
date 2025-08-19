@@ -1,6 +1,6 @@
-import {StatusBar, MainMenu} from './index.js';
+import {StatusBar, MainMenu} from './index';
 
-const GameUI = ({statusBarState, statusBarActions, menuState, menuActions}) => {
+const GameUI = ({statusBarState, statusBarActions, menuState, menuActions}: any) => {
    return (
       <div className='ui-overlay'>
          <StatusBar {...statusBarState} {...statusBarActions} />

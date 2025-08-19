@@ -1,12 +1,19 @@
-import {GAME_CONSTANTS, CELL_SIZE, COLORS} from '../core/constants.js';
-import {coordKey} from '../core/utils.js';
+import {GAME_CONSTANTS, CELL_SIZE, COLORS} from '../core/constants';
+import {coordKey} from '../core/utils';
+import type {GameStateShape, PlacedMarksMap, Mark} from '../../types/engine';
 
 /**
  * GridRenderer handles all grid visualization and rendering
  * Including grid lines, cell highlights, hover effects, and winning lines
  */
 export class GridRenderer {
-   constructor(app, gridContainer) {
+   app: PIXI.Application;
+   gridContainer: PIXI.Container;
+   hoverGraphics: PIXI.Graphics;
+   currentHighlight: PIXI.Graphics | null;
+   winningCells: Array<[number, number]> | null;
+
+   constructor(app: PIXI.Application, gridContainer: PIXI.Container) {
       if (!app) {
          throw new Error('GridRenderer: app parameter is required');
       }
@@ -18,10 +25,13 @@ export class GridRenderer {
       }
 
       this.app = app;
+
       this.gridContainer = gridContainer;
 
       this.hoverGraphics = new PIXI.Graphics();
+
       this.currentHighlight = null;
+
       this.winningCells = null;
 
       this.app.stage.addChild(this.hoverGraphics);
@@ -33,7 +43,7 @@ export class GridRenderer {
     * @param {number} gridX - Grid container X position
     * @param {number} gridY - Grid container Y position
     */
-   drawGrid(scale, gridX, gridY) {
+   drawGrid(scale: number, gridX: number, gridY: number) {
       for (let i = this.gridContainer.children.length - 1; i >= 0; i--) {
          const child = this.gridContainer.children[i];
          if (
@@ -47,12 +57,17 @@ export class GridRenderer {
       }
 
       const graphics = new PIXI.Graphics();
-      graphics.lineStyle(1 / scale, COLORS.GRID_LINE, 1);
+      const gridColor = (PIXI as any).utils?.string2hex
+         ? (PIXI as any).utils.string2hex(COLORS.GRID_LINE)
+         : (0x000000 as number);
+      graphics.lineStyle(1 / scale, gridColor, 1);
 
       // Calculate visible grid bounds with padding
       const startX = Math.floor(-gridX / (CELL_SIZE * scale)) - 20;
       const startY = Math.floor(-gridY / (CELL_SIZE * scale)) - 20;
+
       const endX = startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
+
       const endY = startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
 
       // Draw vertical lines
@@ -78,7 +93,7 @@ export class GridRenderer {
     * Draw the winning line strike-through
     * @param {Array} cells - Array of winning cell coordinates [[x,y], ...]
     */
-   drawWinningLine(cells) {
+   drawWinningLine(cells: Array<[number, number]>) {
       this.clearWinningLine();
 
       if (!cells || cells.length === 0) return;
@@ -87,8 +102,8 @@ export class GridRenderer {
       const graphics = new PIXI.Graphics();
       graphics.isWinningLine = true;
 
-      const startCell = cells[0];
-      const endCell = cells[cells.length - 1];
+      const startCell = cells[0]!;
+      const endCell = cells[cells.length - 1]!;
 
       const startX = startCell[0] * CELL_SIZE + CELL_SIZE / 2;
       const startY = startCell[1] * CELL_SIZE + CELL_SIZE / 2;
@@ -97,7 +112,9 @@ export class GridRenderer {
 
       graphics.lineStyle({
          width: GAME_CONSTANTS.STRIKE_WIDTH,
-         color: GAME_CONSTANTS.STRIKE_COLOR,
+         color: (PIXI as any).utils?.string2hex
+            ? (PIXI as any).utils.string2hex(GAME_CONSTANTS.STRIKE_COLOR)
+            : (0x000000 as number),
          cap: 'round',
          join: 'round',
          alpha: 1,
@@ -113,22 +130,24 @@ export class GridRenderer {
     * @param {Array} cells - Array of winning cell coordinates
     * @returns {Promise} Promise that resolves when animation completes
     */
-   animateWinningLine(cells) {
+   animateWinningLine(cells: Array<[number, number]>): Promise<void> {
       console.log('animateWinningLine called with:', cells);
-      return new Promise(resolve => {
+      return new Promise<void>(resolve => {
          if (!cells || cells.length === 0) {
             resolve();
             return;
          }
 
          console.log('Starting winning animation for', cells.length, 'cells');
+
          this.winningCells = cells;
          const graphics = new PIXI.Graphics();
          graphics.isWinningLine = true;
+
          this.gridContainer.addChild(graphics);
 
-         const startCell = cells[0];
-         const endCell = cells[cells.length - 1];
+         const startCell = cells[0]!;
+         const endCell = cells[cells.length - 1]!;
 
          const startX = startCell[0] * CELL_SIZE + CELL_SIZE / 2;
          const startY = startCell[1] * CELL_SIZE + CELL_SIZE / 2;
@@ -148,7 +167,9 @@ export class GridRenderer {
             graphics.clear();
             graphics.lineStyle({
                width: GAME_CONSTANTS.STRIKE_WIDTH,
-               color: GAME_CONSTANTS.STRIKE_COLOR,
+               color: (PIXI as any).utils?.string2hex
+                  ? (PIXI as any).utils.string2hex(GAME_CONSTANTS.STRIKE_COLOR)
+                  : (0x000000 as number),
                cap: 'round',
                join: 'round',
                alpha: 1,
@@ -161,7 +182,9 @@ export class GridRenderer {
 
             if (progress < 1) {
                requestAnimationFrame(animate);
-            } else return resolve();
+            } else {
+               return resolve();
+            }
          };
 
          animate();
@@ -178,6 +201,7 @@ export class GridRenderer {
             this.gridContainer.removeChild(child);
          }
       }
+
       this.winningCells = null;
    }
 
@@ -187,14 +211,18 @@ export class GridRenderer {
     * @param {number} cellY - Cell Y coordinate
     * @param {string} player - Player who made the move ('X' or 'O')
     */
-   highlightLastMove(cellX, cellY, player) {
+   highlightLastMove(cellX: number, cellY: number, player: Mark) {
       if (this.currentHighlight) {
          this.gridContainer.removeChild(this.currentHighlight);
+
          this.currentHighlight = null;
       }
 
       const highlight = new PIXI.Graphics();
-      const color = player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O;
+      const colorStr = player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O;
+      const color = (PIXI as any).utils?.string2hex
+         ? (PIXI as any).utils.string2hex(colorStr)
+         : (0x000000 as number);
 
       highlight.lineStyle(2, color, 0.7);
       highlight.beginFill(color, 0.2);
@@ -202,7 +230,9 @@ export class GridRenderer {
       highlight.endFill();
 
       highlight.isHighlight = true;
+
       this.gridContainer.addChild(highlight);
+
       this.currentHighlight = highlight;
    }
 
@@ -212,6 +242,7 @@ export class GridRenderer {
    clearHighlight() {
       if (this.currentHighlight) {
          this.gridContainer.removeChild(this.currentHighlight);
+
          this.currentHighlight = null;
       }
    }
@@ -225,7 +256,14 @@ export class GridRenderer {
     * @param {boolean} hasMoved - Whether drag has moved significantly
     * @param {Map} placedMarks - Map of placed marks
     */
-   updateHoverCell(event, scale, gameState, isDragging, hasMoved, placedMarks) {
+   updateHoverCell(
+      event: PIXI.InteractionEventLike,
+      scale: number,
+      gameState: GameStateShape,
+      isDragging: boolean,
+      hasMoved: boolean,
+      placedMarks: PlacedMarksMap
+   ) {
       this.hoverGraphics.clear();
 
       // Disable hover when not in an active game or when menu overlays are shown
@@ -235,7 +273,7 @@ export class GridRenderer {
       if (gameState.isGameOver) return;
       if (gameState.gameMode === 'multi' && !gameState.isMyTurn) return;
 
-      let pos;
+      let pos: PIXI.PointLike | undefined;
       try {
          pos = event.data.getLocalPosition(this.gridContainer);
          if (
@@ -255,14 +293,19 @@ export class GridRenderer {
       const cellY = Math.floor(pos.y / CELL_SIZE);
       const key = coordKey(cellX, cellY);
 
-      let hoverColor = COLORS.HOVER;
+      let hoverColorStr = COLORS.HOVER;
       if (placedMarks.has(key)) {
-         placedMarks.get(key).player == 'X'
-            ? (hoverColor = COLORS.HOVER_X)
-            : (hoverColor = COLORS.HOVER_O);
+         const mark = placedMarks.get(key);
+         if (mark) {
+            hoverColorStr = mark.player === 'X' ? COLORS.HOVER_X : COLORS.HOVER_O;
+         }
       }
+      const hoverColor = (PIXI as any).utils?.string2hex
+         ? (PIXI as any).utils.string2hex(hoverColorStr)
+         : (0x000000 as number);
 
       const worldX = cellX * CELL_SIZE * scale + this.gridContainer.x;
+
       const worldY = cellY * CELL_SIZE * scale + this.gridContainer.y;
 
       this.hoverGraphics.lineStyle(1, hoverColor, 0.3);
@@ -283,7 +326,9 @@ export class GridRenderer {
     */
    onResize() {
       const scale = this.gridContainer.scale.x;
+
       const gridX = this.gridContainer.x;
+
       const gridY = this.gridContainer.y;
       this.drawGrid(scale, gridX, gridY);
    }
@@ -295,7 +340,7 @@ export class GridRenderer {
     * @param {string} player - Player ('X' or 'O')
     * @param {number} scale - Current grid scale for sizing
     */
-   addPlayerMark(cellX, cellY, player) {
+   addPlayerMark(cellX: any, cellY: any, player: any) {
       const text = new PIXI.Text(player, {
          fontSize: 40,
          fill: player === 'X' ? COLORS.PLAYER_X : COLORS.PLAYER_O,
@@ -312,6 +357,7 @@ export class GridRenderer {
       text.scale.set(textScale);
 
       text.isPlayerMark = true;
+
       this.gridContainer.addChild(text);
 
       return text;
@@ -341,7 +387,7 @@ export class GridRenderer {
    destroy() {
       if (this.hoverGraphics) {
          this.app.stage.removeChild(this.hoverGraphics);
-         this.hoverGraphics.destroy();
+         this.hoverGraphics.destroy?.();
       }
 
       this.clearHighlight();

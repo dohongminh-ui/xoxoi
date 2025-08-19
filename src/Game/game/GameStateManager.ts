@@ -3,10 +3,25 @@
  * Provides a unified interface for accessing and updating game state across components
  */
 export class GameStateManager extends EventTarget {
+   state: any;
+   stateHistory: any[];
+   maxHistorySize: number;
+   BUTTON_STATES: {
+      IN_GAME: string;
+      GAME_OVER: string;
+      REMATCH_REQUEST: string;
+      WAITING_REMATCH: string;
+      OPPONENT_LEFT: string;
+      MENU: string;
+      LOBBY: string;
+   };
+   MENU_STATES: {MAIN: string; LOBBY: string; GAME: string; SETTINGS: string; ABOUT: string};
+   GAME_PHASES: {MENU: string; LOBBY: string; PLAYING: string; PAUSED: string; ENDED: string};
    constructor() {
       super();
 
       // Core game state
+
       this.state = {
          // Game mode and type
          gameMode: null, // 'null', 'single', 'bot', 'multi'
@@ -55,10 +70,13 @@ export class GameStateManager extends EventTarget {
       };
 
       // State history for undo/replay functionality
+
       this.stateHistory = [];
+
       this.maxHistorySize = 50;
 
       // Button state constants
+
       this.BUTTON_STATES = {
          IN_GAME: 'in_game',
          GAME_OVER: 'game_over',
@@ -70,6 +88,7 @@ export class GameStateManager extends EventTarget {
       };
 
       // Menu state constants
+
       this.MENU_STATES = {
          MAIN: 'main',
          LOBBY: 'lobby',
@@ -79,6 +98,7 @@ export class GameStateManager extends EventTarget {
       };
 
       // Game phase constants
+
       this.GAME_PHASES = {
          MENU: 'menu',
          LOBBY: 'lobby',
@@ -95,6 +115,7 @@ export class GameStateManager extends EventTarget {
     */
    initializeState() {
       this.state.gameStartTime = Date.now();
+
       this.state.lastUpdate = Date.now();
 
       this.dispatchEvent(
@@ -117,9 +138,10 @@ export class GameStateManager extends EventTarget {
     * @param {string} key - State property key (supports dot notation)
     * @returns {*} State property value
     */
-   get(key) {
+   get(key: string): any {
       if (key.includes('.')) {
          const keys = key.split('.');
+
          let value = this.state;
          for (const k of keys) {
             if (value && typeof value === 'object') {
@@ -130,6 +152,7 @@ export class GameStateManager extends EventTarget {
          }
          return value;
       }
+
       return this.state[key];
    }
 
@@ -139,7 +162,11 @@ export class GameStateManager extends EventTarget {
     * @param {*} value - Value (if first param is key)
     * @param {Object} options - Update options
     */
-   set(keyOrState, value = undefined, options = {}) {
+   set(
+      keyOrState: Record<string, any> | string,
+      value: any = undefined,
+      options: {silent?: boolean; saveToHistory?: boolean; merge?: boolean} = {}
+   ) {
       const {silent = false, saveToHistory = true, merge = true} = options;
 
       // Save current state to history before changes
@@ -148,32 +175,39 @@ export class GameStateManager extends EventTarget {
       }
 
       const oldState = this.getState();
-      let changes = {};
+      let changes: Record<string, {from: any; to: any}> = {};
 
       if (typeof keyOrState === 'string') {
          // Single property update
          if (keyOrState.includes('.')) {
             // Dot notation support
             const keys = keyOrState.split('.');
-            let current = this.state;
+
+            let current: any = this.state;
             for (let i = 0; i < keys.length - 1; i++) {
-               if (!current[keys[i]] || typeof current[keys[i]] !== 'object') {
-                  current[keys[i]] = {};
+               const k = keys[i]!;
+               if (!current[k] || typeof current[k] !== 'object') {
+                  current[k] = {};
                }
-               current = current[keys[i]];
+               current = current[k];
             }
-            const oldValue = current[keys[keys.length - 1]];
-            current[keys[keys.length - 1]] = value;
+            const lastKey = keys[keys.length - 1]!;
+            const oldValue = current[lastKey];
+            current[lastKey] = value;
+
             changes[keyOrState] = {from: oldValue, to: value};
          } else {
             const oldValue = this.state[keyOrState];
+
             this.state[keyOrState] = value;
+
             changes[keyOrState] = {from: oldValue, to: value};
          }
       } else if (typeof keyOrState === 'object') {
          // Multiple properties update
-         for (const [key, val] of Object.entries(keyOrState)) {
-            const oldValue = this.state[key];
+         for (const [key, val] of Object.entries(keyOrState as Record<string, any>)) {
+            const oldValue = this.state[key as keyof typeof this.state];
+
             this.state[key] =
                merge &&
                typeof val === 'object' &&
@@ -181,11 +215,13 @@ export class GameStateManager extends EventTarget {
                !Array.isArray(val)
                   ? {...oldValue, ...val}
                   : val;
-            changes[key] = {from: oldValue, to: this.state[key]};
+
+            changes[key] = {from: oldValue, to: this.state[key as keyof typeof this.state]};
          }
       }
 
       // Update timestamp
+
       this.state.lastUpdate = Date.now();
 
       if (!silent) {
@@ -209,7 +245,7 @@ export class GameStateManager extends EventTarget {
     * @param {Object} changes - Changes that occurred
     * @param {Object} oldState - Previous state
     */
-   emitSpecificStateEvents(changes, oldState) {
+   emitSpecificStateEvents(changes: any, oldState: any) {
       // Game mode changes
       if (changes.gameMode) {
          this.dispatchEvent(
@@ -242,6 +278,7 @@ export class GameStateManager extends EventTarget {
             new CustomEvent('turnChange', {
                detail: {
                   currentPlayer: this.state.currentPlayer,
+
                   isMyTurn: this.state.isMyTurn,
                   state: this.getState(),
                },
@@ -250,11 +287,13 @@ export class GameStateManager extends EventTarget {
       }
 
       // Game over state
+
       if (changes.isGameOver && this.state.isGameOver) {
          this.dispatchEvent(
             new CustomEvent('stateGameEnded', {
                detail: {
                   winner: this.state.winner,
+
                   winningCells: this.state.winningCells,
                   state: this.getState(),
                },
@@ -268,6 +307,7 @@ export class GameStateManager extends EventTarget {
             new CustomEvent('stateMenuStateChanged', {
                detail: {
                   currentMenu: this.state.currentMenu,
+
                   showMenu: this.state.showMenu,
                   state: this.getState(),
                },
@@ -294,7 +334,9 @@ export class GameStateManager extends EventTarget {
             new CustomEvent('stateNetworkStateChanged', {
                detail: {
                   isConnected: this.state.isConnected,
+
                   isReconnecting: this.state.isReconnecting,
+
                   connectionAttempts: this.state.connectionAttempts,
                   state: this.getState(),
                },
@@ -308,17 +350,31 @@ export class GameStateManager extends EventTarget {
     * @param {string} mode - Game mode ('single', 'bot', 'multi')
     * @param {Object} options - Game options
     */
-   startGame(mode, options = {}) {
+   startGame(
+      mode: 'single' | 'bot' | 'multi',
+      options: {
+         playerMark?: 'X' | 'O';
+         roomId?: string;
+         isMyTurn?: boolean;
+         hasOpponent?: boolean;
+         isHost?: boolean;
+      } = {}
+   ) {
       const {
          playerMark = 'X',
+
          roomId = '',
+
          isMyTurn = true,
+
          hasOpponent = false,
+
          isHost = false,
       } = options;
 
       this.set({
          gameMode: mode,
+
          gamePhase: this.GAME_PHASES.PLAYING,
          currentPlayer: 'X',
          playerMark: mode === 'multi' ? playerMark : '',
@@ -332,13 +388,16 @@ export class GameStateManager extends EventTarget {
          isHost: mode === 'multi' ? isHost : false,
          moveCount: 0,
          gameStartTime: Date.now(),
+
          currentMenu: this.MENU_STATES.GAME,
+
          buttonState: this.BUTTON_STATES.IN_GAME,
          statusMessage: this.getStatusMessage(mode, 'X', isMyTurn),
          showMenu: false,
       });
 
       let modeString = '';
+
       switch (this.state.gameMode) {
          case 'single':
             modeString = 'Single Player mode';
@@ -366,15 +425,24 @@ export class GameStateManager extends EventTarget {
     * End the current game
     * @param {Object} result - Game result
     */
-   endGame(result = {}) {
+   endGame(
+      result: {
+         winner?: 'X' | 'O' | null;
+         winningCells?: Array<[number, number]> | null;
+         reason?: string;
+      } = {}
+   ) {
       const {winner = null, winningCells = null, reason = 'completed'} = result;
 
       this.set({
          isGameOver: true,
+
          gamePhase: this.GAME_PHASES.ENDED,
          winner,
          winningCells,
+
          gameDuration: Date.now() - this.state.gameStartTime,
+
          buttonState: this.BUTTON_STATES.GAME_OVER,
          statusMessage: this.getGameEndMessage(winner, reason),
       });
@@ -396,10 +464,12 @@ export class GameStateManager extends EventTarget {
       const newPlayer = this.state.currentPlayer === 'X' ? 'O' : 'X';
       this.set({
          currentPlayer: newPlayer,
+
          isMyTurn: this.state.gameMode === 'multi' ? newPlayer === this.state.playerMark : true,
          statusMessage: this.getStatusMessage(
             this.state.gameMode,
             newPlayer,
+
             this.state.gameMode === 'multi' ? newPlayer === this.state.playerMark : true
          ),
       });
@@ -408,6 +478,7 @@ export class GameStateManager extends EventTarget {
          new CustomEvent('turnChange', {
             detail: {
                currentPlayer: this.state.currentPlayer,
+
                isMyTurn: this.state.isMyTurn,
             },
          })
@@ -418,18 +489,30 @@ export class GameStateManager extends EventTarget {
     * Reset game state
     * @param {Object} options - Reset options
     */
-   resetGame(options = {}) {
+   resetGame(
+      options: {
+         clearAll?: boolean;
+         keepNetworkState?: boolean;
+         keepCameraState?: boolean;
+         returnToMenu?: boolean;
+      } = {}
+   ) {
       const {
          clearAll = false,
+
          keepNetworkState = true,
+
          keepCameraState = true,
+
          returnToMenu = false,
       } = options;
 
-      const newState = {
+      const newState: any = {
          gameMode: returnToMenu ? null : this.state.gameMode,
+
          gamePhase: returnToMenu ? this.GAME_PHASES.MENU : this.GAME_PHASES.PLAYING,
          currentPlayer: 'X',
+
          isMyTurn: this.state.gameMode === 'multi' ? this.state.playerMark === 'X' : true,
          isGameOver: false,
          isPaused: false,
@@ -437,13 +520,16 @@ export class GameStateManager extends EventTarget {
          winningCells: null,
          moveCount: 0,
          gameStartTime: Date.now(),
+
          currentMenu: returnToMenu ? this.MENU_STATES.MAIN : this.MENU_STATES.GAME,
+
          buttonState: returnToMenu ? this.BUTTON_STATES.MENU : this.BUTTON_STATES.IN_GAME,
          statusMessage: returnToMenu
             ? 'toe'
             : this.getStatusMessage(
                  this.state.gameMode,
                  'X',
+
                  this.state.gameMode === 'multi' ? this.state.playerMark === 'X' : true
               ),
          showMenu: returnToMenu,
@@ -451,17 +537,25 @@ export class GameStateManager extends EventTarget {
 
       if (!keepNetworkState || clearAll) {
          newState.roomId = '';
+
          newState.hasOpponent = false;
+
          newState.isHost = false;
+
          newState.playerMark = '';
+
          newState.isConnected = false;
+
          newState.isReconnecting = false;
+
          newState.connectionAttempts = 0;
       }
 
       if (!keepCameraState || clearAll) {
          newState.cameraScale = 1;
+
          newState.cameraX = 0;
+
          newState.cameraY = 0;
       }
 
@@ -472,11 +566,13 @@ export class GameStateManager extends EventTarget {
     * Update camera state
     * @param {Object} cameraState - Camera state update
     */
-   updateCamera(cameraState) {
+   updateCamera(cameraState: any) {
       this.set(
          {
             cameraScale: cameraState.scale || this.state.cameraScale,
+
             cameraX: cameraState.x || this.state.cameraX,
+
             cameraY: cameraState.y || this.state.cameraY,
          },
          undefined,
@@ -488,7 +584,7 @@ export class GameStateManager extends EventTarget {
     * Update network state
     * @param {Object} networkState - Network state update
     */
-   updateNetwork(networkState) {
+   updateNetwork(networkState: any) {
       this.set(networkState);
    }
 
@@ -499,7 +595,7 @@ export class GameStateManager extends EventTarget {
     * @param {boolean} isMyTurn - Whether it's my turn
     * @returns {string} Status message
     */
-   getStatusMessage(gameMode, currentPlayer, isMyTurn) {
+   getStatusMessage(gameMode: any, currentPlayer: any, isMyTurn: any) {
       if (!gameMode) return 'toe';
 
       switch (gameMode) {
@@ -525,7 +621,7 @@ export class GameStateManager extends EventTarget {
     * @param {string} reason - End reason
     * @returns {string} End message
     */
-   getGameEndMessage(winner, reason) {
+   getGameEndMessage(winner: any, reason: any) {
       if (!winner) {
          switch (reason) {
             case 'draw':
@@ -558,6 +654,7 @@ export class GameStateManager extends EventTarget {
       this.stateHistory.push(this.getState());
 
       // Limit history size
+
       if (this.stateHistory.length > this.maxHistorySize) {
          this.stateHistory.shift();
       }
@@ -574,13 +671,17 @@ export class GameStateManager extends EventTarget {
       }
 
       const targetIndex = this.stateHistory.length - stepsBack;
+
       const targetState = this.stateHistory[targetIndex];
 
       // Remove history entries after the target
+
       this.stateHistory.splice(targetIndex);
 
       // Restore state
+
       this.state = JSON.parse(JSON.stringify(targetState));
+
       this.state.lastUpdate = Date.now();
 
       this.dispatchEvent(
@@ -645,10 +746,15 @@ export class GameStateManager extends EventTarget {
    getGameStats() {
       return {
          gameMode: this.state.gameMode,
+
          duration: this.state.gameDuration || Date.now() - this.state.gameStartTime,
+
          moveCount: this.state.moveCount,
+
          isGameOver: this.state.isGameOver,
+
          winner: this.state.winner,
+
          currentPlayer: this.state.currentPlayer,
       };
    }
@@ -665,6 +771,7 @@ export class GameStateManager extends EventTarget {
     */
    destroy() {
       this.clearHistory();
+
       this.state = null;
    }
 }

@@ -1,6 +1,6 @@
 import './MenuOverlay.css';
 
-const MenuOverlay = ({isVisible = true, children}) => {
+const MenuOverlay = ({isVisible = true, children}: any) => {
    if (!isVisible) {
       return null;
    }

@@ -12,7 +12,7 @@ const StatusBar = ({
    onDeclineRematch,
    onCancelRematch,
    onExitGame,
-}) => {
+}: any) => {
    return (
       <div className='status-bar noselect' id='statusBar'>
          <span className='game-status' id='gameStatus'>

@@ -1,36 +1,60 @@
-import {GAME_CONSTANTS, CELL_SIZE} from '../core/constants.js';
-import {clamp} from '../core/utils.js';
+import {GAME_CONSTANTS, CELL_SIZE} from '../core/constants';
+import {clamp} from '../core/utils';
+import type {GameStateShape} from '../../types/engine';
 
 /**
  * CameraController handles all camera-related functionality
  * Including zoom, pan, drag, momentum physics, and camera adjustments
  */
 export class CameraController extends EventTarget {
-   constructor(app, gridContainer) {
+   app: PIXI.Application;
+   gridContainer: PIXI.Container;
+   scale: number;
+   isDragging: boolean;
+   hasMoved: boolean;
+   totalMovement: number;
+   dragStart: {x: number; y: number};
+   initialDown: {x: number; y: number};
+   lastDragPosition: {x: number; y: number} | null;
+   lastDragTime: number;
+   velocity: {x: number; y: number};
+   constructor(app: PIXI.Application, gridContainer: PIXI.Container) {
       super();
+
       this.app = app;
+
       this.gridContainer = gridContainer;
 
       // Camera state
+
       this.scale = 1;
       this.velocity = {x: 0, y: 0};
 
       // Drag state
+
       this.isDragging = false;
+
       this.hasMoved = false;
+
       this.totalMovement = 0;
+
       this.dragStart = {x: 0, y: 0};
+
       this.initialDown = {x: 0, y: 0};
+
       this.lastDragPosition = null;
+
       this.lastDragTime = 0;
 
       // Setup initial container scale
+
       this.gridContainer.scale.set(this.scale);
 
       // Setup event listeners
       this.setupEventListeners();
 
       // Start momentum update loop
+
       this.app.ticker.add(this.updateMomentum.bind(this));
    }
 
@@ -39,12 +63,17 @@ export class CameraController extends EventTarget {
     */
    setupEventListeners() {
       // Zoom/wheel events
+
       this.app.view.addEventListener('wheel', this.handleWheel.bind(this));
 
       // Drag events
+
       this.app.stage.on('pointerdown', this.handlePointerDown.bind(this));
+
       this.app.stage.on('pointermove', this.handlePointerMove.bind(this));
+
       this.app.stage.on('pointerup', this.handlePointerUp.bind(this));
+
       this.app.stage.on('pointerupoutside', this.handlePointerUpOutside.bind(this));
    }
 
@@ -52,7 +81,7 @@ export class CameraController extends EventTarget {
     * Handle mouse wheel zoom
     * @param {WheelEvent} event - Wheel event
     */
-   handleWheel(event) {
+   handleWheel(event: WheelEvent) {
       event.preventDefault();
 
       const mousePos = {
@@ -73,6 +102,7 @@ export class CameraController extends EventTarget {
       // Calculate zoom point in local coordinates
       const localPos = {
          x: (mousePos.x - this.gridContainer.x) / this.scale,
+
          y: (mousePos.y - this.gridContainer.y) / this.scale,
       };
 
@@ -81,9 +111,13 @@ export class CameraController extends EventTarget {
       const newY = mousePos.y - localPos.y * newScale;
 
       // Apply new scale and position
+
       this.scale = newScale;
+
       this.gridContainer.scale.set(this.scale);
+
       this.gridContainer.x = newX;
+
       this.gridContainer.y = newY;
 
       // Emit events for other components to respond
@@ -91,7 +125,9 @@ export class CameraController extends EventTarget {
          new CustomEvent('cameraUpdate', {
             detail: {
                scale: this.scale,
+
                x: this.gridContainer.x,
+
                y: this.gridContainer.y,
                type: 'zoom',
                mousePos,
@@ -107,6 +143,7 @@ export class CameraController extends EventTarget {
                   data: {
                      getLocalPosition: () => ({
                         x: (mousePos.x - this.gridContainer.x) / this.scale,
+
                         y: (mousePos.y - this.gridContainer.y) / this.scale,
                      }),
                   },
@@ -123,13 +160,19 @@ export class CameraController extends EventTarget {
     * Handle pointer down (start dragging)
     * @param {PIXI.InteractionEvent} event - Pointer event
     */
-   handlePointerDown(event) {
+   handlePointerDown(event: PIXI.InteractionEventLike) {
       this.isDragging = true;
+
       this.hasMoved = false;
+
       this.totalMovement = 0;
+
       this.dragStart = event.data.getLocalPosition(this.app.stage);
+
       this.initialDown = {...this.dragStart};
+
       this.lastDragPosition = {...this.dragStart};
+
       this.lastDragTime = Date.now();
       this.velocity = {x: 0, y: 0};
 
@@ -148,31 +191,38 @@ export class CameraController extends EventTarget {
     * Handle pointer move (dragging)
     * @param {PIXI.InteractionEvent} event - Pointer event
     */
-   handlePointerMove(event) {
+   handlePointerMove(event: PIXI.InteractionEventLike) {
       if (this.isDragging) {
          const newPosition = event.data.getLocalPosition(this.app.stage);
          const currentTime = Date.now();
+
          const timeElapsed = currentTime - this.lastDragTime;
 
          // Calculate velocity for momentum
          if (timeElapsed > 0) {
+            const lastPos = this.lastDragPosition ?? newPosition;
             this.velocity.x =
-               ((newPosition.x - this.lastDragPosition.x) / timeElapsed) *
+               ((newPosition.x - lastPos.x) / timeElapsed) *
                16.67 *
                GAME_CONSTANTS.VELOCITY_DAMPING;
             this.velocity.y =
-               ((newPosition.y - this.lastDragPosition.y) / timeElapsed) *
+               ((newPosition.y - lastPos.y) / timeElapsed) *
                16.67 *
                GAME_CONSTANTS.VELOCITY_DAMPING;
          }
 
          // Calculate movement delta
+
          const dx = newPosition.x - this.dragStart.x;
+
          const dy = newPosition.y - this.dragStart.y;
+
          this.totalMovement += Math.sqrt(dx * dx + dy * dy);
 
          // Use deadzone from the original pointer down to avoid false drags
+
          const netDx = newPosition.x - this.initialDown.x;
+
          const netDy = newPosition.y - this.initialDown.y;
          const netDistance = Math.hypot(netDx, netDy);
          if (netDistance > GAME_CONSTANTS.DRAG_DEADZONE) {
@@ -180,15 +230,19 @@ export class CameraController extends EventTarget {
          }
 
          // Apply camera movement if dragging
+
          if (this.hasMoved) {
             this.gridContainer.x += dx;
+
             this.gridContainer.y += dy;
 
             this.dispatchEvent(
                new CustomEvent('cameraUpdate', {
                   detail: {
                      scale: this.scale,
+
                      x: this.gridContainer.x,
+
                      y: this.gridContainer.y,
                      type: 'drag',
                      delta: {dx, dy},
@@ -198,7 +252,9 @@ export class CameraController extends EventTarget {
          }
 
          this.dragStart = newPosition;
+
          this.lastDragPosition = {...newPosition};
+
          this.lastDragTime = currentTime;
       }
 
@@ -207,7 +263,9 @@ export class CameraController extends EventTarget {
          new CustomEvent('pointerMove', {
             detail: {
                event,
+
                isDragging: this.isDragging,
+
                hasMoved: this.hasMoved,
             },
          })
@@ -218,10 +276,11 @@ export class CameraController extends EventTarget {
     * Handle pointer up (end dragging)
     * @param {PIXI.InteractionEvent} event - Pointer event
     */
-   handlePointerUp(event) {
+   handlePointerUp(event: PIXI.InteractionEventLike) {
       const wasClick = this.isDragging && !this.hasMoved;
 
       this.isDragging = false;
+
       this.initialDown = {x: 0, y: 0};
 
       // Emit click event if it was a click rather than a drag
@@ -248,7 +307,9 @@ export class CameraController extends EventTarget {
          new CustomEvent('pointerMove', {
             detail: {
                event,
+
                isDragging: this.isDragging,
+
                hasMoved: this.hasMoved,
             },
          })
@@ -278,7 +339,9 @@ export class CameraController extends EventTarget {
       }
 
       // Apply velocity to position
+
       this.gridContainer.x += this.velocity.x;
+
       this.gridContainer.y += this.velocity.y;
 
       // Apply friction
@@ -294,7 +357,9 @@ export class CameraController extends EventTarget {
          new CustomEvent('cameraUpdate', {
             detail: {
                scale: this.scale,
+
                x: this.gridContainer.x,
+
                y: this.gridContainer.y,
                type: 'momentum',
             },
@@ -303,18 +368,20 @@ export class CameraController extends EventTarget {
 
       // Emit hover update for momentum movement
       // Get current mouse position from PIXI
-      const mousePosition = this.app.renderer.plugins.interaction?.mouse?.global ||
-         this.app.renderer.events?.pointer || {x: 0, y: 0};
+
+      const mousePosition = this.app.renderer?.plugins?.interaction?.mouse?.global ||
+         this.app.renderer?.events?.pointer || {x: 0, y: 0};
 
       this.dispatchEvent(
          new CustomEvent('pointerMove', {
             detail: {
                event: {
                   data: {
-                     getLocalPosition: container => {
+                     getLocalPosition: (container: any) => {
                         return container === this.gridContainer
                            ? {
                                 x: (mousePosition.x - this.gridContainer.x) / this.scale,
+
                                 y: (mousePosition.y - this.gridContainer.y) / this.scale,
                              }
                            : mousePosition;
@@ -335,18 +402,20 @@ export class CameraController extends EventTarget {
     * @param {number} targetY - Target cell Y coordinate
     * @returns {Promise} Promise that resolves when adjustment is complete
     */
-   adjustToCell(targetX, targetY) {
-      return new Promise(resolve => {
+   adjustToCell(targetX: number, targetY: number): Promise<void> {
+      return new Promise<void>(resolve => {
          let isAnimating = true;
 
          const animate = () => {
             if (!isAnimating) {
-               resolve();
+               resolve(undefined);
                return;
             }
 
             const markWorldX = targetX * CELL_SIZE * this.scale + this.gridContainer.x;
+
             const markWorldY = targetY * CELL_SIZE * this.scale + this.gridContainer.y;
+
             const markSize = CELL_SIZE * this.scale;
             const statusBarHeight = (document.getElementById('statusBar')?.offsetHeight || 0) + 40;
 
@@ -374,14 +443,18 @@ export class CameraController extends EventTarget {
 
             if (needsAdjustment) {
                // Apply smooth movement
+
                this.gridContainer.x += adjustments.x * GAME_CONSTANTS.CAMERA_SPEED;
+
                this.gridContainer.y += adjustments.y * GAME_CONSTANTS.CAMERA_SPEED;
 
                this.dispatchEvent(
                   new CustomEvent('cameraUpdate', {
                      detail: {
                         scale: this.scale,
+
                         x: this.gridContainer.x,
+
                         y: this.gridContainer.y,
                         type: 'adjustment',
                      },
@@ -389,18 +462,20 @@ export class CameraController extends EventTarget {
                );
 
                // Update hover during camera adjustment
-               const mousePosition = this.app.renderer.plugins.interaction?.mouse?.global ||
-                  this.app.renderer.events?.pointer || {x: 0, y: 0};
+
+               const mousePosition = this.app.renderer?.plugins?.interaction?.mouse?.global ||
+                  this.app.renderer?.events?.pointer || {x: 0, y: 0};
 
                this.dispatchEvent(
                   new CustomEvent('pointerMove', {
                      detail: {
                         event: {
                            data: {
-                              getLocalPosition: container => {
+                              getLocalPosition: (container: any) => {
                                  return container === this.gridContainer
                                     ? {
                                          x: (mousePosition.x - this.gridContainer.x) / this.scale,
+
                                          y: (mousePosition.y - this.gridContainer.y) / this.scale,
                                       }
                                     : mousePosition;
@@ -432,9 +507,13 @@ export class CameraController extends EventTarget {
    getCameraState() {
       return {
          scale: this.scale,
+
          x: this.gridContainer.x,
+
          y: this.gridContainer.y,
+
          isDragging: this.isDragging,
+
          hasMoved: this.hasMoved,
          velocity: {...this.velocity},
       };
@@ -446,17 +525,22 @@ export class CameraController extends EventTarget {
     * @param {number} y - Y position
     * @param {number} scale - Scale factor
     */
-   setCameraState(x, y, scale) {
+   setCameraState(x: number, y: number, scale: number) {
       this.scale = clamp(scale, GAME_CONSTANTS.MIN_SCALE, GAME_CONSTANTS.MAX_SCALE);
+
       this.gridContainer.x = x;
+
       this.gridContainer.y = y;
+
       this.gridContainer.scale.set(this.scale);
 
       this.dispatchEvent(
          new CustomEvent('cameraUpdate', {
             detail: {
                scale: this.scale,
+
                x: this.gridContainer.x,
+
                y: this.gridContainer.y,
                type: 'manual',
             },
@@ -464,18 +548,20 @@ export class CameraController extends EventTarget {
       );
 
       // Update hover after manual camera change
-      const mousePosition = this.app.renderer.plugins.interaction?.mouse?.global ||
-         this.app.renderer.events?.pointer || {x: 0, y: 0};
+
+      const mousePosition = this.app.renderer?.plugins?.interaction?.mouse?.global ||
+         this.app.renderer?.events?.pointer || {x: 0, y: 0};
 
       this.dispatchEvent(
          new CustomEvent('pointerMove', {
             detail: {
                event: {
                   data: {
-                     getLocalPosition: container => {
+                     getLocalPosition: (container: any) => {
                         return container === this.gridContainer
                            ? {
                                 x: (mousePosition.x - this.gridContainer.x) / this.scale,
+
                                 y: (mousePosition.y - this.gridContainer.y) / this.scale,
                              }
                            : mousePosition;
@@ -501,7 +587,9 @@ export class CameraController extends EventTarget {
          new CustomEvent('cameraReset', {
             detail: {
                scale: this.scale,
+
                x: this.gridContainer.x,
+
                y: this.gridContainer.y,
             },
          })
@@ -513,14 +601,29 @@ export class CameraController extends EventTarget {
     */
    destroy() {
       // Remove ticker
-      this.app.ticker.remove(this.updateMomentum);
+
+      this.app.ticker.remove(this.updateMomentum as unknown as (delta?: number) => void);
 
       // Remove event listeners
+
       this.app.view.removeEventListener('wheel', this.handleWheel);
-      this.app.stage.off('pointerdown', this.handlePointerDown);
-      this.app.stage.off('pointermove', this.handlePointerMove);
-      this.app.stage.off('pointerup', this.handlePointerUp);
-      this.app.stage.off('pointerupoutside', this.handlePointerUpOutside);
+
+      this.app.stage.off(
+         'pointerdown',
+         this.handlePointerDown as unknown as (...args: any[]) => void
+      );
+
+      this.app.stage.off(
+         'pointermove',
+         this.handlePointerMove as unknown as (...args: any[]) => void
+      );
+
+      this.app.stage.off('pointerup', this.handlePointerUp as unknown as (...args: any[]) => void);
+
+      this.app.stage.off(
+         'pointerupoutside',
+         this.handlePointerUpOutside as unknown as (...args: any[]) => void
+      );
 
       // Reset velocity
       this.velocity = {x: 0, y: 0};

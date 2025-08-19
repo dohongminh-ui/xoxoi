@@ -1,10 +1,11 @@
 import {useEffect, useState} from 'react';
+import type {GameEngine} from '../Game/core/GameEngine';
 
 /**
  * Custom hook for managing status bar state and actions
  * Centralizes all status bar logic and provides clean interface
  */
-export const useStatusBar = (gameEngine = null) => {
+export const useStatusBar = (gameEngine: GameEngine | null = null) => {
    const [gameStatus, setGameStatus] = useState('toe');
    const [showRestartButton, setShowRestartButton] = useState(false);
    const [showAcceptRematchButton, setShowAcceptRematchButton] = useState(false);
@@ -13,7 +14,7 @@ export const useStatusBar = (gameEngine = null) => {
    const [showExitGameButton, setShowExitGameButton] = useState(false);
 
    // Helper: map GameStateManager buttonState to local flags
-   const applyButtonState = buttonState => {
+   const applyButtonState = (buttonState: any) => {
       const flags = {
          restart: false,
          acceptRematch: false,
@@ -59,7 +60,7 @@ export const useStatusBar = (gameEngine = null) => {
       if (!gsm) return;
 
       const sync = () => {
-         const state = gsm.getState ? gsm.getState() : {};
+         const state: any = gsm.getState ? gsm.getState() : {};
          setGameStatus(state.statusMessage || 'toe');
          applyButtonState(state.buttonState);
       };
@@ -67,7 +68,7 @@ export const useStatusBar = (gameEngine = null) => {
       sync();
 
       const onStateChanged = () => sync();
-      const onButtonChanged = e => applyButtonState(e.detail?.to);
+      const onButtonChanged = (e: any) => applyButtonState(e.detail?.to);
       const onTurnChange = () => sync();
       const onGameStarted = () => sync();
       const onGameEnded = () => sync();
@@ -96,50 +97,55 @@ export const useStatusBar = (gameEngine = null) => {
 
    const handleRestart = () => {
       console.log('Restart button clicked');
+
       if (gameEngine?.uiRenderer) {
          gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchRequest'));
-      } else if (gameEngine?.gameLogic) {
+      } else if (gameEngine?.gameLogic?.requestRematch) {
          gameEngine.gameLogic.requestRematch();
       }
    };
 
    const handleAcceptRematch = () => {
       console.log('Accept rematch clicked');
+
       if (gameEngine?.uiRenderer) {
          gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchAccept'));
-      } else if (gameEngine?.networkManager) {
+      } else if (gameEngine?.networkManager?.acceptRematch) {
          gameEngine.networkManager.acceptRematch();
       }
    };
 
    const handleDeclineRematch = () => {
       console.log('Decline rematch clicked');
+
       if (gameEngine?.uiRenderer) {
          gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchDecline'));
-      } else if (gameEngine?.networkManager) {
+      } else if (gameEngine?.networkManager?.declineRematch) {
          gameEngine.networkManager.declineRematch();
       }
    };
 
    const handleCancelRematch = () => {
       console.log('Cancel rematch clicked');
+
       if (gameEngine?.uiRenderer) {
          gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchCancel'));
-      } else if (gameEngine?.networkManager) {
+      } else if (gameEngine?.networkManager?.cancelRematch) {
          gameEngine.networkManager.cancelRematch();
       }
    };
 
    const handleExitGame = () => {
       console.log('Exit game clicked');
+
       if (gameEngine?.uiRenderer) {
          gameEngine.uiRenderer.dispatchEvent(new CustomEvent('exitGame'));
-      } else if (gameEngine?.leaveMultiplayerGame) {
-         gameEngine.leaveMultiplayerGame();
+      } else if ((gameEngine as any)?.leaveMultiplayerGame) {
+         (gameEngine as any).leaveMultiplayerGame();
       }
    };
 
-   const updateGameStatus = status => setGameStatus(status);
+   const updateGameStatus = (status: any) => setGameStatus(status);
 
    const showButtons = ({
       restart = false,

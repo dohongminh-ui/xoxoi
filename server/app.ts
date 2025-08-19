@@ -3,7 +3,8 @@
  * No database yet
  */
 
-import express from 'express';
+import express, {type Request, type Response} from 'express';
+import {resolve} from 'path';
 import {createServer} from 'http';
 import {Server} from 'socket.io';
 
@@ -11,13 +12,25 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-app.use(express.static('public'));
+// Serve built frontend from dist
+app.use(express.static('dist'));
 
-const rooms = new Map();
+type Mark = 'X' | 'O';
+type Room = {
+   players: string[];
+   playerMarks: Map<string, Mark>;
+   currentPlayer: Mark;
+   placedMarks: Map<string, Mark>;
+   isGameOver: boolean;
+   rematchRequested: Set<string>;
+   lastWinner: Mark | null;
+};
+
+const rooms: Map<string, Room> = new Map();
 
 const MARKS = {
-   X: 'X',
-   O: 'O',
+   X: 'X' as Mark,
+   O: 'O' as Mark,
 };
 
 io.on('connection', socket => {
@@ -92,21 +105,21 @@ io.on('connection', socket => {
    });
 
    socket.on('disconnect', () => {
-      const roomsToUpdate = [];
-      rooms.forEach((room, roomId) => {
+      const roomsToUpdate: string[] = [];
+      rooms.forEach((room, roomId: string) => {
          if (room.players.includes(socket.id)) {
             roomsToUpdate.push(roomId);
          }
       });
 
-      roomsToUpdate.forEach(roomId => {
+      roomsToUpdate.forEach((roomId: string) => {
          const room = rooms.get(roomId);
          if (!room) return;
 
          room.rematchRequested.clear();
          room.isGameOver = true;
 
-         room.players = room.players.filter(id => id !== socket.id);
+         room.players = room.players.filter((id: string) => id !== socket.id);
          room.playerMarks.delete(socket.id);
 
          if (room.players.length === 0) {
@@ -124,12 +137,12 @@ io.on('connection', socket => {
       room.rematchRequested.clear();
       room.rematchRequested.add(socket.id);
 
-      const opponent = room.players.find(id => id !== socket.id);
-      if (room.rematchRequested.has(opponent)) {
+      const opponent = room.players.find((id: string) => id !== socket.id);
+      if (opponent && room.rematchRequested.has(opponent)) {
          room.rematchRequested.clear();
 
-         room.players.forEach(playerId => {
-            const playerMark = room.playerMarks.get(playerId);
+         room.players.forEach((playerId: string) => {
+            const playerMark = room.playerMarks.get(playerId) ?? MARKS.O;
             const shouldBeX = playerMark === room.lastWinner;
             room.playerMarks.set(playerId, shouldBeX ? MARKS.X : MARKS.O);
          });
@@ -139,8 +152,8 @@ io.on('connection', socket => {
          room.isGameOver = false;
          room.lastWinner = null;
 
-         room.players.forEach(playerId => {
-            const playerMark = room.playerMarks.get(playerId);
+         room.players.forEach((playerId: string) => {
+            const playerMark = room.playerMarks.get(playerId) ?? MARKS.O;
             const isYourTurn = playerMark === MARKS.X;
             io.to(playerId).emit('rematchAccepted', {
                mark: playerMark,
@@ -149,15 +162,17 @@ io.on('connection', socket => {
          });
          return;
       }
-      io.to(opponent).emit('rematchRequested');
+      if (opponent) {
+         io.to(opponent).emit('rematchRequested');
+      }
    });
 
    socket.on('acceptRematch', ({roomId}) => {
       const room = rooms.get(roomId);
       if (!room) return;
 
-      room.players.forEach(playerId => {
-         const playerMark = room.playerMarks.get(playerId);
+      room.players.forEach((playerId: string) => {
+         const playerMark = room.playerMarks.get(playerId) ?? MARKS.O;
          const shouldBeX = playerMark === room.lastWinner;
          room.playerMarks.set(playerId, shouldBeX ? MARKS.X : MARKS.O);
       });
@@ -167,8 +182,8 @@ io.on('connection', socket => {
       room.isGameOver = false;
       room.lastWinner = null;
 
-      room.players.forEach(playerId => {
-         const playerMark = room.playerMarks.get(playerId);
+      room.players.forEach((playerId: string) => {
+         const playerMark = room.playerMarks.get(playerId) ?? MARKS.O;
          io.to(playerId).emit('rematchAccepted', {
             mark: playerMark,
             isYourTurn: playerMark === MARKS.X,
@@ -181,7 +196,7 @@ io.on('connection', socket => {
       if (!room) return;
 
       room.rematchRequested.clear();
-      const requestingPlayer = room.players.find(id => id !== socket.id);
+      const requestingPlayer = room.players.find((id: string) => id !== socket.id);
       if (requestingPlayer) {
          io.to(requestingPlayer).emit('rematchDeclined');
       }
@@ -200,7 +215,7 @@ io.on('connection', socket => {
       if (!room) return;
 
       socket.leave(roomId);
-      room.players = room.players.filter(id => id !== socket.id);
+      room.players = room.players.filter((id: string) => id !== socket.id);
       room.playerMarks.delete(socket.id);
       room.rematchRequested.delete(socket.id);
 
@@ -222,7 +237,7 @@ io.on('connection', socket => {
       for (const [existingRoomId, existingRoom] of rooms.entries()) {
          if (existingRoom.players.includes(socket.id) && existingRoomId !== roomId) {
             socket.leave(existingRoomId);
-            existingRoom.players = existingRoom.players.filter(id => id !== socket.id);
+            existingRoom.players = existingRoom.players.filter((id: string) => id !== socket.id);
             existingRoom.playerMarks.delete(socket.id);
             existingRoom.rematchRequested.delete(socket.id);
          }
@@ -239,7 +254,7 @@ io.on('connection', socket => {
       if (wasInRoom) {
          const playerIndex = room.players.indexOf(playerId);
          room.players[playerIndex] = socket.id;
-         const playerMark = room.playerMarks.get(playerId);
+         const playerMark = room.playerMarks.get(playerId) ?? MARKS.O;
          room.playerMarks.delete(playerId);
          room.playerMarks.set(socket.id, playerMark);
       } else {
@@ -249,12 +264,15 @@ io.on('connection', socket => {
 
       socket.join(roomId);
 
-      const placedMarks = Array.from(room.placedMarks.entries()).map(([coord, player]) => {
-         const [x, y] = coord.split(',').map(Number);
-         return {x, y, player};
-      });
+      const placedMarks: {x: number; y: number; player: Mark}[] = [];
+      for (const [coord, player] of room.placedMarks.entries()) {
+         const [xs, ys] = coord.split(',');
+         const x = Number(xs);
+         const y = Number(ys);
+         placedMarks.push({x, y, player});
+      }
 
-      const otherPlayer = room.players.find(id => id !== socket.id);
+      const otherPlayer = room.players.find((id: string) => id !== socket.id);
       if (otherPlayer) {
          socket.to(otherPlayer).emit('opponentJoined');
       }
@@ -274,8 +292,8 @@ io.on('connection', socket => {
    });
 });
 
-app.get('/invite/:roomId', (req, res) => {
-   const roomId = req.params.roomId;
+app.get('/invite/:roomId', (req: Request<{roomId: string}>, res: Response) => {
+   const roomId = req.params.roomId as string;
    const room = rooms.get(roomId);
 
    if (!room) {
@@ -289,6 +307,11 @@ app.get('/invite/:roomId', (req, res) => {
    }
 
    res.redirect(`/?join=${roomId}`);
+});
+
+// SPA fallback for other routes in dev/prod
+app.get('*', (_req: Request, res: Response) => {
+   res.sendFile(resolve(process.cwd(), 'dist', 'index.html'));
 });
 
 const PORT = 3000;

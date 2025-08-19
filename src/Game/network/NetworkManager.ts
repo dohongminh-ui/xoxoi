@@ -4,24 +4,45 @@
  * TODO: Actually implement server-side logic for multiplayer
  */
 export class NetworkManager extends EventTarget {
+   socket: any;
+   isConnected: boolean;
+   isReconnecting: boolean;
+   roomId: string | null;
+   playerMark: string | null;
+   isMyTurn: boolean;
+   hasOpponent: boolean;
+   isGameOver: boolean;
+   connectionAttempts: number;
+   maxReconnectAttempts: number;
+   reconnectDelay: number;
    constructor() {
       super();
 
       // Connection state
       this.socket = null;
+
       this.isConnected = false;
+
       this.isReconnecting = false;
 
       // Game state
+
       this.roomId = null;
+
       this.playerMark = null;
+
       this.isMyTurn = false;
+
       this.hasOpponent = false;
+
       this.isGameOver = false;
 
       // Connection tracking
+
       this.connectionAttempts = 0;
+
       this.maxReconnectAttempts = 5;
+
       this.reconnectDelay = 1000;
 
       this.initializeSocket();
@@ -31,11 +52,13 @@ export class NetworkManager extends EventTarget {
     * Initialize socket connection and set up event listeners
     */
    initializeSocket() {
+      // io may be provided globally by Socket.IO client script
+      // @ts-ignore
       if (typeof io === 'undefined') {
          console.warn('Socket.io not available, multiplayer disabled');
          return;
       }
-
+      // @ts-ignore
       this.socket = io();
       this.setupSocketEventListeners();
    }
@@ -49,8 +72,11 @@ export class NetworkManager extends EventTarget {
       // Connection events
       this.socket.on('connect', () => {
          console.log('Connected to server with ID:', this.socket.id);
+
          this.isConnected = true;
+
          this.isReconnecting = false;
+
          this.connectionAttempts = 0;
 
          this.dispatchEvent(
@@ -60,13 +86,15 @@ export class NetworkManager extends EventTarget {
          );
 
          // Attempt to rejoin room if we were in one
+
          if (this.roomId) {
             this.attemptRoomRejoin();
          }
       });
 
-      this.socket.on('disconnect', reason => {
+      this.socket.on('disconnect', (reason: any) => {
          console.log('Disconnected from server. Reason:', reason);
+
          this.isConnected = false;
 
          this.dispatchEvent(
@@ -76,7 +104,7 @@ export class NetworkManager extends EventTarget {
          );
       });
 
-      this.socket.on('connect_error', error => {
+      this.socket.on('connect_error', (error: any) => {
          console.log('Connection error:', error);
          this.dispatchEvent(
             new CustomEvent('connectionError', {
@@ -86,8 +114,9 @@ export class NetworkManager extends EventTarget {
       });
 
       // Reconnection events
-      this.socket.io.on('reconnect', attempts => {
+      this.socket.io.on('reconnect', (attempts: any) => {
          console.log('Reconnected to server after', attempts, 'attempts');
+
          this.isReconnecting = false;
 
          this.dispatchEvent(
@@ -97,9 +126,11 @@ export class NetworkManager extends EventTarget {
          );
       });
 
-      this.socket.io.on('reconnect_attempt', attempt => {
+      this.socket.io.on('reconnect_attempt', (attempt: any) => {
          console.log('Attempting to reconnect:', attempt);
+
          this.isReconnecting = true;
+
          this.connectionAttempts = attempt;
 
          this.dispatchEvent(
@@ -109,7 +140,7 @@ export class NetworkManager extends EventTarget {
          );
       });
 
-      this.socket.io.on('reconnect_error', error => {
+      this.socket.io.on('reconnect_error', (error: any) => {
          console.log('Reconnection error:', error);
          this.dispatchEvent(
             new CustomEvent('reconnectError', {
@@ -120,6 +151,7 @@ export class NetworkManager extends EventTarget {
 
       this.socket.io.on('reconnect_failed', () => {
          console.log('Failed to reconnect to server');
+
          this.isReconnecting = false;
 
          this.dispatchEvent(
@@ -140,12 +172,17 @@ export class NetworkManager extends EventTarget {
       if (!this.socket) return;
 
       // Room management
-      this.socket.on('roomCreated', roomId => {
+      this.socket.on('roomCreated', (roomId: any) => {
          console.log('Room created:', roomId);
+
          this.roomId = roomId;
+
          this.playerMark = 'X';
+
          this.isMyTurn = true;
+
          this.hasOpponent = false;
+
          this.isGameOver = false;
 
          // Store player ID for reconnection
@@ -155,7 +192,9 @@ export class NetworkManager extends EventTarget {
             new CustomEvent('roomCreated', {
                detail: {
                   roomId,
+
                   playerMark: this.playerMark,
+
                   isMyTurn: this.isMyTurn,
                   inviteUrl: `${window.location.origin}/invite/${roomId}`,
                },
@@ -163,12 +202,17 @@ export class NetworkManager extends EventTarget {
          );
       });
 
-      this.socket.on('gameJoined', data => {
+      this.socket.on('gameJoined', (data: any) => {
          console.log('Joined game:', data);
+
          this.playerMark = typeof data === 'object' ? data.mark : data;
+
          this.roomId = typeof data === 'object' ? data.roomId : null;
+
          this.isMyTurn = this.playerMark === 'X';
+
          this.hasOpponent = true;
+
          this.isGameOver = false;
 
          if (this.roomId) {
@@ -179,8 +223,11 @@ export class NetworkManager extends EventTarget {
             new CustomEvent('gameJoined', {
                detail: {
                   roomId: this.roomId,
+
                   playerMark: this.playerMark,
+
                   isMyTurn: this.isMyTurn,
+
                   hasOpponent: this.hasOpponent,
                },
             })
@@ -189,6 +236,7 @@ export class NetworkManager extends EventTarget {
 
       this.socket.on('opponentJoined', () => {
          console.log('Opponent joined the game');
+
          this.hasOpponent = true;
 
          this.dispatchEvent(
@@ -200,7 +248,9 @@ export class NetworkManager extends EventTarget {
 
       this.socket.on('opponentLeft', () => {
          console.log('Opponent left the game');
+
          this.hasOpponent = false;
+
          this.isGameOver = true;
 
          this.dispatchEvent(
@@ -211,7 +261,7 @@ export class NetworkManager extends EventTarget {
       });
 
       // Move synchronization
-      this.socket.on('markPlaced', data => {
+      this.socket.on('markPlaced', (data: any) => {
          const {cellX, cellY, player, nextPlayer} = data;
          console.log('Received move:', data);
 
@@ -224,21 +274,24 @@ export class NetworkManager extends EventTarget {
                   cellY,
                   player,
                   nextPlayer,
+
                   isMyTurn: this.isMyTurn,
                },
             })
          );
       });
 
-      this.socket.on('gameWon', data => {
+      this.socket.on('gameWon', (data: any) => {
          const {winner} = data;
          console.log('Game won by:', winner);
+
          this.isGameOver = true;
 
          this.dispatchEvent(
             new CustomEvent('gameWon', {
                detail: {
                   winner,
+
                   isWinner: winner === this.playerMark,
                },
             })
@@ -246,20 +299,28 @@ export class NetworkManager extends EventTarget {
       });
 
       // Room rejoining
-      this.socket.on('roomRejoined', data => {
+      this.socket.on('roomRejoined', (data: any) => {
          console.log('Room rejoined:', data);
+
          this.roomId = data.roomId;
+
          this.playerMark = data.mark;
+
          this.isMyTurn = data.isYourTurn;
+
          this.isGameOver = data.isGameOver;
+
          this.hasOpponent = true;
 
          this.dispatchEvent(
             new CustomEvent('roomRejoined', {
                detail: {
                   roomId: this.roomId,
+
                   playerMark: this.playerMark,
+
                   isMyTurn: this.isMyTurn,
+
                   isGameOver: this.isGameOver,
                   placedMarks: data.placedMarks,
                },
@@ -272,11 +333,14 @@ export class NetworkManager extends EventTarget {
          this.dispatchEvent(new CustomEvent('rematchRequested'));
       });
 
-      this.socket.on('rematchAccepted', data => {
+      this.socket.on('rematchAccepted', (data: any) => {
          if (data) {
             this.playerMark = data.mark;
+
             this.isMyTurn = data.isYourTurn;
+
             this.isGameOver = false;
+
             this.hasOpponent = true;
          }
 
@@ -284,6 +348,7 @@ export class NetworkManager extends EventTarget {
             new CustomEvent('rematchAccepted', {
                detail: {
                   playerMark: this.playerMark,
+
                   isMyTurn: this.isMyTurn,
                },
             })
@@ -299,7 +364,7 @@ export class NetworkManager extends EventTarget {
       });
 
       // Error handling
-      this.socket.on('error', error => {
+      this.socket.on('error', (error: any) => {
          console.error('Socket error:', error);
          this.dispatchEvent(
             new CustomEvent('error', {
@@ -326,7 +391,7 @@ export class NetworkManager extends EventTarget {
     * Join an existing multiplayer room
     * @param {string} roomId - The room ID to join
     */
-   joinRoom(roomId) {
+   joinRoom(roomId: any) {
       if (!this.socket || !this.isConnected) {
          console.warn('Socket not connected, cannot join room');
          return false;
@@ -346,7 +411,7 @@ export class NetworkManager extends EventTarget {
     * @param {number} cellX - Cell X coordinate
     * @param {number} cellY - Cell Y coordinate
     */
-   sendMove(cellX, cellY) {
+   sendMove(cellX: any, cellY: any) {
       if (!this.socket || !this.isConnected) {
          console.warn('Socket not connected, cannot send move');
          return false;
@@ -427,7 +492,7 @@ export class NetworkManager extends EventTarget {
    attemptRoomRejoin() {
       if (!this.socket || !this.roomId) return;
 
-      this.socket.emit('checkRoom', {roomId: this.roomId}, exists => {
+      this.socket.emit('checkRoom', {roomId: this.roomId}, (exists: any) => {
          if (exists) {
             const playerId = localStorage.getItem(`room_${this.roomId}_playerId`) || this.socket.id;
             this.socket.emit('rejoinRoom', {
@@ -453,12 +518,19 @@ export class NetworkManager extends EventTarget {
    getNetworkState() {
       return {
          isConnected: this.isConnected,
+
          isReconnecting: this.isReconnecting,
+
          connectionAttempts: this.connectionAttempts,
+
          roomId: this.roomId,
+
          playerMark: this.playerMark,
+
          isMyTurn: this.isMyTurn,
+
          hasOpponent: this.hasOpponent,
+
          isGameOver: this.isGameOver,
          socketId: this.socket?.id,
       };
@@ -471,9 +543,13 @@ export class NetworkManager extends EventTarget {
       const oldRoomId = this.roomId;
 
       this.roomId = null;
+
       this.playerMark = null;
+
       this.isMyTurn = false;
+
       this.hasOpponent = false;
+
       this.isGameOver = false;
 
       // Clean up localStorage
@@ -510,7 +586,9 @@ export class NetworkManager extends EventTarget {
       }
 
       this.resetGameState();
+
       this.isConnected = false;
+
       this.isReconnecting = false;
    }
 }

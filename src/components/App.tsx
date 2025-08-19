@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
 import '../style/App.css';
-import {useGameEngine, useStatusBar, useMenuOverlay} from '../hooks/index.js';
-import {GameUI} from './index.js';
+import {useGameEngine, useStatusBar, useMenuOverlay} from '../hooks/index';
+import {GameUI} from './index';
 
 function App() {
    const pixiContainerRef = useRef(null);

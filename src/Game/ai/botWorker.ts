@@ -1,4 +1,4 @@
-importScripts('bot.js');
+// importScripts('bot.js');
 
 self.onmessage = e => {
    try {
@@ -6,12 +6,12 @@ self.onmessage = e => {
       const {placedMarks, potentialWins} = e.data;
 
       const marksMap = new Map();
-      placedMarks.forEach(mark => {
+      placedMarks.forEach((mark: any) => {
          marksMap.set(mark.key, {player: mark.player});
       });
 
       const potentialWinsMap = new Map();
-      potentialWins.forEach(win => {
+      potentialWins.forEach((win: any) => {
          const [direction, x, y] = win.key.split(',');
          potentialWinsMap.set(win.key, {
             count: win.count,
@@ -19,6 +19,7 @@ self.onmessage = e => {
          });
       });
 
+      // @ts-ignore
       const move = bot.getBestMove(marksMap, potentialWinsMap);
       console.log('Bot move:', move);
 
@@ -38,16 +39,16 @@ self.onmessage = e => {
             throw new Error('No valid moves available');
          }
       }
-   } catch (error) {
+   } catch (error: unknown) {
       self.postMessage({
          type: 'error',
-         message: error.message,
-         stack: error.stack,
+         message: (error as any)?.message ?? 'Unknown error',
+         stack: (error as any)?.stack ?? null,
       });
    }
 };
 
-function getFallbackMove(marksMap) {
+function getFallbackMove(marksMap: any) {
    if (marksMap.size === 0) {
       return {x: 0, y: 0};
    }

@@ -1,15 +1,23 @@
 import {useEffect, useRef, useState} from 'react';
-import {GameEngine} from '../Game/core/GameEngine.js';
-import {GAME_CONSTANTS} from '../Game/core/constants.js';
+import {GameEngine} from '../Game/core/GameEngine';
+import {GAME_CONSTANTS} from '../Game/core/constants';
 
 /**
  * Custom hook for managing PIXI.js game engine lifecycle
  * Handles initialization, mounting, and cleanup
  */
-export const useGameEngine = containerRef => {
-   const gameEngineRef = useRef(null);
+type UseGameEngineReturn = {
+   gameEngine: GameEngine | null;
+   gameInitialized: boolean;
+   error: string | null;
+};
+
+export const useGameEngine = (
+   containerRef: React.RefObject<HTMLElement | null>
+): UseGameEngineReturn => {
+   const gameEngineRef = useRef<GameEngine | null>(null);
    const [gameInitialized, setGameInitialized] = useState(false);
-   const [error, setError] = useState(null);
+   const [error, setError] = useState<string | null>(null);
 
    useEffect(() => {
       const initializeGame = async () => {
@@ -21,12 +29,14 @@ export const useGameEngine = containerRef => {
                return;
             }
 
-            window.GAME_CONSTANTS = GAME_CONSTANTS;
+            (window as any).GAME_CONSTANTS = GAME_CONSTANTS;
 
             gameEngineRef.current = new GameEngine();
             await gameEngineRef.current.init();
 
-            const pixiCanvas = gameEngineRef.current.app.view;
+            const pixiCanvas = (gameEngineRef.current as any).app?.view as
+               | HTMLCanvasElement
+               | undefined;
             if (containerRef.current && pixiCanvas) {
                containerRef.current.innerHTML = '';
                containerRef.current.appendChild(pixiCanvas);
@@ -34,10 +44,10 @@ export const useGameEngine = containerRef => {
 
             setGameInitialized(true);
             console.log('Game engine initialized successfully');
-            window.gameEngine = gameEngineRef.current;
+            (window as any).gameEngine = gameEngineRef.current as GameEngine;
          } catch (err) {
             console.error('❌ Failed to initialize game:', err);
-            setError(err.message);
+            setError(err instanceof Error ? err.message : 'Unknown error');
          }
       };
 
@@ -45,8 +55,8 @@ export const useGameEngine = containerRef => {
 
       return () => {
          clearTimeout(timeoutId);
-         if (gameEngineRef.current?.app) {
-            gameEngineRef.current.app.destroy(true, true);
+         if (gameEngineRef.current && (gameEngineRef.current as any).app) {
+            (gameEngineRef.current as any).app.destroy(true, true);
          }
       };
    }, [containerRef]);
