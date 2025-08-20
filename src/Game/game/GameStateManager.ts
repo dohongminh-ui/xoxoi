@@ -464,15 +464,6 @@ export class GameStateManager extends EventTarget {
             this.state.gameMode === 'multi' ? newPlayer === this.state.playerMark : true
          ),
       });
-
-      this.dispatchEvent(
-         new CustomEvent('turnChange', {
-            detail: {
-               currentPlayer: this.state.currentPlayer,
-               isMyTurn: this.state.isMyTurn,
-            } as TurnChangeEventDetail,
-         })
-      );
    }
 
    /**
