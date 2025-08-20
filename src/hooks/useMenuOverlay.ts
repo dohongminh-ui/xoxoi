@@ -41,42 +41,43 @@ export const useMenuOverlay = (gameEngine: GameEngine | null = null) => {
 
    const handleStartSinglePlayer = () => {
       console.log('Start single player clicked');
-      if ((gameEngine as any)?.startSinglePlayerGame) {
-         if (gameEngine?.uiRenderer) {
-            gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startSingle'));
+      if (gameEngine?.uiRenderer) {
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startSingle'));
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
          }
+      } else if ((gameEngine as any)?.startSinglePlayerGame) {
          (gameEngine as any).startSinglePlayerGame();
-
-         if (gameEngine?.gameStateManager?.set) {
-            gameEngine.gameStateManager.set('showMenu', false);
-         } else {
-            setIsMenuVisible(false);
-         }
-         return;
-      }
-      console.warn('Game engine or startSinglePlayerGame method not available');
-   };
-
-   const handleStartBotGame = () => {
-      console.log('Start bot game clicked');
-      if ((gameEngine as any)?.startBotGame) {
-         (gameEngine as any).startBotGame();
-
-         if (gameEngine?.gameStateManager?.set) {
-            gameEngine.gameStateManager.set('showMenu', false);
-         } else {
-            setIsMenuVisible(false);
-         }
-      } else if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startBot'));
-
          if (gameEngine?.gameStateManager?.set) {
             gameEngine.gameStateManager.set('showMenu', false);
          } else {
             setIsMenuVisible(false);
          }
       } else {
-         console.warn('Game engine or startBotGame method not available');
+         console.warn('Game engine or uiRenderer not available');
+      }
+   };
+
+   const handleStartBotGame = () => {
+      console.log('Start bot game clicked');
+      if (gameEngine?.uiRenderer) {
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startBot'));
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+      } else if ((gameEngine as any)?.startBotGame) {
+         (gameEngine as any).startBotGame();
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+      } else {
+         console.warn('Game engine or uiRenderer not available');
       }
    };
 

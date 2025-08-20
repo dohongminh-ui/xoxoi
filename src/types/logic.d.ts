@@ -1,5 +1,8 @@
 // Type definitions for GameLogic
 
+import type {Mark, GameMode} from './state';
+import type {PotentialWinLine, MoveRecord} from './engine';
+
 export type GameStartOptions = {
    playerMark?: Mark;
    roomId?: string;
@@ -48,7 +51,7 @@ export type PlaceMarkResult =
    | PlaceMarkMultiplayer;
 
 export type GameLogicState = {
-   gameMode: 'single' | 'bot' | 'multi' | null;
+   gameMode: GameMode;
    currentPlayer: Mark;
    isGameOver: boolean;
    playerMark: Mark | '';

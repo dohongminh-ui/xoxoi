@@ -3,7 +3,6 @@
 export type GameMode = 'single' | 'bot' | 'multi' | null;
 export type Mark = 'X' | 'O';
 export type GamePhase = 'menu' | 'lobby' | 'playing' | 'paused' | 'ended';
-export type MenuState = 'main' | 'lobby' | 'game' | 'settings' | 'about';
 export type ButtonState =
    | 'in_game'
    | 'game_over'

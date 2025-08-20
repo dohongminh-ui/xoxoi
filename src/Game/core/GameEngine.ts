@@ -591,19 +591,13 @@ export class GameEngine {
       if (!this.uiRenderer) return;
 
       // Single player game
-      this.uiRenderer.addEventListener('startSingle', () => {
-         this.startSinglePlayerGame();
-      });
+      this.uiRenderer.addEventListener('startSingle', () => this.startSinglePlayerGame());
 
       // Bot game
-      this.uiRenderer.addEventListener('startBot', () => {
-         this.startBotGame();
-      });
+      this.uiRenderer.addEventListener('startBot', () => this.startBotGame());
 
       // Multiplayer game creation
-      this.uiRenderer.addEventListener('multiCreate', () => {
-         this.createMultiplayerGame();
-      });
+      this.uiRenderer.addEventListener('multiCreate', () => this.createMultiplayerGame());
 
       // Multiplayer game joining
       this.uiRenderer.addEventListener('multiJoin', (event: Event) => {
@@ -615,30 +609,22 @@ export class GameEngine {
       });
 
       // Game restart/rematch
-      this.uiRenderer.addEventListener('rematchRequest', () => {
-         this.gameLogic?.requestRematch?.();
-      });
+      this.uiRenderer.addEventListener('rematchRequest', () => this.gameLogic?.requestRematch?.());
 
       // Accept rematch
-      this.uiRenderer.addEventListener('rematchAccept', () => {
-         if (this.networkManager) {
-            this.networkManager?.acceptRematch?.();
-         }
-      });
+      this.uiRenderer.addEventListener('rematchAccept', () =>
+         this.networkManager?.acceptRematch?.()
+      );
 
       // Decline rematch
-      this.uiRenderer.addEventListener('rematchDecline', () => {
-         if (this.networkManager) {
-            this.networkManager?.declineRematch?.();
-         }
-      });
+      this.uiRenderer.addEventListener('rematchDecline', () =>
+         this.networkManager?.declineRematch?.()
+      );
 
       // Cancel rematch
-      this.uiRenderer.addEventListener('rematchCancel', () => {
-         if (this.networkManager) {
-            this.networkManager?.cancelRematch?.();
-         }
-      });
+      this.uiRenderer.addEventListener('rematchCancel', () =>
+         this.networkManager?.cancelRematch?.()
+      );
 
       // Exit game
       this.uiRenderer.addEventListener('exitGame', () => {

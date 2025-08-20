@@ -3,10 +3,8 @@ import type {
    GameMode,
    Mark,
    GamePhase,
-   MenuState,
    ButtonState,
    GameEndReason,
-   StateChange,
    StateChanges,
    StartGameOptions,
    EndGameResult,
@@ -261,16 +259,16 @@ export class GameStateManager extends EventTarget {
          );
 
          // Emit specific events for major state changes
-         this.emitSpecificStateEvents(changes, oldState);
+         this.emitSpecificStateEvents(changes);
       }
    }
 
    /**
     * Emit specific events for major state changes
     * @param {StateChanges} changes - Changes that occurred
-    * @param {GameState} oldState - Previous state
     */
-   emitSpecificStateEvents(changes: StateChanges, oldState: GameState) {
+   emitSpecificStateEvents(changes: StateChanges) {
+      const state = this.getState();
       // Game mode changes
       if (changes.gameMode) {
          this.dispatchEvent(
@@ -278,7 +276,7 @@ export class GameStateManager extends EventTarget {
                detail: {
                   from: changes.gameMode.from as GameMode,
                   to: changes.gameMode.to as GameMode,
-                  state: this.getState(),
+                  state,
                } as GameModeChangedDetail,
             })
          );
@@ -291,7 +289,7 @@ export class GameStateManager extends EventTarget {
                detail: {
                   from: changes.gamePhase.from as GamePhase,
                   to: changes.gamePhase.to as GamePhase,
-                  state: this.getState(),
+                  state,
                } as GamePhaseChangedDetail,
             })
          );
@@ -304,7 +302,7 @@ export class GameStateManager extends EventTarget {
                detail: {
                   currentPlayer: this.state.currentPlayer,
                   isMyTurn: this.state.isMyTurn,
-                  state: this.getState(),
+                  state,
                } as TurnChangeDetail,
             })
          );
@@ -317,7 +315,7 @@ export class GameStateManager extends EventTarget {
                detail: {
                   winner: this.state.winner,
                   winningCells: this.state.winningCells,
-                  state: this.getState(),
+                  state,
                } as GameEndedDetail,
             })
          );
@@ -330,7 +328,7 @@ export class GameStateManager extends EventTarget {
                detail: {
                   currentMenu: this.state.currentMenu,
                   showMenu: this.state.showMenu,
-                  state: this.getState(),
+                  state,
                } as MenuStateChangedDetail,
             })
          );
@@ -343,7 +341,7 @@ export class GameStateManager extends EventTarget {
                detail: {
                   from: changes.buttonState.from as ButtonState | null,
                   to: changes.buttonState.to as ButtonState | null,
-                  state: this.getState(),
+                  state,
                } as ButtonStateChangedDetail,
             })
          );
@@ -357,7 +355,7 @@ export class GameStateManager extends EventTarget {
                   isConnected: this.state.isConnected,
                   isReconnecting: this.state.isReconnecting,
                   connectionAttempts: this.state.connectionAttempts,
-                  state: this.getState(),
+                  state,
                } as NetworkStateChangedDetail,
             })
          );

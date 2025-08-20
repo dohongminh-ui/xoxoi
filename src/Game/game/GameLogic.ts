@@ -9,6 +9,7 @@ import type {
    PlaceMarkResult,
    GameLogicState,
 } from '../../types/logic';
+import type {GameMode} from '../../types/state';
 
 /**
  * GameLogic handles all game rules, validation, and state management
@@ -16,7 +17,7 @@ import type {
  */
 
 export class GameLogic extends EventTarget {
-   gameMode: 'single' | 'bot' | 'multi' | null;
+   gameMode: GameMode | null;
    currentPlayer: Mark;
    isGameOver: boolean;
    playerMark: Mark | '';
