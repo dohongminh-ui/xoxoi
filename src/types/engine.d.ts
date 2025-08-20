@@ -118,3 +118,114 @@ export interface GameStateManagerLike extends EventTarget {
       options?: boolean | AddEventListenerOptions
    ): void;
 }
+
+export interface CameraUpdateEvent extends CustomEvent {
+   detail: {
+      scale: number;
+      x: number;
+      y: number;
+   };
+}
+
+export interface DragStartEvent extends CustomEvent {
+   detail: {
+      cellX: number;
+      cellY: number;
+   };
+}
+
+export interface CellClickEvent extends CustomEvent {
+   detail: {
+      cellX: number;
+      cellY: number;
+   };
+}
+
+export interface PointerMoveEvent extends CustomEvent {
+   detail: {
+      event: PointerEvent;
+      isDragging: boolean;
+      hasMoved: boolean;
+   };
+}
+
+export interface MoveAttemptedEvent extends CustomEvent {
+   detail: {
+      x: number;
+      y: number;
+      player: Mark;
+      success: boolean;
+      reason?: string;
+   };
+}
+
+export interface MovePlacedEvent extends CustomEvent {
+   detail: {
+      cellX: number;
+      cellY: number;
+      player: Mark;
+   };
+}
+
+export interface GameWonEvent extends CustomEvent {
+   detail: {
+      winner: Mark;
+      winningCells: [number, number][];
+   };
+}
+
+export interface GameDrawEvent extends CustomEvent {
+   detail: Record<string, unknown>;
+}
+
+export interface StateChangedEvent extends CustomEvent {
+   detail: {
+      gameState: GameStateShape;
+   };
+}
+
+export interface NetworkEvent extends CustomEvent {
+   detail: {
+      attempts?: number;
+      roomId?: string;
+      playerMark?: Mark;
+      inviteUrl?: string;
+      isMyTurn?: boolean;
+      cellX?: number;
+      cellY?: number;
+      player?: Mark;
+      error?: Error;
+   };
+}
+
+export interface GameStateEvent extends CustomEvent {
+   detail: {
+      from?: string;
+      to?: string;
+      currentPlayer?: Mark;
+      isMyTurn?: boolean;
+      winner?: Mark | null;
+      currentMenu?: string;
+      showMenu?: boolean;
+      isConnected?: boolean;
+      isReconnecting?: boolean;
+   };
+}
+
+export interface UIEvent extends CustomEvent {
+   detail: {
+      roomId?: string;
+   };
+}
+
+export interface ComponentClasses {
+   GridRenderer?: new (app: PIXI.Application, gridContainer: PIXI.Container) => GridRendererLike;
+   CameraController?: new (
+      app: PIXI.Application,
+      gridContainer: PIXI.Container
+   ) => CameraControllerLike;
+   GameLogic?: new () => GameLogicLike;
+   NetworkManager?: new () => NetworkManagerLike;
+   GameStateManager?: new () => GameStateManagerLike;
+   UIRenderer?: new (gameStateManager: GameStateManagerLike) => UIRendererLike;
+}
