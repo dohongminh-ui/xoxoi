@@ -16,7 +16,7 @@ type GameEndMenuProps = {
    };
 };
 
-const TicTacToeGameEndMenu = ({data, actions}: GameEndMenuProps) => {
+const GameEndMenu = ({data, actions}: GameEndMenuProps) => {
    const [showMenu, setShowMenu] = useState(false);
    const [animateStats, setAnimateStats] = useState(false);
 
@@ -221,4 +221,4 @@ const TicTacToeGameEndMenu = ({data, actions}: GameEndMenuProps) => {
    );
 };
 
-export default TicTacToeGameEndMenu;
+export default GameEndMenu;
