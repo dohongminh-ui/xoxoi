@@ -103,8 +103,6 @@ export class GameStateManager extends EventTarget {
       this.BUTTON_STATES = {
          IN_GAME: 'in_game',
          GAME_OVER: 'game_over',
-         REMATCH_REQUEST: 'rematch_request',
-         WAITING_REMATCH: 'waiting_rematch',
          OPPONENT_LEFT: 'opponent_left',
          MENU: 'menu',
          LOBBY: 'lobby',

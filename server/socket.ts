@@ -237,7 +237,7 @@ function requestRematch() {
    socket.emit('requestRematch', {roomId: gameState.roomId});
    // @ts-expect-error TS(2531): Object is possibly 'null'.
    document.getElementById('gameStatus').textContent = "Waiting for opponent's response...";
-   updateButtonState(BUTTON_STATES.WAITING_REMATCH);
+   updateButtonState(BUTTON_STATES.GAME_OVER);
 }
 
 function cancelRematch() {
@@ -251,7 +251,7 @@ function cancelRematch() {
 socket.on('rematchRequested', () => {
    // @ts-expect-error TS(2531): Object is possibly 'null'.
    document.getElementById('gameStatus').textContent = 'Opponent wants a rematch!';
-   updateButtonState(BUTTON_STATES.REMATCH_REQUEST);
+   updateButtonState(BUTTON_STATES.GAME_OVER);
 });
 
 socket.on('rematchAccepted', (data: any) => {

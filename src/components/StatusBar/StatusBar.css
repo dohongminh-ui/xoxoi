@@ -153,23 +153,11 @@
    flex-shrink: 0;
 }
 
-.status-button.restart-button,
-.status-button.accept-rematch-button {
-   background: var(--color-1);
-}
-
-.status-button.restart-button:hover,
-.status-button.accept-rematch-button:hover {
-   background: var(--color-1-hover);
-}
-
-.status-button.decline-rematch-button,
-.status-button.cancel-rematch-button {
+.status-button.resign-button {
    background: var(--danger-color);
 }
 
-.status-button.decline-rematch-button:hover,
-.status-button.cancel-rematch-button:hover {
+.status-button.resign-button:hover {
    background: var(--danger-color-hover);
 }
 

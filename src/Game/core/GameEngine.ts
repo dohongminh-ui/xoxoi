@@ -608,24 +608,6 @@ export class GameEngine {
          }
       });
 
-      // Game restart/rematch
-      this.uiRenderer.addEventListener('rematchRequest', () => this.gameLogic?.requestRematch?.());
-
-      // Accept rematch
-      this.uiRenderer.addEventListener('rematchAccept', () =>
-         this.networkManager?.acceptRematch?.()
-      );
-
-      // Decline rematch
-      this.uiRenderer.addEventListener('rematchDecline', () =>
-         this.networkManager?.declineRematch?.()
-      );
-
-      // Cancel rematch
-      this.uiRenderer.addEventListener('rematchCancel', () =>
-         this.networkManager?.cancelRematch?.()
-      );
-
       // Exit game
       this.uiRenderer.addEventListener('exitGame', () => {
          this.leaveMultiplayerGame();

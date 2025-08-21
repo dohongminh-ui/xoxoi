@@ -134,9 +134,7 @@ export const useGameEnd = (gameEngine: GameEngine | null) => {
 
    const onPrimary = useCallback(() => {
       // Rematch / Play Again
-      if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchRequest'));
-      } else if (gameEngine?.gameLogic?.requestRematch) {
+      if (gameEngine?.gameLogic?.requestRematch) {
          gameEngine.gameLogic.requestRematch();
       }
    }, [gameEngine]);

@@ -4,54 +4,37 @@ import type {ButtonState} from '../types/engine';
 
 /**
  * Custom hook for managing status bar state and actions
- * Centralizes all status bar logic and provides clean interface
+ * Focuses on in-game status display and basic controls
  */
 export const useStatusBar = (gameEngine: GameEngine | null = null) => {
    const [gameStatus, setGameStatus] = useState('toe');
-   const [showRestartButton, setShowRestartButton] = useState(false);
-   const [showAcceptRematchButton, setShowAcceptRematchButton] = useState(false);
-   const [showDeclineRematchButton, setShowDeclineRematchButton] = useState(false);
-   const [showCancelRematchButton, setShowCancelRematchButton] = useState(false);
+   const [showResignButton, setShowResignButton] = useState(false);
    const [showExitGameButton, setShowExitGameButton] = useState(false);
 
-   const applyButtonState = (buttonState: ButtonState) => {
+   const applyButtonState = (buttonState: ButtonState, gameState?: any) => {
       const flags = {
-         restart: false,
-         acceptRematch: false,
-         declineRematch: false,
-         cancelRematch: false,
+         resign: false,
          exitGame: false,
       };
 
       switch (buttonState) {
          case 'in_game':
+            flags.resign = true;
             flags.exitGame = true;
             break;
          case 'game_over':
-            flags.restart = true;
-            flags.exitGame = true;
-            break;
-         case 'rematch_request':
-            flags.acceptRematch = true;
-            flags.declineRematch = true;
-            flags.exitGame = true;
-            break;
-         case 'waiting_rematch':
-            flags.cancelRematch = true;
-            flags.exitGame = true;
             break;
          case 'opponent_left':
             flags.exitGame = true;
             break;
+         case 'menu':
+         case 'lobby':
          default:
             // hide all
             break;
       }
 
-      setShowRestartButton(flags.restart);
-      setShowAcceptRematchButton(flags.acceptRematch);
-      setShowDeclineRematchButton(flags.declineRematch);
-      setShowCancelRematchButton(flags.cancelRematch);
+      setShowResignButton(flags.resign);
       setShowExitGameButton(flags.exitGame);
    };
 
@@ -63,16 +46,20 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
          const state = (gsm.getState ? gsm.getState() : {}) as {
             statusMessage?: string;
             buttonState: ButtonState;
+            isGameOver?: boolean;
+            gamePhase?: string;
          };
          setGameStatus(state.statusMessage || 'toe');
-         applyButtonState(state.buttonState);
+         applyButtonState(state.buttonState, state);
       };
 
       sync();
 
       const onStateChanged = () => sync();
-      const onButtonChanged = (e: CustomEvent<{from: ButtonState; to: ButtonState}>) =>
-         applyButtonState(e.detail.to);
+      const onButtonChanged = (e: CustomEvent<{from: ButtonState; to: ButtonState}>) => {
+         const state = gsm.getState ? gsm.getState() : {};
+         applyButtonState(e.detail.to, state);
+      };
       const onTurnChange = () => sync();
       const onGameStarted = () => sync();
       const onGameEnded = () => sync();
@@ -99,43 +86,13 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       };
    }, [gameEngine]);
 
-   const handleRestart = () => {
-      console.log('Restart button clicked');
+   const handleResign = () => {
+      console.log('Resign clicked');
 
       if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchRequest'));
-      } else if (gameEngine?.gameLogic?.requestRematch) {
-         gameEngine.gameLogic.requestRematch();
-      }
-   };
-
-   const handleAcceptRematch = () => {
-      console.log('Accept rematch clicked');
-
-      if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchAccept'));
-      } else if (gameEngine?.networkManager?.acceptRematch) {
-         gameEngine.networkManager.acceptRematch();
-      }
-   };
-
-   const handleDeclineRematch = () => {
-      console.log('Decline rematch clicked');
-
-      if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchDecline'));
-      } else if (gameEngine?.networkManager?.declineRematch) {
-         gameEngine.networkManager.declineRematch();
-      }
-   };
-
-   const handleCancelRematch = () => {
-      console.log('Cancel rematch clicked');
-
-      if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('rematchCancel'));
-      } else if (gameEngine?.networkManager?.cancelRematch) {
-         gameEngine.networkManager.cancelRematch();
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('resign'));
+      } else if (gameEngine?.networkManager?.resign) {
+         gameEngine.networkManager.resign();
       }
    };
 
@@ -152,22 +109,13 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
    const updateGameStatus = (status: string) => setGameStatus(status);
 
    const showButtons = ({
-      restart = false,
-      acceptRematch = false,
-      declineRematch = false,
-      cancelRematch = false,
+      resign = false,
       exitGame = false,
    }: {
-      restart?: boolean;
-      acceptRematch?: boolean;
-      declineRematch?: boolean;
-      cancelRematch?: boolean;
+      resign?: boolean;
       exitGame?: boolean;
    }) => {
-      setShowRestartButton(restart);
-      setShowAcceptRematchButton(acceptRematch);
-      setShowDeclineRematchButton(declineRematch);
-      setShowCancelRematchButton(cancelRematch);
+      setShowResignButton(resign);
       setShowExitGameButton(exitGame);
    };
 
@@ -179,18 +127,12 @@ export const useStatusBar = (gameEngine: GameEngine | null = null) => {
       // State
       statusBarState: {
          gameStatus,
-         showRestartButton,
-         showAcceptRematchButton,
-         showDeclineRematchButton,
-         showCancelRematchButton,
+         showResignButton,
          showExitGameButton,
       },
       // Actions
       statusBarActions: {
-         onRestart: handleRestart,
-         onAcceptRematch: handleAcceptRematch,
-         onDeclineRematch: handleDeclineRematch,
-         onCancelRematch: handleCancelRematch,
+         onResign: handleResign,
          onExitGame: handleExitGame,
       },
       // Utilities

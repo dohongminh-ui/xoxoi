@@ -3,16 +3,10 @@ import {useGameEnd} from '../hooks';
 
 type StatusBarProps = {
    gameStatus?: string;
-   showRestartButton?: boolean;
-   showAcceptRematchButton?: boolean;
-   showDeclineRematchButton?: boolean;
-   showCancelRematchButton?: boolean;
    showExitGameButton?: boolean;
-   onRestart?: () => void;
-   onAcceptRematch?: () => void;
-   onDeclineRematch?: () => void;
-   onCancelRematch?: () => void;
+   showResignButton?: boolean;
    onExitGame?: () => void;
+   onResign?: () => void;
 };
 
 type MenuProps = {
@@ -24,16 +18,9 @@ type MenuProps = {
 };
 
 type GameUIProps = {
-   statusBarState: Omit<
-      StatusBarProps,
-      'onRestart' | 'onAcceptRematch' | 'onDeclineRematch' | 'onCancelRematch' | 'onExitGame'
-   >;
-   statusBarActions: Required<
-      Pick<
-         StatusBarProps,
-         'onRestart' | 'onAcceptRematch' | 'onDeclineRematch' | 'onCancelRematch' | 'onExitGame'
-      >
-   >;
+   statusBarState: Omit<StatusBarProps, 'onExitGame' | 'onResign'>;
+   statusBarActions: Required<Pick<StatusBarProps, 'onExitGame'>> &
+      Partial<Pick<StatusBarProps, 'onResign'>>;
    menuState: Pick<MenuProps, 'isVisible'>;
    menuActions: Required<
       Pick<
@@ -48,14 +35,13 @@ const GameUI = ({statusBarState, statusBarActions, menuState, menuActions}: Game
    // As a pragmatic approach, use window.gameEngine if available
    const ge = (window as any).gameEngine ?? null;
    const {isVisible: isGameEndVisible, data: gameEndData, actions: gameEndActions} = useGameEnd(ge);
+
    return (
       <div className='ui-overlay'>
          <StatusBar {...statusBarState} {...statusBarActions} />
          <MainMenu {...menuState} {...menuActions} />
          {isGameEndVisible && gameEndData && (
-            //<MenuOverlay isVisible>
             <GameEndMenu data={gameEndData} actions={gameEndActions} />
-            //</MenuOverlay>
          )}
       </div>
    );

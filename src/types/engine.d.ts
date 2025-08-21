@@ -100,6 +100,7 @@ export interface NetworkManagerLike extends EventTarget {
    acceptRematch?(): void;
    declineRematch?(): void;
    cancelRematch?(): void;
+   resign?(): void;
    destroy?(): void;
 }
 

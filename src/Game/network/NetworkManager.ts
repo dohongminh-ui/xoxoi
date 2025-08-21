@@ -425,6 +425,15 @@ export class NetworkManager extends EventTarget {
    }
 
    /**
+    * Resign from the current game
+    */
+   resign() {
+      if (!this.socket || !this.roomId) return false;
+      this.socket.emit('resign', {roomId: this.roomId});
+      return true;
+   }
+
+   /**
     * Attempt to rejoin a room after reconnection
     */
    attemptRoomRejoin() {
@@ -453,7 +462,7 @@ export class NetworkManager extends EventTarget {
     * Get current network state
     * @returns {Object} Current network state
     */
-   getNetworkState() {
+   getNetworkState(): object {
       return {
          isConnected: this.isConnected,
          isReconnecting: this.isReconnecting,

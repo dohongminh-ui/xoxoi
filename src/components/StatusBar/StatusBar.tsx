@@ -4,16 +4,10 @@ import './StatusBar.css';
 
 type StatusBarProps = {
    gameStatus?: string;
-   showRestartButton?: boolean;
-   showAcceptRematchButton?: boolean;
-   showDeclineRematchButton?: boolean;
-   showCancelRematchButton?: boolean;
    showExitGameButton?: boolean;
-   onRestart?: () => void;
-   onAcceptRematch?: () => void;
-   onDeclineRematch?: () => void;
-   onCancelRematch?: () => void;
+   showResignButton?: boolean;
    onExitGame?: () => void;
+   onResign?: () => void;
    expandableContent?: ReactNode;
    expandableTitle?: string;
    alwaysShowExpandButton?: boolean;
@@ -21,15 +15,9 @@ type StatusBarProps = {
 
 const StatusBar = ({
    gameStatus = 'toe',
-   showRestartButton = false,
-   showAcceptRematchButton = false,
-   showDeclineRematchButton = false,
-   showCancelRematchButton = false,
    showExitGameButton = false,
-   onRestart,
-   onAcceptRematch,
-   onDeclineRematch,
-   onCancelRematch,
+   showResignButton = false,
+   onResign,
    onExitGame,
    expandableContent,
    expandableTitle,
@@ -37,12 +25,7 @@ const StatusBar = ({
 }: StatusBarProps) => {
    const [isExpanded, setIsExpanded] = useState(false);
 
-   const hasAnyButton =
-      showRestartButton ||
-      showAcceptRematchButton ||
-      showDeclineRematchButton ||
-      showCancelRematchButton ||
-      showExitGameButton;
+   const hasAnyButton = showResignButton || showExitGameButton;
    const shouldShowExpandButton = alwaysShowExpandButton || hasAnyButton || expandableContent;
 
    const handleButtonClick = (callback?: () => void) => {
@@ -82,35 +65,11 @@ const StatusBar = ({
                {/* button section */}
                {hasAnyButton && (
                   <div className='button-section'>
-                     {showRestartButton && (
+                     {showResignButton && (
                         <button
-                           className='status-button restart-button'
-                           onClick={() => handleButtonClick(onRestart)}>
-                           Rematch
-                        </button>
-                     )}
-
-                     {showAcceptRematchButton && (
-                        <button
-                           className='status-button accept-rematch-button'
-                           onClick={() => handleButtonClick(onAcceptRematch)}>
-                           Accept
-                        </button>
-                     )}
-
-                     {showDeclineRematchButton && (
-                        <button
-                           className='status-button decline-rematch-button'
-                           onClick={() => handleButtonClick(onDeclineRematch)}>
-                           Decline
-                        </button>
-                     )}
-
-                     {showCancelRematchButton && (
-                        <button
-                           className='status-button cancel-rematch-button'
-                           onClick={() => handleButtonClick(onCancelRematch)}>
-                           Cancel
+                           className='status-button resign-button'
+                           onClick={() => handleButtonClick(onResign)}>
+                           Resign
                         </button>
                      )}
 
