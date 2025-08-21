@@ -138,6 +138,13 @@ export class UIRenderer extends EventTarget {
             }
          });
       }
+
+      // Switch players event listener
+      this.addEventListener('switchPlayers', () => {
+         if (this.gameStateManager?.switchPlayers) {
+            this.gameStateManager.switchPlayers();
+         }
+      });
    }
 
    /**

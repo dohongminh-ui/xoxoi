@@ -28,8 +28,11 @@ export class GameLogic extends EventTarget {
    potentialWins: Map<string, PotentialWinLine>;
    winningCells: Array<[number, number]> | null;
    moveHistory: Array<MoveRecord>;
-   constructor() {
+   uiRenderer: any;
+   constructor(uiRenderer?: any) {
       super();
+
+      this.uiRenderer = uiRenderer;
 
       // Game state
       this.gameMode = null; // 'null', 'single', 'bot', 'multi'
@@ -570,6 +573,7 @@ export class GameLogic extends EventTarget {
     */
    requestRematch() {
       const currentState = this.getGameState();
+      if (!currentState) return;
       if (!currentState.isGameOver) return;
 
       switch (currentState.gameMode) {
@@ -580,13 +584,86 @@ export class GameLogic extends EventTarget {
             window.gameEngine?.startBotGame();
             break;
          case 'multi':
-            //idk update status bar or smt
+            window.gameEngine?.createMultiplayerGame();
             // we dont even have a server for this yet lmao
             break;
          default:
             window.gameEngine?.leaveMultiplayerGame();
             break;
       }
+   }
+
+   /**
+    * Handle share game functionality for multiplayer games (rough outline)
+    */
+   handleShareGame(): void {
+      const gameState = this.getGameState();
+      if (!gameState || gameState.gameMode !== 'multi') {
+         console.warn('Share functionality is only available for multiplayer games');
+         return;
+      }
+
+      const roomId = gameState.roomId;
+      if (!roomId) {
+         console.warn('No room ID available for sharing');
+         return;
+      }
+
+      // Create shareable URL or copy room ID to clipboard
+      const shareUrl = `${window.location.origin}?room=${roomId}`;
+
+      if (navigator.share) {
+         // Use native sharing if available
+         navigator
+            .share({
+               title: 'Join my Tic-Tac-Toe game!',
+               text: `Join my game with room ID: ${roomId}`,
+               url: shareUrl,
+            })
+            .catch(error => {
+               console.log('Error sharing:', error);
+               this.fallbackShare(roomId, shareUrl);
+            });
+      } else {
+         this.fallbackShare(roomId, shareUrl);
+      }
+   }
+
+   /**
+    * Fallback share functionality using clipboard (rough outline)
+    */
+   private fallbackShare(roomId: string, shareUrl: string): void {
+      if (navigator.clipboard) {
+         navigator.clipboard
+            .writeText(shareUrl)
+            .then(() => {
+               this.dispatchEvent(
+                  new CustomEvent('showMessage', {
+                     detail: {message: `Room ID ${roomId} copied to clipboard!`},
+                  })
+               );
+            })
+            .catch(() => {
+               this.dispatchEvent(
+                  new CustomEvent('showMessage', {
+                     detail: {message: `Room ID: ${roomId}`},
+                  })
+               );
+            });
+      } else {
+         this.dispatchEvent(
+            new CustomEvent('showMessage', {
+               detail: {message: `Room ID: ${roomId}`},
+            })
+         );
+      }
+   }
+
+   /**
+    * Handle new game in the same mode
+    */
+   handleNewGame(): void {
+      // TODO: Game settings UI
    }
 
    /**

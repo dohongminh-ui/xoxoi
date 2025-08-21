@@ -10,24 +10,45 @@ type WinMethod = 'line' | 'resignation' | 'timeout' | 'draw';
 type GameEndMenuProps = {
    data: GameEndMenuData;
    actions: {
-      onPrimary: () => void;
+      onRematch: () => void;
       onNewGame: () => void;
       onBack: () => void;
+      onSwitchPlayers: () => void;
    };
+   animationComplete?: boolean;
 };
 
-const GameEndMenu = ({data, actions}: GameEndMenuProps) => {
+const GameEndMenu = ({data, actions, animationComplete = true}: GameEndMenuProps) => {
    const [showMenu, setShowMenu] = useState(false);
    const [animateStats, setAnimateStats] = useState(false);
 
    useEffect(() => {
-      const timer1 = setTimeout(() => setShowMenu(true), 500);
-      const timer2 = setTimeout(() => setAnimateStats(true), 1000);
+      console.log('GameEndMenu: Component mounted/updated, animationComplete:', animationComplete);
+
+      // Reset animation states when component mounts or data changes
+      setShowMenu(false);
+      setAnimateStats(false);
+
+      // Start menu animation immediately since we've already waited for winning line
+      const timer1 = setTimeout(() => {
+         console.log('GameEndMenu: Showing menu');
+         setShowMenu(true);
+      }, 100);
+
+      // Start stats animation with coordinated timing
+      // If winning line animation was needed, use shorter delay since we already waited
+      // If no animation was needed, use standard timing
+      const statsDelay = animationComplete ? 400 : 800;
+      const timer2 = setTimeout(() => {
+         console.log('GameEndMenu: Starting stats animation');
+         setAnimateStats(true);
+      }, statsDelay);
+
       return () => {
          clearTimeout(timer1);
          clearTimeout(timer2);
       };
-   }, []);
+   }, [data, animationComplete]);
 
    const getResultText = () => {
       if (data.winner === 'draw') return 'Draw Game';
@@ -99,14 +120,18 @@ const GameEndMenu = ({data, actions}: GameEndMenuProps) => {
                            <p className='player-name-text'>{data.xPlayer.name}</p>
                            {data.xPlayer.isBot && <span className='bot-badge'>BOT</span>}
                         </div>
-                        <p className='player-rating'>Rating: {data.xPlayer.rating}</p>
+                        {data.gameType === 'multi' && (
+                           <p className='player-rating'>Rating: {data.xPlayer.rating}</p>
+                        )}
                      </div>
                   </div>
-                  <div
-                     className={`rating-change ${data.xPlayer.ratingChange > 0 ? 'positive' : 'negative'}`}>
-                     {data.xPlayer.ratingChange > 0 ? '+' : ''}
-                     {data.xPlayer.ratingChange}
-                  </div>
+                  {data.gameType === 'multi' && (
+                     <div
+                        className={`rating-change ${data.xPlayer.ratingChange > 0 ? 'positive' : 'negative'}`}>
+                        {data.xPlayer.ratingChange > 0 ? '+' : ''}
+                        {data.xPlayer.ratingChange}
+                     </div>
+                  )}
                </div>
 
                {/* O Player */}
@@ -122,14 +147,18 @@ const GameEndMenu = ({data, actions}: GameEndMenuProps) => {
                            <p className='player-name-text'>{data.oPlayer.name}</p>
                            {data.oPlayer.isBot && <span className='bot-badge'>BOT</span>}
                         </div>
-                        <p className='player-rating'>Rating: {data.oPlayer.rating}</p>
+                        {data.gameType === 'multi' && (
+                           <p className='player-rating'>Rating: {data.oPlayer.rating}</p>
+                        )}
                      </div>
                   </div>
-                  <div
-                     className={`rating-change ${data.oPlayer.ratingChange > 0 ? 'positive' : 'negative'}`}>
-                     {data.oPlayer.ratingChange > 0 ? '+' : ''}
-                     {data.oPlayer.ratingChange}
-                  </div>
+                  {data.gameType === 'multi' && (
+                     <div
+                        className={`rating-change ${data.oPlayer.ratingChange > 0 ? 'positive' : 'negative'}`}>
+                        {data.oPlayer.ratingChange > 0 ? '+' : ''}
+                        {data.oPlayer.ratingChange}
+                     </div>
+                  )}
                </div>
 
                {/* Game stats */}
@@ -170,12 +199,12 @@ const GameEndMenu = ({data, actions}: GameEndMenuProps) => {
 
                {/* Action buttons */}
                <div className={`action-buttons delayed-3 ${animateStats ? 'animate' : ''}`}>
-                  <button className='primary-button' onClick={actions.onPrimary}>
+                  <button className='primary-button' onClick={actions.onRematch}>
                      <RotateCcw size={20} />
                      <span>{data.gameType === 'bot' ? 'Play Again' : 'Rematch'}</span>
                   </button>
 
-                  {data.gameType === 'multiplayer' && (
+                  {data.gameType === 'multi' && (
                      <div className='secondary-button-grid'>
                         <button className='secondary-button'>
                            <Share2 size={16} />
@@ -188,9 +217,18 @@ const GameEndMenu = ({data, actions}: GameEndMenuProps) => {
                      </div>
                   )}
 
-                  {data.gameType === 'local' && (
+                  {data.gameType === 'single' && (
+                     <button
+                        className='secondary-button full-width-secondary-button'
+                        onClick={actions.onNewGame}>
+                        <Grid3X3 size={20} />
+                        <span>New Game</span>
+                     </button>
+                  )}
+
+                  {data.gameType === 'bot' && (
                      <div className='secondary-button-grid'>
-                        <button className='secondary-button'>
+                        <button className='secondary-button' onClick={actions.onSwitchPlayers}>
                            <Users size={16} />
                            <span>Switch</span>
                         </button>
@@ -199,15 +237,6 @@ const GameEndMenu = ({data, actions}: GameEndMenuProps) => {
                            <span>New Game</span>
                         </button>
                      </div>
-                  )}
-
-                  {data.gameType === 'bot' && (
-                     <button
-                        className='secondary-button full-width-secondary-button'
-                        onClick={actions.onNewGame}>
-                        <Grid3X3 size={20} />
-                        <span>New Game</span>
-                     </button>
                   )}
 
                   <button className='back-button' onClick={actions.onBack}>

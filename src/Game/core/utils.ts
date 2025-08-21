@@ -59,6 +59,18 @@ export function distance(point1: {x: number; y: number}, point2: {x: number; y: 
 }
 
 /**
+ * Format duration in milliseconds to MM:SS format
+ * @param {number} ms - Duration in milliseconds
+ * @returns {string} Formatted duration string
+ */
+export function formatDuration(ms: number): string {
+   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+   const minutes = Math.floor(totalSeconds / 60);
+   const seconds = totalSeconds % 60;
+   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
+
+/**
  * Debounce function execution
  * @param {Function} func - Function to debounce
  * @param {number} wait - Wait time in milliseconds

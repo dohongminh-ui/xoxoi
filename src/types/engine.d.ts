@@ -71,6 +71,7 @@ export interface CameraControllerLike extends EventTarget {
 
 export interface UIRendererLike extends EventTarget {
    initialize(): void;
+   showMessage?(message: string, duration?: number): void;
 }
 
 export interface GameLogicLike extends EventTarget {
@@ -82,6 +83,8 @@ export interface GameLogicLike extends EventTarget {
    executeMove?(x: number, y: number, player: Mark): void;
    resetGame?(): void;
    requestRematch?(): void;
+   handleShareGame?(): void;
+   handleNewGame?(): void;
    destroy?(): void;
    dispatchEvent(event: Event): boolean;
    addEventListener(
@@ -108,11 +111,25 @@ export interface GameStateManagerLike extends EventTarget {
    GAME_PHASES?: Record<string, string> & {ENDED?: string};
    getState(): GameStateShape;
    isGameActive(): boolean;
-   switchTurn?(): void;
+   switchPlayers?(): void;
    endGame?(opts: any): void;
    startGame(mode: GameMode, options?: any): void;
    resetGame?(opts?: any): void;
    set?(key: string, value: any): void;
+   incrementMoveCount?(): void;
+   syncMoveCount?(actualMoveCount: number): void;
+   resetMoveCount?(): void;
+   calculateCurrentDuration?(): number;
+   formatDuration?(ms: number): string;
+   getFormattedDuration?(): string;
+   getGameModeLabel?(mode?: GameMode): string;
+   getGridSizeDisplay?(): string;
+   getDisplayStats?(): {
+      moves: number;
+      duration: string;
+      gridSize: string;
+      gameMode: string;
+   };
    addEventListener(
       type: string,
       listener: EventListenerOrEventListenerObject | null,
