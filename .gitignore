@@ -28,7 +28,6 @@ pnpm-lock.yaml
 package-lock.json
 ARCHITECTURE.md
 TODO.md
-/src/Game/legacy
 
 # debug
 npm-debug.log*
