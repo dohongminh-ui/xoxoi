@@ -55,7 +55,7 @@ const StatusBar = ({
 
    return (
       <div className={`status-bar noselect ${isExpanded ? 'expanded' : ''}`} id='statusBar'>
-         <div className='status-bar-top'>
+         <div className={`status-bar-top ${shouldShowExpandButton ? 'has-expand-button' : ''}`}>
             <span className='game-status' id='gameStatus'>
                {gameStatus}
             </span>
