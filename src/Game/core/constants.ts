@@ -4,6 +4,13 @@ export const GAME_CONSTANTS = {
    MIN_SCALE: 0.1,
    MAX_SCALE: 6,
    ZOOM_SPEED: 0.1,
+   GRID_SIZE: {
+      // which infinite is false use the number below as size
+      INFINITE_X: false,
+      X: 3,
+      INFINITE_Y: false,
+      Y: 3,
+   },
 
    // Visual styling
    STRIKE_COLOR: '#52575D',
@@ -39,6 +46,7 @@ export const {
    CELL_SIZE,
    MIN_SCALE,
    MAX_SCALE,
+   GRID_SIZE,
    ZOOM_SPEED,
    STRIKE_COLOR,
    STRIKE_WIDTH,

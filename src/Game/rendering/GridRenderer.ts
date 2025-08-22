@@ -1,4 +1,4 @@
-import {GAME_CONSTANTS, CELL_SIZE, COLORS} from '../core/constants';
+import {GAME_CONSTANTS, CELL_SIZE, COLORS, GRID_SIZE} from '../core/constants';
 import {coordKey} from '../core/utils';
 import type {GameStateShape, PlacedMarksMap, Mark} from '../../types/engine';
 
@@ -58,10 +58,19 @@ export class GridRenderer {
       graphics.lineStyle(1 / scale, gridColor, 1);
 
       // Calculate visible grid bounds with padding
-      const startX = Math.floor(-gridX / (CELL_SIZE * scale)) - 20;
-      const startY = Math.floor(-gridY / (CELL_SIZE * scale)) - 20;
-      const endX = startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
-      const endY = startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
+      let startX = Math.floor(-gridX / (CELL_SIZE * scale)) - 20;
+      let startY = Math.floor(-gridY / (CELL_SIZE * scale)) - 20;
+      let endX = startX + Math.ceil(this.app.screen.width / (CELL_SIZE * scale)) + 40;
+      let endY = startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
+
+      if (!GRID_SIZE.INFINITE_X) {
+         startX = 0;
+         endX = GRID_SIZE.X;
+      }
+      if (!GRID_SIZE.INFINITE_Y) {
+         startY = 0;
+         endY = GRID_SIZE.Y;
+      }
 
       // Draw vertical lines
       for (let x = startX; x <= endX; x++) {
@@ -280,6 +289,9 @@ export class GridRenderer {
 
       const cellX = Math.floor(pos.x / CELL_SIZE);
       const cellY = Math.floor(pos.y / CELL_SIZE);
+      if (!GRID_SIZE.INFINITE_X && (cellX < 0 || cellX >= GRID_SIZE.X)) return;
+      if (!GRID_SIZE.INFINITE_Y && (cellY < 0 || cellY >= GRID_SIZE.Y)) return;
+
       const key = coordKey(cellX, cellY);
 
       let hoverColorStr = COLORS.HOVER;

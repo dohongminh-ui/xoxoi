@@ -391,7 +391,16 @@ export class GameEngine {
       // Listen for draws
       this.gameLogic.addEventListener('gameDraw', (event: Event) => {
          const drawEvent = event as GameDrawEvent;
-         console.log('Game ended in a draw');
+         console.log('Game ended in a draw!');
+
+         // end the game after draw
+         this.gameStateManager?.endGame?.({
+            winner: null,
+            winningCells: null,
+            reason: 'completed',
+         });
+
+         this.gameLogic?.dispatchEvent(new CustomEvent('gameEnded'));
       });
 
       // Listen for game state changes
