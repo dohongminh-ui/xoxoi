@@ -6,9 +6,9 @@ export const GAME_CONSTANTS = {
    ZOOM_SPEED: 0.1,
    GRID_SIZE: {
       // which infinite is false use the number below as size
-      INFINITE_X: false,
+      INFINITE_X: true,
       X: 3,
-      INFINITE_Y: false,
+      INFINITE_Y: true,
       Y: 3,
    },
 
