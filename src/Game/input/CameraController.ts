@@ -562,12 +562,9 @@ export class CameraController extends EventTarget {
    resetCamera() {
       this.velocity = {x: 0, y: 0};
 
-      if (!GRID_SIZE.INFINITE_X && !GRID_SIZE.INFINITE_Y) {
-         const mid_x = GRID_SIZE.X / 2;
-         const mid_y = GRID_SIZE.Y / 2;
-
-         this.cameraToCell(mid_x, mid_y);
-      } else this.setCameraState(0, 0, 1);
+      let toX = GRID_SIZE.INFINITE_X ? 0 : GRID_SIZE.X / 2;
+      let toY = GRID_SIZE.INFINITE_Y ? 0 : GRID_SIZE.Y / 2;
+      this.cameraToCell(toX, toY);
 
       this.dispatchEvent(
          new CustomEvent('cameraReset', {
