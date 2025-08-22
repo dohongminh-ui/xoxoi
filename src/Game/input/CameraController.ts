@@ -562,10 +562,8 @@ export class CameraController extends EventTarget {
    resetCamera() {
       this.velocity = {x: 0, y: 0};
 
-      let toX = 0;
-      let toY = 0;
-      if (!GRID_SIZE.INFINITE_X) toX = GRID_SIZE.X / 2;
-      if (!GRID_SIZE.INFINITE_Y) toY = GRID_SIZE.Y / 2;
+      let toX = GRID_SIZE.INFINITE_X ? 0 : GRID_SIZE.X / 2;
+      let toY = GRID_SIZE.INFINITE_Y ? 0 : GRID_SIZE.Y / 2;
       this.cameraToCell(toX, toY);
 
       this.dispatchEvent(
