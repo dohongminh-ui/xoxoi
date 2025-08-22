@@ -1,7 +1,7 @@
 import {useEffect, useRef} from 'react';
-import '../style/App.css';
-import {useGameEngine, useStatusBar, useMenuOverlay} from '../hooks/index';
-import {GameUI} from './index';
+import styles from './App.module.css';
+import {useGameEngine, useStatusBar, useMenuOverlay} from '../../hooks/index';
+import {GameUI} from '../index';
 
 function App() {
    const pixiContainerRef = useRef(null);
@@ -23,7 +23,7 @@ function App() {
 
    if (error) {
       return (
-         <div className='error-container'>
+         <div className={styles.errorContainer}>
             <h1>Game Initialization Failed</h1>
             <p>There was an error starting the game. Check the console for details.</p>
             <pre>{error}</pre>
@@ -32,8 +32,8 @@ function App() {
    }
 
    return (
-      <div className='app'>
-         <div id='pixi-container' ref={pixiContainerRef} className='pixi-container' />
+      <div className={styles.app}>
+         <div id='pixi-container' ref={pixiContainerRef} className={styles.pixiContainer} />
          <GameUI
             statusBarState={statusBarState}
             statusBarActions={statusBarActions}

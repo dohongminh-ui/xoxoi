@@ -1,0 +1,356 @@
+/* ==========================================================================
+   VISIBILITY UTILITIES
+   Show/hide and opacity utility classes for element visibility control
+   ========================================================================== */
+
+/* Visibility utilities */
+.visible {
+   visibility: visible;
+}
+.invisible {
+   visibility: hidden;
+}
+
+/* Display utilities for show/hide */
+.show {
+   display: block !important;
+}
+.hide {
+   display: none !important;
+}
+
+/* Opacity utilities */
+.opacity-0 {
+   opacity: 0;
+}
+.opacity-5 {
+   opacity: 0.05;
+}
+.opacity-10 {
+   opacity: 0.1;
+}
+.opacity-20 {
+   opacity: 0.2;
+}
+.opacity-25 {
+   opacity: 0.25;
+}
+.opacity-30 {
+   opacity: 0.3;
+}
+.opacity-40 {
+   opacity: 0.4;
+}
+.opacity-50 {
+   opacity: 0.5;
+}
+.opacity-60 {
+   opacity: 0.6;
+}
+.opacity-70 {
+   opacity: 0.7;
+}
+.opacity-75 {
+   opacity: 0.75;
+}
+.opacity-80 {
+   opacity: 0.8;
+}
+.opacity-90 {
+   opacity: 0.9;
+}
+.opacity-95 {
+   opacity: 0.95;
+}
+.opacity-100 {
+   opacity: 1;
+}
+
+/* Screen reader utilities */
+.sr-only {
+   position: absolute;
+   width: 1px;
+   height: 1px;
+   padding: 0;
+   margin: -1px;
+   overflow: hidden;
+   clip: rect(0, 0, 0, 0);
+   white-space: nowrap;
+   border: 0;
+}
+
+.not-sr-only {
+   position: static;
+   width: auto;
+   height: auto;
+   padding: 0;
+   margin: 0;
+   overflow: visible;
+   clip: auto;
+   white-space: normal;
+}
+
+/* Pointer events utilities */
+.pointer-events-none {
+   pointer-events: none;
+}
+.pointer-events-auto {
+   pointer-events: auto;
+}
+
+/* User select utilities */
+.select-none {
+   user-select: none;
+}
+.select-text {
+   user-select: text;
+}
+.select-all {
+   user-select: all;
+}
+.select-auto {
+   user-select: auto;
+}
+
+/* Cursor utilities */
+.cursor-auto {
+   cursor: auto;
+}
+.cursor-default {
+   cursor: default;
+}
+.cursor-pointer {
+   cursor: pointer;
+}
+.cursor-wait {
+   cursor: wait;
+}
+.cursor-text {
+   cursor: text;
+}
+.cursor-move {
+   cursor: move;
+}
+.cursor-help {
+   cursor: help;
+}
+.cursor-not-allowed {
+   cursor: not-allowed;
+}
+.cursor-grab {
+   cursor: grab;
+}
+.cursor-grabbing {
+   cursor: grabbing;
+}
+
+/* Resize utilities */
+.resize-none {
+   resize: none;
+}
+.resize {
+   resize: both;
+}
+.resize-y {
+   resize: vertical;
+}
+.resize-x {
+   resize: horizontal;
+}
+
+/* Backdrop filter utilities */
+.backdrop-blur-none {
+   backdrop-filter: none;
+}
+.backdrop-blur-sm {
+   backdrop-filter: blur(4px);
+}
+.backdrop-blur {
+   backdrop-filter: blur(8px);
+}
+.backdrop-blur-md {
+   backdrop-filter: blur(12px);
+}
+.backdrop-blur-lg {
+   backdrop-filter: blur(16px);
+}
+.backdrop-blur-xl {
+   backdrop-filter: blur(24px);
+}
+.backdrop-blur-2xl {
+   backdrop-filter: blur(40px);
+}
+.backdrop-blur-3xl {
+   backdrop-filter: blur(64px);
+}
+
+/* Filter utilities */
+.filter-none {
+   filter: none;
+}
+.blur-none {
+   filter: blur(0);
+}
+.blur-sm {
+   filter: blur(4px);
+}
+.blur {
+   filter: blur(8px);
+}
+.blur-md {
+   filter: blur(12px);
+}
+.blur-lg {
+   filter: blur(16px);
+}
+.blur-xl {
+   filter: blur(24px);
+}
+.blur-2xl {
+   filter: blur(40px);
+}
+.blur-3xl {
+   filter: blur(64px);
+}
+
+/* Brightness utilities */
+.brightness-0 {
+   filter: brightness(0);
+}
+.brightness-50 {
+   filter: brightness(0.5);
+}
+.brightness-75 {
+   filter: brightness(0.75);
+}
+.brightness-90 {
+   filter: brightness(0.9);
+}
+.brightness-95 {
+   filter: brightness(0.95);
+}
+.brightness-100 {
+   filter: brightness(1);
+}
+.brightness-105 {
+   filter: brightness(1.05);
+}
+.brightness-110 {
+   filter: brightness(1.1);
+}
+.brightness-125 {
+   filter: brightness(1.25);
+}
+.brightness-150 {
+   filter: brightness(1.5);
+}
+.brightness-200 {
+   filter: brightness(2);
+}
+
+/* Contrast utilities */
+.contrast-0 {
+   filter: contrast(0);
+}
+.contrast-50 {
+   filter: contrast(0.5);
+}
+.contrast-75 {
+   filter: contrast(0.75);
+}
+.contrast-100 {
+   filter: contrast(1);
+}
+.contrast-125 {
+   filter: contrast(1.25);
+}
+.contrast-150 {
+   filter: contrast(1.5);
+}
+.contrast-200 {
+   filter: contrast(2);
+}
+
+/* Grayscale utilities */
+.grayscale-0 {
+   filter: grayscale(0);
+}
+.grayscale {
+   filter: grayscale(100%);
+}
+
+/* Saturate utilities */
+.saturate-0 {
+   filter: saturate(0);
+}
+.saturate-50 {
+   filter: saturate(0.5);
+}
+.saturate-100 {
+   filter: saturate(1);
+}
+.saturate-150 {
+   filter: saturate(1.5);
+}
+.saturate-200 {
+   filter: saturate(2);
+}
+
+/* Sepia utilities */
+.sepia-0 {
+   filter: sepia(0);
+}
+.sepia {
+   filter: sepia(100%);
+}
+
+/* Hue rotate utilities */
+.hue-rotate-0 {
+   filter: hue-rotate(0deg);
+}
+.hue-rotate-15 {
+   filter: hue-rotate(15deg);
+}
+.hue-rotate-30 {
+   filter: hue-rotate(30deg);
+}
+.hue-rotate-60 {
+   filter: hue-rotate(60deg);
+}
+.hue-rotate-90 {
+   filter: hue-rotate(90deg);
+}
+.hue-rotate-180 {
+   filter: hue-rotate(180deg);
+}
+
+/* Invert utilities */
+.invert-0 {
+   filter: invert(0);
+}
+.invert {
+   filter: invert(100%);
+}
+
+/* Drop shadow utilities */
+.drop-shadow-sm {
+   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+}
+.drop-shadow {
+   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.06));
+}
+.drop-shadow-md {
+   filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.07)) drop-shadow(0 2px 2px rgba(0, 0, 0, 0.06));
+}
+.drop-shadow-lg {
+   filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.04)) drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
+}
+.drop-shadow-xl {
+   filter: drop-shadow(0 20px 13px rgba(0, 0, 0, 0.03)) drop-shadow(0 8px 5px rgba(0, 0, 0, 0.08));
+}
+.drop-shadow-2xl {
+   filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15));
+}
+.drop-shadow-none {
+   filter: drop-shadow(0 0 #0000);
+}

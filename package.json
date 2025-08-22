@@ -9,18 +9,20 @@
       "backend:build": "tsc -p tsconfig.server.json",
       "frontend": "vite",
       "dev": "concurrently \"tsc -w -p tsconfig.server.json\" \"vite\"",
-      "build": "concurrently \"tsc -p tsconfig.server.json\" \"vite build\"",
+      "build": "tsc -p tsconfig.server.json && vite build",
       "preview": "concurrently \"node dist/server/app.js\" \"vite preview\"",
       "type-check": "tsc -p tsconfig.json --noEmit",
       "test": "jest",
       "format": "prettier --write .",
       "format:check": "prettier --check .",
+      "lint:css": "stylelint \"src/**/*.css\"",
       "prepare": "husky install"
    },
    "license": "ISC",
    "lint-staged": {
       "*.{js,jsx,ts,tsx,json,css,md}": [
-         "prettier --write"
+         "prettier --write",
+         "stylelint \"src/**/*.css\""
       ]
    },
    "dependencies": {
@@ -50,6 +52,9 @@
       "lint-staged": "^16.1.5",
       "prettier": "3.6.2",
       "prisma": "^6.14.0",
+      "stylelint": "^16.23.1",
+      "stylelint-config-css-modules": "^4.5.1",
+      "stylelint-config-standard": "^39.0.0",
       "vite": "^7.0.6"
    }
 }

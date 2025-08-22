@@ -5,6 +5,19 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
    plugins: [react()],
 
+   // CSS configuration
+   css: {
+      modules: {
+         // Generate class names in development for easier debugging
+         generateScopedName:
+            process.env.NODE_ENV === 'development'
+               ? '[name]__[local]__[hash:base64:5]'
+               : '[hash:base64:8]',
+         // Enable CSS modules for .module.css files
+         localsConvention: 'camelCaseOnly',
+      },
+   },
+
    // Configure development server
    server: {
       port: 3001, // Use different port than Express server (3000)

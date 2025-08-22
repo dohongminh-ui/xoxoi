@@ -1,0 +1,179 @@
+/* StatusBar component CSS Module using design tokens */
+
+.container {
+   position: fixed;
+   top: var(--space-5);
+   left: 50%;
+   transform: translateX(-50%);
+   background: var(--color-bg-surface);
+   padding: var(--space-2-5) var(--space-5);
+   border-radius: var(--radius-3xl);
+   box-shadow: var(--shadow-lg);
+   z-index: var(--z-status);
+   pointer-events: none !important;
+   border: 1px solid var(--color-border-default);
+   transition: all var(--duration-medium) var(--easing-ease);
+}
+
+.container.expanded {
+   border-radius: var(--radius-2xl);
+   padding: var(--space-3-5) var(--space-6);
+   box-shadow: var(--shadow-2xl);
+}
+
+.container * {
+   pointer-events: auto;
+}
+
+.top {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: var(--space-3-5);
+   width: 100%;
+}
+
+.top.hasExpandButton {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: var(--space-3-5);
+   width: 100%;
+}
+
+.gameStatus {
+   color: var(--color-text-primary);
+   font-weight: normal;
+   text-align: center;
+   white-space: nowrap;
+}
+
+.top.hasExpandButton .gameStatus {
+   text-align: left;
+   flex: 1;
+}
+
+.expandToggle {
+   padding: var(--space-1-5) var(--space-2);
+   background: var(--palette-slate-500);
+   color: var(--color-text-inverse);
+   border: none;
+   border-radius: var(--radius-xl);
+   cursor: pointer;
+   font-size: var(--font-size-xs);
+   transition: var(--transition-medium);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   min-width: var(--space-6);
+   height: var(--space-6);
+}
+
+.expandToggle:hover {
+   background: var(--palette-slate-600);
+}
+
+.expandToggle.expanded {
+   background: var(--color-success);
+}
+
+.expandToggle.expanded:hover {
+   background: var(--color-success-hover);
+}
+
+.expandIcon {
+   transition: var(--transition-transform);
+   display: inline-block;
+   line-height: 1;
+}
+
+.expandToggle.expanded .expandIcon {
+   transform: rotate(180deg);
+}
+
+.expandableArea {
+   overflow: hidden;
+   max-height: 0;
+   opacity: 0;
+   transition: all 0.125s ease;
+   margin-top: 0;
+}
+
+.expandableArea.expanded {
+   max-height: 500px;
+   opacity: 1;
+   margin-top: var(--space-3-5);
+}
+
+.expandableContent {
+   width: 100%;
+}
+
+.expandableTitle {
+   color: var(--color-text-primary);
+   font-weight: bold;
+   font-size: var(--font-size-sm);
+   margin-bottom: var(--space-3);
+   padding-bottom: var(--space-2);
+   border-bottom: 1px solid var(--color-border-subtle);
+   text-align: center;
+}
+
+.customContent {
+   margin-bottom: var(--space-3-5);
+   color: var(--color-text-primary);
+   text-align: left;
+}
+
+.customContent:last-child {
+   margin-bottom: 0;
+}
+
+.buttonSection {
+   display: flex;
+   flex-wrap: wrap;
+   gap: var(--space-2);
+   justify-content: center;
+   align-items: center;
+}
+
+.buttonSection:not(:first-child) {
+   margin-top: var(--space-3-5);
+   padding-top: var(--space-3-5);
+   border-top: 1px solid var(--color-border-subtle);
+}
+
+/* Room ID specific styling */
+.gameStatus.roomId {
+   transition: var(--transition-colors);
+   cursor: pointer;
+}
+
+.gameStatus.roomId:hover {
+   color: var(--color-success);
+}
+
+.gameStatus.roomId:active {
+   color: var(--color-success);
+}
+
+/* Responsive design */
+@media (width <= 480px) {
+   .container {
+      left: var(--space-2-5);
+      right: var(--space-2-5);
+      transform: none;
+      min-width: auto;
+      max-width: calc(100vw - var(--space-5));
+   }
+
+   .buttonSection {
+      flex-direction: column;
+      gap: var(--space-1-5);
+   }
+
+   .buttonSection button {
+      width: 100%;
+      text-align: center;
+   }
+}

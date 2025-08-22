@@ -1,0 +1,44 @@
+/* MainMenu component styles using CSS Modules and design tokens */
+
+.menuContent {
+   background: var(--color-bg-glass);
+   padding: var(--space-8);
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-4);
+   min-width: 300px;
+   text-align: center;
+   position: relative;
+   -webkit-backdrop-filter: blur(3px);
+   backdrop-filter: blur(3px);
+   border: 1px solid var(--color-border-inverse);
+   border-radius: var(--radius-2xl);
+   box-shadow: var(--shadow-elevated);
+}
+
+.joinGameSection {
+   display: flex;
+   gap: var(--space-2-5);
+   margin-top: var(--space-2-5);
+}
+
+.roomIdInput {
+   flex: 1;
+   padding: var(--input-padding);
+   border: 1px solid var(--input-border);
+   border-radius: var(--input-radius);
+   font-size: var(--input-font-size);
+   background: var(--input-bg);
+   color: var(--color-text-primary);
+   transition: var(--input-transition);
+}
+
+.roomIdInput:focus {
+   outline: none;
+   border-color: var(--input-border-focus);
+   box-shadow: var(--input-focus-ring);
+}
+
+.roomIdInput::placeholder {
+   color: var(--color-text-placeholder);
+}

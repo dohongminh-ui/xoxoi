@@ -1,0 +1,218 @@
+:root {
+   /* ==========================================================================
+      DESIGN TOKEN SYSTEM
+      ========================================================================== */
+
+   /* Color Palette - Raw color values */
+   --palette-teal-500: #10b981;
+   --palette-teal-600: #059669;
+   --palette-amber-500: #f59e0b;
+   --palette-amber-400: #fbbf24;
+   --palette-rose-500: #f43f5e;
+   --palette-rose-600: #e65e60;
+   --palette-blue-400: #60a5fa;
+   --palette-purple-500: #a855f7;
+   --palette-slate-500: #64748b;
+   --palette-slate-600: #475569;
+   --palette-slate-700: #334155;
+   --palette-gray-50: #f8f9fa;
+   --palette-gray-100: #f1f3f4;
+   --palette-gray-200: #e9ecef;
+   --palette-gray-300: #dee2e6;
+   --palette-gray-400: #ced4da;
+   --palette-gray-500: #adb5bd;
+   --palette-gray-600: #6c757d;
+   --palette-gray-700: #495057;
+   --palette-gray-800: #343a40;
+   --palette-gray-900: #212529;
+   --palette-white: #fff;
+   --palette-black: #000;
+
+   /* Semantic Colors - Intent-based color system */
+   --color-accent: var(--palette-teal-500);
+   --color-accent-hover: var(--palette-teal-600);
+   --color-accent-subtle: rgba(16, 185, 129, 0.1);
+   --color-accent-border: rgba(16, 185, 129, 0.2);
+   --color-danger: var(--palette-rose-500);
+   --color-danger-hover: var(--palette-rose-600);
+   --color-danger-subtle: rgba(244, 63, 94, 0.1);
+   --color-danger-border: rgba(244, 63, 94, 0.2);
+   --color-warning: var(--palette-amber-500);
+   --color-warning-hover: var(--palette-amber-400);
+   --color-warning-subtle: rgba(245, 158, 11, 0.1);
+   --color-warning-border: rgba(245, 158, 11, 0.2);
+   --color-info: var(--palette-blue-400);
+   --color-info-hover: #3b82f6;
+   --color-info-subtle: rgba(96, 165, 250, 0.1);
+   --color-info-border: rgba(96, 165, 250, 0.2);
+   --color-success: var(--palette-teal-500);
+   --color-success-hover: var(--palette-teal-600);
+   --color-success-subtle: rgba(16, 185, 129, 0.1);
+   --color-success-border: rgba(16, 185, 129, 0.2);
+
+   /* Text Colors - Hierarchical text system */
+   --color-text-primary: var(--palette-gray-900);
+   --color-text-secondary: var(--palette-gray-600);
+   --color-text-tertiary: var(--palette-gray-500);
+   --color-text-inverse: var(--palette-white);
+   --color-text-disabled: var(--palette-gray-400);
+   --color-text-placeholder: var(--palette-gray-400);
+
+   /* Background Colors - Layered background system */
+   --color-bg-canvas: var(--palette-white);
+   --color-bg-surface: var(--palette-white);
+   --color-bg-subtle: var(--palette-gray-50);
+   --color-bg-muted: var(--palette-gray-100);
+   --color-bg-overlay: rgba(0, 0, 0, 0.8);
+   --color-bg-elevated: rgba(0, 0, 0, 0.65);
+   --color-bg-glass: rgba(255, 255, 255, 0.1);
+   --color-bg-glass-strong: rgba(255, 255, 255, 0.2);
+
+   /* Border Colors */
+   --color-border-default: var(--palette-gray-200);
+   --color-border-subtle: var(--palette-gray-100);
+   --color-border-strong: var(--palette-gray-300);
+   --color-border-inverse: rgba(255, 255, 255, 0.2);
+
+   /* Spacing Scale - Consistent 4px base scale */
+   --space-0: 0;
+   --space-px: 1px;
+   --space-0-5: 0.125rem; /* 2px */
+   --space-1: 0.25rem; /* 4px */
+   --space-1-5: 0.375rem; /* 6px */
+   --space-2: 0.5rem; /* 8px */
+   --space-2-5: 0.625rem; /* 10px */
+   --space-3: 0.75rem; /* 12px */
+   --space-3-5: 0.875rem; /* 14px */
+   --space-4: 1rem; /* 16px */
+   --space-5: 1.25rem; /* 20px */
+   --space-6: 1.5rem; /* 24px */
+   --space-7: 1.75rem; /* 28px */
+   --space-8: 2rem; /* 32px */
+   --space-9: 2.25rem; /* 36px */
+   --space-10: 2.5rem; /* 40px */
+   --space-11: 2.75rem; /* 44px */
+   --space-12: 3rem; /* 48px */
+   --space-14: 3.5rem; /* 56px */
+   --space-16: 4rem; /* 64px */
+   --space-20: 5rem; /* 80px */
+   --space-24: 6rem; /* 96px */
+   --space-32: 8rem; /* 128px */
+
+   /* Border Radius - Consistent rounding scale */
+   --radius-none: 0;
+   --radius-xs: 0.125rem; /* 2px */
+   --radius-sm: 0.25rem; /* 4px */
+   --radius-md: 0.375rem; /* 6px */
+   --radius-lg: 0.5rem; /* 8px */
+   --radius-xl: 0.75rem; /* 12px */
+   --radius-2xl: 1rem; /* 16px */
+   --radius-3xl: 1.5rem; /* 24px */
+   --radius-pill: 999px;
+   --radius-full: 50%;
+
+   /* Shadows - Layered elevation system */
+   --shadow-none: none;
+   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+   --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
+   --shadow-elevated: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+   --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.12);
+   --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+
+   /* Motion - Animation and transition system */
+   --duration-instant: 0ms;
+   --duration-fast: 120ms;
+   --duration-medium: 200ms;
+   --duration-slow: 300ms;
+   --duration-slower: 400ms;
+   --duration-slowest: 500ms;
+   --easing-linear: linear;
+   --easing-ease: ease;
+   --easing-ease-in: ease-in;
+   --easing-ease-out: ease-out;
+   --easing-ease-in-out: ease-in-out;
+   --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+   --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+   --easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+   --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+   /* Composite transitions */
+   --transition-fast: all var(--duration-fast) var(--easing-standard);
+   --transition-medium: all var(--duration-medium) var(--easing-standard);
+   --transition-slow: all var(--duration-slow) var(--easing-standard);
+   --transition-transform: transform var(--duration-medium) var(--easing-standard);
+   --transition-opacity: opacity var(--duration-medium) var(--easing-standard);
+   --transition-colors:
+      background-color var(--duration-medium) var(--easing-standard),
+      border-color var(--duration-medium) var(--easing-standard),
+      color var(--duration-medium) var(--easing-standard);
+
+   /* Z-Index Scale - Layered stacking system */
+   --z-base: 0;
+   --z-canvas: 1;
+   --z-dropdown: 10;
+   --z-sticky: 20;
+   --z-overlay: 30;
+   --z-status: 100;
+   --z-popover: 200;
+   --z-tooltip: 300;
+   --z-modal: 1000;
+   --z-toast: 1100;
+   --z-max: 2147483647;
+
+   /* ==========================================================================
+      COMPONENT-SPECIFIC TOKENS
+      ========================================================================== */
+
+   /* Button Component Variants */
+   --button-padding: var(--space-3) var(--space-4);
+   --button-padding-sm: var(--space-2) var(--space-3);
+   --button-padding-lg: var(--space-4) var(--space-6);
+   --button-radius: var(--radius-lg);
+   --button-font-weight: 500;
+   --button-transition: var(--transition-colors), var(--transition-transform);
+   --button-gap: var(--space-2);
+   --button-focus-ring: 2px solid var(--color-accent);
+   --button-focus-offset: 2px;
+
+   /* Game End Menu Component */
+
+   /* Player Card Component */
+   --player-card-bg: var(--color-bg-glass);
+   --player-card-bg-winner: var(--color-success-subtle);
+   --player-card-bg-draw: var(--color-warning-subtle);
+   --player-card-border: var(--color-border-inverse);
+   --player-card-border-winner: var(--color-success-border);
+   --player-card-border-draw: var(--color-warning-border);
+   --player-card-radius: var(--radius-xl);
+   --player-card-padding: var(--space-4);
+   --player-card-gap: var(--space-3);
+   --player-card-transition: var(--transition-slow);
+
+   /* Form Input Component */
+   --input-bg: var(--color-bg-surface);
+   --input-border: var(--color-border-default);
+   --input-border-focus: var(--color-accent);
+   --input-radius: var(--radius-md);
+   --input-padding: var(--space-2) var(--space-3);
+   --input-font-size: 0.875rem;
+   --input-transition: var(--transition-colors);
+   --input-focus-ring: 0 0 0 2px rgba(16, 185, 129, 0.25);
+
+   /* Typography Scale Tokens */
+   --font-size-xs: 0.75rem; /* 12px */
+   --font-size-sm: 0.875rem; /* 14px */
+   --font-size-base: 1rem; /* 16px */
+   --font-size-lg: 1.125rem; /* 18px */
+   --font-size-xl: 1.25rem; /* 20px */
+   --font-size-2xl: 1.5rem; /* 24px */
+   --font-size-3xl: 1.875rem; /* 30px */
+   --font-size-4xl: 2.25rem; /* 36px */
+   --line-height-tight: 1.25;
+   --line-height-normal: 1.5;
+   --line-height-relaxed: 1.75;
+}

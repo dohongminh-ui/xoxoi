@@ -1,4 +1,4 @@
-import './MenuOverlay.css';
+import styles from './MenuOverlay.module.css';
 
 type MenuOverlayProps = {
    isVisible?: boolean;
@@ -10,7 +10,7 @@ const MenuOverlay = ({isVisible = true, children}: MenuOverlayProps) => {
       return null;
    }
 
-   return <div className='menu-overlay'>{children}</div>;
+   return <div className={styles.overlay}>{children}</div>;
 };
 
 export default MenuOverlay;

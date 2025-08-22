@@ -1,0 +1,287 @@
+/* GameEndMenu CSS Module - Converted from GameEndMenu.css */
+
+@keyframes pulse {
+   0%,
+   100% {
+      opacity: 1;
+   }
+
+   50% {
+      opacity: 0.5;
+   }
+}
+
+/* Main container */
+.container {
+   min-height: 100vh;
+   display: flex;
+   align-items: center;
+   justify-content: left;
+   padding: var(--space-4);
+   position: relative;
+   overflow: hidden;
+   pointer-events: none !important;
+}
+
+.menuContainer {
+   position: relative;
+   background: var(--color-bg-elevated);
+   backdrop-filter: blur(16px);
+   -webkit-backdrop-filter: blur(16px);
+   border: 1px solid var(--color-border-inverse);
+   border-radius: var(--radius-2xl);
+   box-shadow: var(--shadow-elevated);
+   max-width: 448px;
+   width: 100%;
+   transition: all 0.7s var(--easing-standard);
+   opacity: 0;
+   transform: scale(0.95);
+   pointer-events: auto;
+}
+
+.menuContainer.isVisible {
+   opacity: 1;
+   transform: scale(1);
+}
+
+/* Header section */
+.menuHeader {
+   text-align: center;
+   padding: var(--space-8) var(--space-6);
+   border-bottom: 1px solid var(--color-border-inverse);
+}
+
+.resultIcon {
+   margin-bottom: var(--space-4);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--space-2);
+}
+
+.singleIcon {
+   font-size: var(--font-size-4xl);
+   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.drawIcons {
+   font-size: var(--font-size-3xl);
+}
+
+.resultTitle {
+   font-size: var(--font-size-3xl);
+   font-weight: bold;
+   margin-bottom: var(--space-2);
+   margin: 0;
+}
+
+.resultSubtitle {
+   color: var(--palette-gray-300);
+   font-size: var(--font-size-lg);
+   text-transform: capitalize;
+   margin: 0;
+}
+
+/* Players section */
+.playersSection {
+   padding: var(--space-6);
+}
+
+.playerCard {
+   composes: horizontal from '../../style/components/Card.module.css';
+   margin-bottom: var(--space-3);
+}
+
+/* Entry animations for player cards */
+.fromLeft {
+   composes: animateFromLeft from '../../style/components/Card.module.css';
+}
+
+.fromRight {
+   composes: animateFromRight from '../../style/components/Card.module.css';
+}
+
+.animate {
+   composes: animate from '../../style/components/Card.module.css';
+}
+
+.playerInfo {
+   composes: playerInfo from '../../style/components/Card.module.css';
+}
+
+.playerAvatar {
+   composes: playerAvatar from '../../style/components/Card.module.css';
+}
+
+.playerDetails {
+   composes: playerDetails from '../../style/components/Card.module.css';
+}
+
+.playerName {
+   composes: playerName from '../../style/components/Card.module.css';
+}
+
+.playerNameText {
+   composes: playerNameText from '../../style/components/Card.module.css';
+}
+
+.botBadge {
+   composes: badge bot from '../../style/components/Card.module.css';
+}
+
+.playerRating {
+   composes: playerRating from '../../style/components/Card.module.css';
+   color: var(--palette-gray-300);
+}
+
+.ratingChange {
+   composes: ratingChange from '../../style/components/Card.module.css';
+}
+
+.ratingChangePositive {
+   composes: ratingChange positive from '../../style/components/Card.module.css';
+}
+
+.ratingChangeNegative {
+   composes: ratingChange negative from '../../style/components/Card.module.css';
+}
+
+/* Stats grid */
+.statsGrid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: var(--space-4);
+   margin-bottom: var(--space-6);
+   transition: var(--transition-slow);
+   opacity: 0;
+   transform: translateY(var(--space-4));
+}
+
+.statsGrid.animate {
+   opacity: 1;
+   transform: translateY(0);
+}
+
+.statCard {
+   composes: statCard from '../../style/components/Card.module.css';
+}
+
+.statHeader {
+   composes: statHeader from '../../style/components/Card.module.css';
+}
+
+.statLabel {
+   composes: statLabel from '../../style/components/Card.module.css';
+   color: var(--palette-gray-300);
+}
+
+.statValue {
+   composes: statValue from '../../style/components/Card.module.css';
+}
+
+/* Game info card */
+.gameInfoCard {
+   composes: base from '../../style/components/Card.module.css';
+   margin-bottom: var(--space-6);
+   transition: var(--transition-slow);
+   opacity: 0;
+   transform: translateY(var(--space-4));
+}
+
+.gameInfoCard.animate {
+   opacity: 1;
+   transform: translateY(0);
+}
+
+.gameInfoRow {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: var(--space-2);
+}
+
+.gameInfoRow.last {
+   margin-bottom: 0;
+}
+
+.gameInfoLabel {
+   display: flex;
+   align-items: center;
+   gap: var(--space-2);
+}
+
+.gameInfoLabelText {
+   font-size: var(--font-size-xs);
+   color: var(--palette-gray-300);
+}
+
+.gameInfoValue {
+   color: var(--color-text-inverse);
+   font-weight: 500;
+   margin: 0;
+}
+
+/* Action buttons */
+.actionButtons {
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-3);
+   transition: var(--transition-slow);
+   opacity: 0;
+   transform: translateY(var(--space-4));
+}
+
+.actionButtons.animate {
+   opacity: 1;
+   transform: translateY(0);
+}
+
+.primaryButton {
+   composes: primary fullWidth from '../../style/components/Button.module.css';
+}
+
+.secondaryButtonGrid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: var(--space-3);
+}
+
+.secondaryButton {
+   composes: secondary from '../../style/components/Button.module.css';
+}
+
+.fullWidthSecondaryButton {
+   composes: secondary fullWidth from '../../style/components/Button.module.css';
+}
+
+.backButton {
+   composes: neutralDark fullWidth from '../../style/components/Button.module.css';
+}
+
+/* Player card variants */
+.winnerDraw {
+   composes: warning from '../../style/components/Card.module.css';
+}
+
+.winnerHighlight {
+   composes: success from '../../style/components/Card.module.css';
+}
+
+.playerDefault {
+   composes: base from '../../style/components/Card.module.css';
+}
+
+/* Button hover states are handled by the shared Button component */
+
+/* Transition delay helpers */
+.delayed1 {
+   transition-delay: 0.4s;
+}
+
+.delayed2 {
+   transition-delay: 0.5s;
+}
+
+.delayed3 {
+   transition-delay: 0.6s;
+}

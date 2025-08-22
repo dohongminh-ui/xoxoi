@@ -1,0 +1,307 @@
+/* Shared Form component styles */
+
+/* Form container */
+.form {
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-4);
+}
+
+.formRow {
+   display: flex;
+   gap: var(--space-3);
+   align-items: flex-end;
+}
+
+.formGroup {
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-2);
+   flex: 1;
+}
+
+/* Label styles */
+.label {
+   font-size: var(--font-size-sm);
+   font-weight: 500;
+   color: var(--color-text-primary);
+   margin: 0;
+}
+
+.labelRequired::after {
+   content: ' *';
+   color: var(--color-danger);
+}
+
+.labelInverse {
+   composes: label;
+   color: var(--color-text-inverse);
+}
+
+/* Input base styles */
+.inputBase {
+   background: var(--input-bg);
+   border: 1px solid var(--input-border);
+   border-radius: var(--input-radius);
+   padding: var(--input-padding);
+   font-size: var(--input-font-size);
+   font-family: inherit;
+   transition: var(--input-transition);
+   width: 100%;
+}
+
+.inputBase:focus {
+   outline: none;
+   border-color: var(--input-border-focus);
+   box-shadow: var(--input-focus-ring);
+}
+
+.inputBase::placeholder {
+   color: var(--color-text-placeholder);
+}
+
+/* Input variants */
+.input {
+   composes: inputBase;
+}
+
+.inputInverse {
+   composes: inputBase;
+   background: var(--color-bg-glass);
+   border-color: var(--color-border-inverse);
+   color: var(--color-text-inverse);
+}
+
+.inputInverse:focus {
+   border-color: var(--color-accent);
+   box-shadow: 0 0 0 2px var(--color-accent-subtle);
+}
+
+.inputInverse::placeholder {
+   color: var(--color-text-secondary);
+}
+
+/* Input sizes */
+.inputSmall {
+   composes: inputBase;
+   padding: var(--space-1-5) var(--space-2-5);
+   font-size: var(--font-size-xs);
+}
+
+.inputLarge {
+   composes: inputBase;
+   padding: var(--space-3-5) var(--space-4);
+   font-size: var(--font-size-lg);
+}
+
+/* Input states */
+.inputDisabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+   background: var(--color-bg-muted);
+}
+
+.inputError {
+   border-color: var(--color-danger);
+   box-shadow: 0 0 0 2px var(--color-danger-subtle);
+}
+
+.inputSuccess {
+   border-color: var(--color-success);
+   box-shadow: 0 0 0 2px var(--color-success-subtle);
+}
+
+/* Textarea */
+.textarea {
+   composes: inputBase;
+   resize: vertical;
+   min-height: 80px;
+   font-family: inherit;
+}
+
+.textareaInverse {
+   composes: inputInverse;
+   resize: vertical;
+   min-height: 80px;
+   font-family: inherit;
+}
+
+/* Select */
+.select {
+   composes: inputBase;
+   cursor: pointer;
+   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+   background-position: right var(--space-2) center;
+   background-repeat: no-repeat;
+   background-size: 1.5em 1.5em;
+   padding-right: var(--space-8);
+}
+
+.selectInverse {
+   composes: inputInverse;
+   cursor: pointer;
+   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d1d5db' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+   background-position: right var(--space-2) center;
+   background-repeat: no-repeat;
+   background-size: 1.5em 1.5em;
+   padding-right: var(--space-8);
+}
+
+/* Checkbox and Radio */
+.checkbox,
+.radio {
+   width: var(--space-4);
+   height: var(--space-4);
+   border: 1px solid var(--input-border);
+   background: var(--input-bg);
+   cursor: pointer;
+   transition: var(--input-transition);
+}
+
+.checkbox {
+   border-radius: var(--radius-sm);
+}
+
+.radio {
+   border-radius: var(--radius-full);
+}
+
+.checkbox:checked,
+.radio:checked {
+   background: var(--color-accent);
+   border-color: var(--color-accent);
+}
+
+.checkbox:focus,
+.radio:focus {
+   outline: none;
+   box-shadow: var(--input-focus-ring);
+}
+
+.checkboxInverse,
+.radioInverse {
+   composes: checkbox;
+   border-color: var(--color-border-inverse);
+   background: var(--color-bg-glass);
+}
+
+.radioInverse {
+   composes: radio;
+   border-color: var(--color-border-inverse);
+   background: var(--color-bg-glass);
+}
+
+/* Input group (for input with button) */
+.inputGroup {
+   display: flex;
+   gap: 0;
+}
+
+.inputGroup .inputBase {
+   border-top-right-radius: 0;
+   border-bottom-right-radius: 0;
+   border-right: none;
+   flex: 1;
+}
+
+.inputGroup .inputBase:focus {
+   z-index: 1;
+   position: relative;
+}
+
+.inputGroupButton {
+   border-top-left-radius: 0;
+   border-bottom-left-radius: 0;
+   white-space: nowrap;
+}
+
+/* Help text */
+.helpText {
+   font-size: var(--font-size-xs);
+   color: var(--color-text-secondary);
+   margin: 0;
+}
+
+.helpTextInverse {
+   composes: helpText;
+   color: var(--color-text-secondary);
+}
+
+.errorText {
+   composes: helpText;
+   color: var(--color-danger);
+}
+
+.successText {
+   composes: helpText;
+   color: var(--color-success);
+}
+
+/* Field set */
+.fieldset {
+   border: 1px solid var(--color-border-default);
+   border-radius: var(--radius-lg);
+   padding: var(--space-4);
+   margin: 0;
+}
+
+.legend {
+   font-weight: 600;
+   color: var(--color-text-primary);
+   padding: 0 var(--space-2);
+}
+
+.fieldsetInverse {
+   composes: fieldset;
+   border-color: var(--color-border-inverse);
+}
+
+.legendInverse {
+   composes: legend;
+   color: var(--color-text-inverse);
+}
+
+/* Form actions */
+.formActions {
+   display: flex;
+   gap: var(--space-3);
+   justify-content: flex-end;
+   padding-top: var(--space-4);
+   border-top: 1px solid var(--color-border-default);
+}
+
+.formActionsInverse {
+   composes: formActions;
+   border-top-color: var(--color-border-inverse);
+}
+
+.formActionsCenter {
+   composes: formActions;
+   justify-content: center;
+}
+
+.formActionsStart {
+   composes: formActions;
+   justify-content: flex-start;
+}
+
+.formActionsSpaceBetween {
+   composes: formActions;
+   justify-content: space-between;
+}
+
+/* Responsive form layouts */
+@media (width <= 640px) {
+   .formRow {
+      flex-direction: column;
+      align-items: stretch;
+   }
+
+   .formActions {
+      flex-direction: column;
+   }
+
+   .formActionsSpaceBetween {
+      flex-direction: column-reverse;
+   }
+}

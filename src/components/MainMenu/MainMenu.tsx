@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import MenuOverlay from '../MenuOverlay/MenuOverlay';
-import './MainMenu.css';
+import styles from './MainMenu.module.css';
+import buttonStyles from '../../style/components/Button.module.css';
 
 type MainMenuProps = {
    isVisible?: boolean;
@@ -36,29 +37,29 @@ const MainMenu = ({
 
    return (
       <MenuOverlay isVisible={isVisible}>
-         <div className='menu-content'>
-            <button className='menu-button single-player-btn' onClick={onStartSinglePlayer}>
+         <div className={styles.menuContent}>
+            <button className={buttonStyles.singlePlayer} onClick={onStartSinglePlayer}>
                Singleplayer
             </button>
 
-            <button className='menu-button bot-game-btn' onClick={onStartBotGame}>
+            <button className={buttonStyles.botGame} onClick={onStartBotGame}>
                Play with Bot
             </button>
 
-            <button className='menu-button multiplayer-btn' onClick={onCreateMultiplayer}>
+            <button className={buttonStyles.multiplayer} onClick={onCreateMultiplayer}>
                Create Multiplayer Game
             </button>
 
-            <div className='join-game-section'>
+            <div className={styles.joinGameSection}>
                <input
                   type='text'
-                  className='room-id-input'
+                  className={styles.roomIdInput}
                   placeholder='Enter Room ID'
                   value={roomId}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRoomId(e.target.value)}
                   onKeyDown={handleKeyDown}
                />
-               <button className='menu-button join-game-btn' onClick={handleJoinGame}>
+               <button className={buttonStyles.joinGame} onClick={handleJoinGame}>
                   Join Game
                </button>
             </div>

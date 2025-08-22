@@ -1,0 +1,122 @@
+/* Global Typography Rules */
+
+body {
+   line-height: 1.5;
+   -webkit-font-smoothing: antialiased;
+   font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+   color: var(--color-text-primary);
+   background-color: var(--color-bg-canvas);
+}
+
+/* Typography scale using design tokens */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+   font-weight: 600;
+   line-height: 1.2;
+   color: var(--color-text-primary);
+}
+
+h1 {
+   font-size: 2.25rem; /* 36px */
+   margin-bottom: var(--space-6);
+}
+
+h2 {
+   font-size: 1.875rem; /* 30px */
+   margin-bottom: var(--space-5);
+}
+
+h3 {
+   font-size: 1.5rem; /* 24px */
+   margin-bottom: var(--space-4);
+}
+
+h4 {
+   font-size: 1.25rem; /* 20px */
+   margin-bottom: var(--space-3);
+}
+
+h5 {
+   font-size: 1.125rem; /* 18px */
+   margin-bottom: var(--space-3);
+}
+
+h6 {
+   font-size: 1rem; /* 16px */
+   margin-bottom: var(--space-2);
+}
+
+p {
+   margin-bottom: var(--space-4);
+   color: var(--color-text-primary);
+}
+
+/* Text utilities */
+.text-primary {
+   color: var(--color-text-primary);
+}
+
+.text-secondary {
+   color: var(--color-text-secondary);
+}
+
+.text-inverse {
+   color: var(--color-text-inverse);
+}
+
+/* Font weight utilities */
+.font-normal {
+   font-weight: 400;
+}
+
+.font-medium {
+   font-weight: 500;
+}
+
+.font-semibold {
+   font-weight: 600;
+}
+
+.font-bold {
+   font-weight: 700;
+}
+
+/* Text size utilities */
+.text-sm {
+   font-size: 0.875rem; /* 14px */
+}
+
+.text-base {
+   font-size: 1rem; /* 16px */
+}
+
+.text-lg {
+   font-size: 1.125rem; /* 18px */
+}
+
+.text-xl {
+   font-size: 1.25rem; /* 20px */
+}
+
+/* Text alignment utilities */
+.text-left {
+   text-align: left;
+}
+
+.text-center {
+   text-align: center;
+}
+
+.text-right {
+   text-align: right;
+}

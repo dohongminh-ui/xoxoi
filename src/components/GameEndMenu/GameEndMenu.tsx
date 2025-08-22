@@ -1,4 +1,4 @@
-import './GameEndMenu.css';
+import styles from './GameEndMenu.module.css';
 import {useState, useEffect} from 'react';
 import type {Mark} from '../../types/state';
 import type {GameEndMenuData} from '../../hooks/useGameEnd';
@@ -73,61 +73,63 @@ const GameEndMenu = ({data, actions, animationComplete = true}: GameEndMenuProps
    };
 
    const getWinnerBorder = (player: Mark) => {
-      if (data.winner === 'draw') return 'winner-draw';
-      if (data.winner === player) return 'winner-highlight';
-      return 'player-default';
+      if (data.winner === 'draw') return styles.winnerDraw;
+      if (data.winner === player) return styles.winnerHighlight;
+      return styles.playerDefault;
    };
 
    return (
-      <div className='game-end-menu gem-container'>
+      <div className={styles.container}>
          {/* Main menu container */}
-         <div className={`menu-container ${showMenu ? 'is-visible' : ''}`}>
+         <div className={`${styles.menuContainer} ${showMenu ? styles.isVisible : ''}`}>
             {/* Header with result */}
-            <div className='menu-header'>
-               <div className='result-icon'>
+            <div className={styles.menuHeader}>
+               <div className={styles.resultIcon}>
                   {data.winner === 'draw' ? (
                      <>
-                        <span className='draw-icons'>❌</span>
-                        <span className='draw-icons' style={{color: '#fbbf24'}}>
+                        <span className={styles.drawIcons}>❌</span>
+                        <span className={styles.drawIcons} style={{color: '#fbbf24'}}>
                            ⚖️
                         </span>
-                        <span className='draw-icons'>⭕</span>
+                        <span className={styles.drawIcons}>⭕</span>
                      </>
                   ) : (
-                     <div className='single-icon' style={{color: getResultColor()}}>
+                     <div className={styles.singleIcon} style={{color: getResultColor()}}>
                         {data.winner === 'X' ? '❌' : '⭕'}
                      </div>
                   )}
                </div>
-               <h1 className='result-title' style={{color: getResultColor()}}>
+               <h1 className={styles.resultTitle} style={{color: getResultColor()}}>
                   {getResultText()}
                </h1>
-               <p className='result-subtitle'>{getResultSubtext()}</p>
+               <p className={styles.resultSubtitle}>{getResultSubtext()}</p>
             </div>
 
             {/* Players section */}
-            <div className='players-section'>
+            <div className={styles.playersSection}>
                {/* X Player */}
                <div
-                  className={`player-card ${getWinnerBorder('X')} from-left ${animateStats ? 'animate' : ''}`}>
-                  <div className='player-info'>
-                     <span className='player-avatar'>{data.xPlayer.avatar}</span>
-                     <div className='player-details'>
-                        <div className='player-name'>
-                           {data.winner === 'X' && (
-                              <Trophy size={16} color='#fbbf24' className='winner-trophy' />
-                           )}
-                           <p className='player-name-text'>{data.xPlayer.name}</p>
-                           {data.xPlayer.isBot && <span className='bot-badge'>BOT</span>}
+                  className={`${styles.playerCard} ${getWinnerBorder('X')} ${styles.fromLeft} ${animateStats ? styles.animate : ''}`}>
+                  <div className={styles.playerInfo}>
+                     <span className={styles.playerAvatar}>{data.xPlayer.avatar}</span>
+                     <div className={styles.playerDetails}>
+                        <div className={styles.playerName}>
+                           {data.winner === 'X' && <Trophy size={16} color='#fbbf24' />}
+                           <p className={styles.playerNameText}>{data.xPlayer.name}</p>
+                           {data.xPlayer.isBot && <span className={styles.botBadge}>BOT</span>}
                         </div>
                         {data.gameType === 'multi' && (
-                           <p className='player-rating'>Rating: {data.xPlayer.rating}</p>
+                           <p className={styles.playerRating}>Rating: {data.xPlayer.rating}</p>
                         )}
                      </div>
                   </div>
                   {data.gameType === 'multi' && (
                      <div
-                        className={`rating-change ${data.xPlayer.ratingChange > 0 ? 'positive' : 'negative'}`}>
+                        className={
+                           data.xPlayer.ratingChange > 0
+                              ? styles.ratingChangePositive
+                              : styles.ratingChangeNegative
+                        }>
                         {data.xPlayer.ratingChange > 0 ? '+' : ''}
                         {data.xPlayer.ratingChange}
                      </div>
@@ -136,25 +138,27 @@ const GameEndMenu = ({data, actions, animationComplete = true}: GameEndMenuProps
 
                {/* O Player */}
                <div
-                  className={`player-card ${getWinnerBorder('O')} from-right ${animateStats ? 'animate' : ''}`}>
-                  <div className='player-info'>
-                     <span className='player-avatar'>{data.oPlayer.avatar}</span>
-                     <div className='player-details'>
-                        <div className='player-name'>
-                           {data.winner === 'O' && (
-                              <Trophy size={16} color='#fbbf24' className='winner-trophy' />
-                           )}
-                           <p className='player-name-text'>{data.oPlayer.name}</p>
-                           {data.oPlayer.isBot && <span className='bot-badge'>BOT</span>}
+                  className={`${styles.playerCard} ${getWinnerBorder('O')} ${styles.fromRight} ${animateStats ? styles.animate : ''}`}>
+                  <div className={styles.playerInfo}>
+                     <span className={styles.playerAvatar}>{data.oPlayer.avatar}</span>
+                     <div className={styles.playerDetails}>
+                        <div className={styles.playerName}>
+                           {data.winner === 'O' && <Trophy size={16} color='#fbbf24' />}
+                           <p className={styles.playerNameText}>{data.oPlayer.name}</p>
+                           {data.oPlayer.isBot && <span className={styles.botBadge}>BOT</span>}
                         </div>
                         {data.gameType === 'multi' && (
-                           <p className='player-rating'>Rating: {data.oPlayer.rating}</p>
+                           <p className={styles.playerRating}>Rating: {data.oPlayer.rating}</p>
                         )}
                      </div>
                   </div>
                   {data.gameType === 'multi' && (
                      <div
-                        className={`rating-change ${data.oPlayer.ratingChange > 0 ? 'positive' : 'negative'}`}>
+                        className={
+                           data.oPlayer.ratingChange > 0
+                              ? styles.ratingChangePositive
+                              : styles.ratingChangeNegative
+                        }>
                         {data.oPlayer.ratingChange > 0 ? '+' : ''}
                         {data.oPlayer.ratingChange}
                      </div>
@@ -162,55 +166,58 @@ const GameEndMenu = ({data, actions, animationComplete = true}: GameEndMenuProps
                </div>
 
                {/* Game stats */}
-               <div className={`stats-grid delayed-1 ${animateStats ? 'animate' : ''}`}>
-                  <div className='stat-card'>
-                     <div className='stat-header'>
+               <div
+                  className={`${styles.statsGrid} ${styles.delayed1} ${animateStats ? styles.animate : ''}`}>
+                  <div className={styles.statCard}>
+                     <div className={styles.statHeader}>
                         <Target size={16} color='#60a5fa' />
-                        <span className='stat-label'>Moves</span>
+                        <span className={styles.statLabel}>Moves</span>
                      </div>
-                     <p className='stat-value'>{data.gameStats.moves}</p>
+                     <p className={styles.statValue}>{data.gameStats.moves}</p>
                   </div>
-                  <div className='stat-card'>
-                     <div className='stat-header'>
+                  <div className={styles.statCard}>
+                     <div className={styles.statHeader}>
                         <Clock size={16} color='#a855f7' />
-                        <span className='stat-label'>Time</span>
+                        <span className={styles.statLabel}>Time</span>
                      </div>
-                     <p className='stat-value'>{data.gameStats.duration}</p>
+                     <p className={styles.statValue}>{data.gameStats.duration}</p>
                   </div>
                </div>
 
                {/* Game mode and grid info */}
-               <div className={`game-info-card delayed-2 ${animateStats ? 'animate' : ''}`}>
-                  <div className='game-info-row'>
-                     <div className='game-info-label'>
+               <div
+                  className={`${styles.gameInfoCard} ${styles.delayed2} ${animateStats ? styles.animate : ''}`}>
+                  <div className={styles.gameInfoRow}>
+                     <div className={styles.gameInfoLabel}>
                         <Grid3X3 size={16} color='#fbbf24' />
-                        <span className='game-info-label-text'>Grid</span>
+                        <span className={styles.gameInfoLabelText}>Grid</span>
                      </div>
-                     <p className='game-info-value'>{data.gameStats.gridSize}</p>
+                     <p className={styles.gameInfoValue}>{data.gameStats.gridSize}</p>
                   </div>
-                  <div className='game-info-row last'>
-                     <div className='game-info-label'>
+                  <div className={`${styles.gameInfoRow} ${styles.last}`}>
+                     <div className={styles.gameInfoLabel}>
                         <Zap size={16} color='#10b981' />
-                        <span className='game-info-label-text'>Mode</span>
+                        <span className={styles.gameInfoLabelText}>Mode</span>
                      </div>
-                     <p className='game-info-value'>{data.gameStats.gameMode}</p>
+                     <p className={styles.gameInfoValue}>{data.gameStats.gameMode}</p>
                   </div>
                </div>
 
                {/* Action buttons */}
-               <div className={`action-buttons delayed-3 ${animateStats ? 'animate' : ''}`}>
-                  <button className='primary-button' onClick={actions.onRematch}>
+               <div
+                  className={`${styles.actionButtons} ${styles.delayed3} ${animateStats ? styles.animate : ''}`}>
+                  <button className={styles.primaryButton} onClick={actions.onRematch}>
                      <RotateCcw size={20} />
                      <span>{data.gameType === 'bot' ? 'Play Again' : 'Rematch'}</span>
                   </button>
 
                   {data.gameType === 'multi' && (
-                     <div className='secondary-button-grid'>
-                        <button className='secondary-button'>
+                     <div className={styles.secondaryButtonGrid}>
+                        <button className={styles.secondaryButton}>
                            <Share2 size={16} />
                            <span>Share</span>
                         </button>
-                        <button className='secondary-button' onClick={actions.onNewGame}>
+                        <button className={styles.secondaryButton} onClick={actions.onNewGame}>
                            <Grid3X3 size={16} />
                            <span>New Game</span>
                         </button>
@@ -219,7 +226,7 @@ const GameEndMenu = ({data, actions, animationComplete = true}: GameEndMenuProps
 
                   {data.gameType === 'single' && (
                      <button
-                        className='secondary-button full-width-secondary-button'
+                        className={`${styles.secondaryButton} ${styles.fullWidthSecondaryButton}`}
                         onClick={actions.onNewGame}>
                         <Grid3X3 size={20} />
                         <span>New Game</span>
@@ -227,19 +234,21 @@ const GameEndMenu = ({data, actions, animationComplete = true}: GameEndMenuProps
                   )}
 
                   {data.gameType === 'bot' && (
-                     <div className='secondary-button-grid'>
-                        <button className='secondary-button' onClick={actions.onSwitchPlayers}>
+                     <div className={styles.secondaryButtonGrid}>
+                        <button
+                           className={styles.secondaryButton}
+                           onClick={actions.onSwitchPlayers}>
                            <Users size={16} />
                            <span>Switch</span>
                         </button>
-                        <button className='secondary-button' onClick={actions.onNewGame}>
+                        <button className={styles.secondaryButton} onClick={actions.onNewGame}>
                            <Grid3X3 size={16} />
                            <span>New Game</span>
                         </button>
                      </div>
                   )}
 
-                  <button className='back-button' onClick={actions.onBack}>
+                  <button className={styles.backButton} onClick={actions.onBack}>
                      <Home size={20} />
                      <span>Back to Menu</span>
                   </button>

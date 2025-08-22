@@ -1,0 +1,293 @@
+/* Shared Card component styles */
+
+/* Base card styles */
+.base {
+   background: var(--color-bg-glass);
+   border: 1px solid var(--color-border-inverse);
+   border-radius: var(--player-card-radius);
+   padding: var(--player-card-padding);
+   transition: var(--player-card-transition);
+}
+
+/* Card variants */
+.elevated {
+   composes: base;
+   background: var(--color-bg-surface);
+   border: 1px solid var(--color-border-default);
+   box-shadow: var(--shadow-md);
+}
+
+.glass {
+   composes: base;
+   background: var(--color-bg-glass);
+   backdrop-filter: blur(16px);
+   -webkit-backdrop-filter: blur(16px);
+}
+
+.subtle {
+   composes: base;
+   background: var(--color-bg-subtle);
+   border: 1px solid var(--color-border-subtle);
+}
+
+/* State variants */
+.interactive {
+   cursor: pointer;
+}
+
+.interactive:hover {
+   transform: translateY(-2px);
+   box-shadow: var(--shadow-lg);
+}
+
+.selected {
+   border-color: var(--color-accent);
+   box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+}
+
+/* Status variants */
+.success {
+   composes: base;
+   background: var(--player-card-bg-winner);
+   border-color: var(--player-card-border-winner);
+}
+
+.warning {
+   composes: base;
+   background: var(--player-card-bg-draw);
+   border-color: var(--player-card-border-draw);
+}
+
+.danger {
+   composes: base;
+   background: var(--color-danger-subtle);
+   border-color: var(--color-danger-border);
+}
+
+.info {
+   composes: base;
+   background: var(--color-info-subtle);
+   border-color: var(--color-info-border);
+}
+
+/* Layout variants */
+.horizontal {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: var(--player-card-gap);
+}
+
+.vertical {
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-3);
+}
+
+.centered {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   text-align: center;
+   gap: var(--space-3);
+}
+
+/* Size variants */
+.compact {
+   composes: base;
+   padding: var(--space-2) var(--space-3);
+}
+
+.comfortable {
+   composes: base;
+   padding: var(--space-4) var(--space-5);
+}
+
+.spacious {
+   composes: base;
+   padding: var(--space-6) var(--space-8);
+}
+
+/* Player card specific styles */
+.playerCard {
+   composes: horizontal;
+   margin-bottom: var(--space-3);
+}
+
+.playerInfo {
+   display: flex;
+   align-items: center;
+   gap: var(--space-3);
+}
+
+.playerAvatar {
+   font-size: var(--font-size-2xl);
+   width: var(--space-10);
+   height: var(--space-10);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: var(--radius-full);
+   background: var(--color-bg-glass);
+}
+
+.playerDetails {
+   display: flex;
+   flex-direction: column;
+   gap: var(--space-1);
+}
+
+.playerName {
+   display: flex;
+   align-items: center;
+   gap: var(--space-2);
+   margin: 0;
+}
+
+.playerNameText {
+   color: var(--color-text-inverse);
+   font-weight: 600;
+   font-size: var(--font-size-base);
+   margin: 0;
+}
+
+.playerRating {
+   color: var(--color-text-secondary);
+   font-size: var(--font-size-sm);
+   margin: 0;
+}
+
+.ratingChange {
+   font-weight: bold;
+   font-size: var(--font-size-base);
+}
+
+.ratingChange.positive {
+   color: var(--color-success);
+}
+
+.ratingChange.negative {
+   color: var(--color-danger);
+}
+
+/* Badge styles */
+.badge {
+   background: var(--color-bg-glass);
+   color: var(--color-text-inverse);
+   font-size: var(--font-size-xs);
+   padding: var(--space-1) var(--space-2);
+   border-radius: var(--radius-pill);
+   border: 1px solid var(--color-border-inverse);
+   font-weight: 500;
+   white-space: nowrap;
+}
+
+.badge.bot {
+   background: rgba(168, 85, 247, 0.2);
+   color: #c084fc;
+   border-color: rgba(168, 85, 247, 0.3);
+}
+
+.badge.winner {
+   background: var(--color-success-subtle);
+   color: var(--color-success);
+   border-color: var(--color-success-border);
+}
+
+.badge.draw {
+   background: var(--color-warning-subtle);
+   color: var(--color-warning);
+   border-color: var(--color-warning-border);
+}
+
+/* Stat card styles */
+.statCard {
+   composes: centered;
+   composes: compact;
+}
+
+.statHeader {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--space-1);
+   margin-bottom: var(--space-1);
+}
+
+.statLabel {
+   font-size: var(--font-size-xs);
+   color: var(--color-text-secondary);
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+}
+
+.statValue {
+   color: var(--color-text-inverse);
+   font-weight: 600;
+   font-size: var(--font-size-lg);
+   margin: 0;
+}
+
+/* Animation classes */
+.animateFromLeft {
+   transform: translateX(-100%);
+   opacity: 0;
+}
+
+.animateFromRight {
+   transform: translateX(100%);
+   opacity: 0;
+}
+
+.animateFromBottom {
+   transform: translateY(100%);
+   opacity: 0;
+}
+
+.animate {
+   transform: translateX(0) translateY(0);
+   opacity: 1;
+}
+
+/* Grid layouts */
+.grid {
+   display: grid;
+   gap: var(--space-4);
+}
+
+.grid.cols2 {
+   grid-template-columns: 1fr 1fr;
+}
+
+.grid.cols3 {
+   grid-template-columns: repeat(3, 1fr);
+}
+
+.grid.cols4 {
+   grid-template-columns: repeat(4, 1fr);
+}
+
+/* Responsive grid */
+@media (width <= 640px) {
+   .grid.cols2,
+   .grid.cols3,
+   .grid.cols4 {
+      grid-template-columns: 1fr;
+   }
+
+   .playerCard {
+      flex-direction: column;
+      text-align: center;
+      gap: var(--space-2);
+   }
+
+   .playerInfo {
+      flex-direction: column;
+      text-align: center;
+   }
+}

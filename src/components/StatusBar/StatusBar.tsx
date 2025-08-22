@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import type {ReactNode} from 'react';
-import './StatusBar.css';
+import styles from './StatusBar.module.css';
+import buttonStyles from '../../style/components/Button.module.css';
 
 type StatusBarProps = {
    gameStatus?: string;
@@ -37,37 +38,41 @@ const StatusBar = ({
    };
 
    return (
-      <div className={`status-bar noselect ${isExpanded ? 'expanded' : ''}`} id='statusBar'>
-         <div className={`status-bar-top ${shouldShowExpandButton ? 'has-expand-button' : ''}`}>
-            <span className='game-status' id='gameStatus'>
+      <div
+         className={`${styles.container} noselect ${isExpanded ? styles.expanded : ''}`}
+         id='statusBar'>
+         <div className={`${styles.top} ${shouldShowExpandButton ? styles.hasExpandButton : ''}`}>
+            <span className={styles.gameStatus} id='gameStatus'>
                {gameStatus}
             </span>
 
             {shouldShowExpandButton && (
                <button
-                  className={`expand-toggle ${isExpanded ? 'expanded' : ''}`}
+                  className={`${styles.expandToggle} ${isExpanded ? styles.expanded : ''}`}
                   onClick={() => setIsExpanded(!isExpanded)}
                   aria-expanded={isExpanded}>
-                  <span className='expand-icon'>▼</span>
+                  <span className={styles.expandIcon}>▼</span>
                </button>
             )}
          </div>
 
          {/* expandable content area */}
-         <div className={`expandable-area ${isExpanded ? 'expanded' : ''}`}>
-            <div className='expandable-content'>
+         <div className={`${styles.expandableArea} ${isExpanded ? styles.expanded : ''}`}>
+            <div className={styles.expandableContent}>
                {/* title section */}
-               {expandableTitle && <div className='expandable-title'>{expandableTitle}</div>}
+               {expandableTitle && <div className={styles.expandableTitle}>{expandableTitle}</div>}
 
                {/* custom expandable content */}
-               {expandableContent && <div className='custom-content'>{expandableContent}</div>}
+               {expandableContent && (
+                  <div className={styles.customContent}>{expandableContent}</div>
+               )}
 
                {/* button section */}
                {hasAnyButton && (
-                  <div className='button-section'>
+                  <div className={styles.buttonSection}>
                      {showResignButton && (
                         <button
-                           className='status-button resign-button'
+                           className={buttonStyles.compactDanger}
                            onClick={() => handleButtonClick(onResign)}>
                            Resign
                         </button>
@@ -75,7 +80,7 @@ const StatusBar = ({
 
                      {showExitGameButton && (
                         <button
-                           className='status-button exit-game-button'
+                           className={buttonStyles.compactNeutral}
                            onClick={() => handleButtonClick(onExitGame)}>
                            Exit
                         </button>

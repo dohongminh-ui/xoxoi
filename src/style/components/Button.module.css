@@ -1,0 +1,328 @@
+/* Shared Button component styles */
+.base {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--button-gap);
+   font: inherit;
+   font-weight: var(--button-font-weight);
+   padding: var(--button-padding);
+   border-radius: var(--button-radius);
+   border: 1px solid transparent;
+   cursor: pointer;
+   transition: var(--button-transition);
+   white-space: nowrap;
+   text-decoration: none;
+   font-size: var(--font-size-base);
+}
+
+.base:focus {
+   outline: none;
+   box-shadow: 0 0 0 var(--button-focus-offset) var(--button-focus-ring);
+}
+
+.base:active {
+   transform: translateY(1px);
+}
+
+/* Size variants - inherit from base */
+.small {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--button-gap);
+   font: inherit;
+   font-weight: var(--button-font-weight);
+   border-radius: var(--button-radius);
+   border: 1px solid transparent;
+   cursor: pointer;
+   transition: var(--button-transition);
+   white-space: nowrap;
+   text-decoration: none;
+   padding: var(--button-padding-sm);
+   font-size: var(--font-size-sm);
+}
+
+.small:focus {
+   outline: none;
+   box-shadow: 0 0 0 var(--button-focus-offset) var(--button-focus-ring);
+}
+
+.small:active {
+   transform: translateY(1px);
+}
+
+.large {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--button-gap);
+   font: inherit;
+   font-weight: var(--button-font-weight);
+   border-radius: var(--button-radius);
+   border: 1px solid transparent;
+   cursor: pointer;
+   transition: var(--button-transition);
+   white-space: nowrap;
+   text-decoration: none;
+   padding: var(--button-padding-lg);
+   font-size: var(--font-size-lg);
+}
+
+.large:focus {
+   outline: none;
+   box-shadow: 0 0 0 var(--button-focus-offset) var(--button-focus-ring);
+}
+
+.large:active {
+   transform: translateY(1px);
+}
+
+/* Style variants */
+.primary {
+   composes: base;
+   background: var(--color-success);
+   color: var(--color-text-inverse);
+}
+
+.primary:hover {
+   background: var(--color-success-hover);
+   transform: scale(1.05);
+   box-shadow: var(--shadow-lg);
+}
+
+.secondary {
+   composes: base;
+   background: var(--color-bg-glass);
+   color: var(--color-text-inverse);
+   border: 1px solid var(--color-border-inverse);
+}
+
+.secondary:hover {
+   background: var(--color-bg-glass-strong);
+   transform: scale(1.05);
+   box-shadow: var(--shadow-lg);
+}
+
+.danger {
+   composes: base;
+   background: var(--color-danger);
+   color: var(--color-text-inverse);
+}
+
+.danger:hover {
+   background: var(--color-danger-hover);
+}
+
+.warning {
+   composes: base;
+   background: var(--color-warning);
+   color: var(--palette-black);
+}
+
+.warning:hover {
+   background: var(--color-warning-hover);
+}
+
+.info {
+   composes: base;
+   background: var(--color-info);
+   color: var(--color-text-inverse);
+}
+
+.info:hover {
+   background: var(--color-info-hover);
+}
+
+.ghost {
+   composes: base;
+   background: transparent;
+   color: var(--color-text-primary);
+}
+
+.ghost:hover {
+   background: var(--color-bg-subtle);
+}
+
+.ghostInverse {
+   composes: base;
+   background: transparent;
+   color: var(--color-text-inverse);
+}
+
+.ghostInverse:hover {
+   background: var(--color-bg-glass);
+}
+
+.neutral {
+   composes: base;
+   background: var(--palette-slate-500);
+   color: var(--color-text-inverse);
+}
+
+.neutral:hover {
+   background: var(--palette-slate-600);
+}
+
+.neutralDark {
+   composes: base;
+   background: var(--palette-slate-600);
+   color: var(--color-text-inverse);
+}
+
+.neutralDark:hover {
+   background: var(--palette-slate-700);
+   transform: scale(1.05);
+   box-shadow: var(--shadow-lg);
+}
+
+/* Layout variants */
+.fullWidth {
+   width: 100%;
+}
+
+.iconOnly {
+   padding: var(--space-2);
+   min-width: auto;
+   aspect-ratio: 1;
+}
+
+.iconOnly.small {
+   padding: var(--space-1-5);
+}
+
+.iconOnly.large {
+   padding: var(--space-3);
+}
+
+/* Compact variants for status bars and toolbars */
+.compact {
+   composes: base;
+   padding: var(--space-1-5) var(--space-3);
+   font-size: var(--font-size-sm);
+   border-radius: var(--radius-xl);
+}
+
+.compactDanger {
+   composes: compact;
+   background: var(--color-danger);
+   color: var(--color-text-inverse);
+}
+
+.compactDanger:hover {
+   background: var(--color-danger-hover);
+}
+
+.compactNeutral {
+   composes: compact;
+   background: var(--palette-slate-500);
+   color: var(--color-text-inverse);
+}
+
+.compactNeutral:hover {
+   background: var(--palette-slate-600);
+}
+
+/* MainMenu specific variants */
+.singlePlayer {
+   composes: base;
+   background: var(--color-success);
+   color: var(--color-text-inverse);
+   transition: var(--transition-medium);
+}
+
+.singlePlayer:hover {
+   background: var(--color-success-hover);
+   opacity: 0.9;
+   transform: translateY(-1px);
+   transition: var(--transition-medium);
+}
+
+.singlePlayer:active {
+   transform: translateY(0);
+   transition: var(--transition-medium);
+}
+
+.botGame {
+   composes: base;
+   background: var(--color-warning);
+   color: var(--palette-black);
+   transition: var(--transition-medium);
+}
+
+.botGame:hover {
+   background: var(--color-warning-hover);
+   opacity: 0.9;
+   transform: translateY(-1px);
+   transition: var(--transition-medium);
+}
+
+.botGame:active {
+   transform: translateY(0);
+   transition: var(--transition-medium);
+}
+
+.multiplayer {
+   composes: base;
+   background: var(--color-info);
+   color: var(--color-text-inverse);
+   transition: var(--transition-medium);
+}
+
+.multiplayer:hover {
+   background: var(--color-info-hover);
+   opacity: 0.9;
+   transform: translateY(-1px);
+   transition: var(--transition-medium);
+}
+
+.multiplayer:active {
+   transform: translateY(0);
+   transition: var(--transition-medium);
+}
+
+.joinGame {
+   composes: base;
+   padding: var(--space-2) var(--space-4);
+   background: var(--color-warning);
+   color: var(--palette-black);
+   font-size: var(--font-size-sm);
+   transition: var(--transition-medium);
+}
+
+.joinGame:hover {
+   background: var(--color-warning-hover);
+   transition: var(--transition-medium);
+}
+
+/* State variants */
+.disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+   pointer-events: none;
+}
+
+.loading {
+   position: relative;
+   color: transparent;
+}
+
+.loading::after {
+   content: '';
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 1rem;
+   height: 1rem;
+   border: 2px solid currentColor;
+   border-top-color: transparent;
+   border-radius: 50%;
+   animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+   to {
+      transform: translate(-50%, -50%) rotate(360deg);
+   }
+}
