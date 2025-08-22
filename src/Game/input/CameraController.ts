@@ -1,4 +1,4 @@
-import {GAME_CONSTANTS, CELL_SIZE} from '../core/constants';
+import {GAME_CONSTANTS, CELL_SIZE, GRID_SIZE} from '../core/constants';
 import {clamp} from '../core/utils';
 import type {
    Point,
@@ -561,7 +561,13 @@ export class CameraController extends EventTarget {
     */
    resetCamera() {
       this.velocity = {x: 0, y: 0};
-      this.setCameraState(0, 0, 1);
+
+      if (!GRID_SIZE.INFINITE_X && !GRID_SIZE.INFINITE_Y) {
+         const mid_x = GRID_SIZE.X / 2;
+         const mid_y = GRID_SIZE.Y / 2;
+
+         this.cameraToCell(mid_x, mid_y);
+      } else this.setCameraState(0, 0, 1);
 
       this.dispatchEvent(
          new CustomEvent('cameraReset', {
@@ -572,6 +578,23 @@ export class CameraController extends EventTarget {
             } as CameraResetDetail,
          })
       );
+   }
+
+   /**
+    * Move camera to cell position
+    * @param cellX - cell X to move to
+    * @param cellY - cell Y to move to
+    */
+   cameraToCell(cellX: number, cellY: number) {
+      const statusBarHeight = (document.getElementById('statusBar')?.offsetHeight || 0) + 40;
+
+      // Calculate the position to center the camera on the cell
+      const cornerX = window.innerWidth / 2 - cellX * this.scale;
+      const cornerY = window.innerHeight / 2 - cellY * this.scale + statusBarHeight / 2;
+      const offsetX = -cellX * CELL_SIZE * this.scale;
+      const offsetY = -cellY * CELL_SIZE * this.scale;
+
+      this.setCameraState(cornerX + offsetX, cornerY + offsetY, this.scale);
    }
 
    /**
