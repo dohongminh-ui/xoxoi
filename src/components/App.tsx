@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import '../style/App.css';
 import {useGameEngine, useStatusBar, useMenuOverlay} from '../hooks/index';
 import {GameUI} from './index';
@@ -15,7 +15,7 @@ function App() {
       handleJoinMultiplayer,
    } = useMenuOverlay(gameEngine);
 
-   React.useEffect(() => {
+   useEffect(() => {
       if (gameInitialized) {
          console.log('Ready!');
       }

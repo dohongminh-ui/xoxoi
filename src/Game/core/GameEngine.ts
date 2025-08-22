@@ -9,10 +9,8 @@ import type {
    PlacedMarksMap,
    GameStateShape,
    Mark,
-   GameMode,
    CameraUpdateEvent,
    DragStartEvent,
-   CellClickEvent,
    PointerMoveEvent,
    MoveAttemptedEvent,
    MovePlacedEvent,
@@ -24,6 +22,7 @@ import type {
    UIEvent,
    ComponentClasses,
 } from '../../types/engine';
+import type {GameEndedDetail} from '../../types/state';
 
 /**
  * Main game engine that orchestrates all game components
@@ -365,7 +364,8 @@ export class GameEngine {
          });
 
          // update game state
-         this.gameStateManager?.switchTurn?.();
+         this.gameStateManager?.incrementMoveCount?.();
+         this.gameStateManager?.switchPlayers?.();
       });
 
       // Listen for wins
@@ -383,24 +383,54 @@ export class GameEngine {
 
          this.gameLogic?.dispatchEvent(new CustomEvent('gameEnded'));
 
-         if (this.gridRenderer?.animateWinningLine) {
-            await this.gridRenderer.animateWinningLine(winningCells);
+         // Animate winning line and emit completion event
+         if (this.gridRenderer?.animateWinningLine && winningCells?.length > 0) {
+            console.log('GameEngine: Starting winning line animation');
+            try {
+               await this.gridRenderer.animateWinningLine(winningCells);
+               console.log('GameEngine: Winning line animation completed successfully');
+            } catch (error) {
+               console.warn('GameEngine: Winning line animation failed:', error);
+            }
+
+            // Emit event when winning line animation completes (or fails)
+            console.log('GameEngine: Emitting winningLineAnimationComplete event');
+            this.gameStateManager?.dispatchEvent(
+               new CustomEvent('winningLineAnimationComplete', {
+                  detail: {winner, winningCells},
+               })
+            );
+         } else {
+            // No animation available or needed, emit immediately
+            console.log(
+               'GameEngine: No winning line animation needed, emitting completion immediately'
+            );
+            this.gameStateManager?.dispatchEvent(
+               new CustomEvent('winningLineAnimationComplete', {
+                  detail: {winner, winningCells},
+               })
+            );
          }
       });
 
       // Listen for draws
       this.gameLogic.addEventListener('gameDraw', (event: Event) => {
          const drawEvent = event as GameDrawEvent;
-         console.log('Game ended in a draw!');
+         console.log('Game ended in a draw');
 
-         // end the game after draw
+         // End the game with draw result
          this.gameStateManager?.endGame?.({
             winner: null,
             winningCells: null,
-            reason: 'completed',
+            reason: 'draw',
          });
 
-         this.gameLogic?.dispatchEvent(new CustomEvent('gameEnded'));
+         // No animation needed for draws, emit completion immediately
+         this.gameStateManager?.dispatchEvent(
+            new CustomEvent('winningLineAnimationComplete', {
+               detail: {winner: null, winningCells: null},
+            })
+         );
       });
 
       // Listen for game state changes
@@ -568,6 +598,23 @@ export class GameEngine {
          }
       });
 
+      // Listen for game end state changes to ensure animation completion event is emitted
+      this.gameStateManager.addEventListener('stateGameEnded', (event: Event) => {
+         const stateEvent = event as CustomEvent<GameEndedDetail>;
+         const {winner, winningCells, winMethod} = stateEvent.detail;
+
+         // If this game end wasn't triggered by GameLogic (e.g., resignation, timeout)
+         // we need to emit the animation completion event
+         if (winMethod !== 'line') {
+            console.log('Game ended without line win, emitting animation completion immediately');
+            this.gameStateManager?.dispatchEvent(
+               new CustomEvent('winningLineAnimationComplete', {
+                  detail: {winner, winningCells},
+               })
+            );
+         }
+      });
+
       // Listen for menu state changes
       this.gameStateManager.addEventListener('stateMenuStateChanged', (event: Event) => {
          const stateEvent = event as GameStateEvent;
@@ -599,16 +646,12 @@ export class GameEngine {
    setupUIEventListeners(): void {
       if (!this.uiRenderer) return;
 
-      // Single player game
       this.uiRenderer.addEventListener('startSingle', () => this.startSinglePlayerGame());
 
-      // Bot game
       this.uiRenderer.addEventListener('startBot', () => this.startBotGame());
 
-      // Multiplayer game creation
       this.uiRenderer.addEventListener('multiCreate', () => this.createMultiplayerGame());
 
-      // Multiplayer game joining
       this.uiRenderer.addEventListener('multiJoin', (event: Event) => {
          const uiEvent = event as UIEvent;
          const {roomId} = uiEvent.detail;
@@ -617,28 +660,27 @@ export class GameEngine {
          }
       });
 
-      // Game restart/rematch
       this.uiRenderer.addEventListener('rematchRequest', () => this.gameLogic?.requestRematch?.());
 
-      // Accept rematch
       this.uiRenderer.addEventListener('rematchAccept', () =>
          this.networkManager?.acceptRematch?.()
       );
 
-      // Decline rematch
       this.uiRenderer.addEventListener('rematchDecline', () =>
          this.networkManager?.declineRematch?.()
       );
 
-      // Cancel rematch
       this.uiRenderer.addEventListener('rematchCancel', () =>
          this.networkManager?.cancelRematch?.()
       );
 
-      // Exit game
       this.uiRenderer.addEventListener('exitGame', () => {
          this.leaveMultiplayerGame();
       });
+
+      this.uiRenderer.addEventListener('shareGame', () => this.gameLogic?.handleShareGame?.());
+
+      this.uiRenderer.addEventListener('newGame', () => this.gameLogic?.handleNewGame?.());
    }
 
    /**

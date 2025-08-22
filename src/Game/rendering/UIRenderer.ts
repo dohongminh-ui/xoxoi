@@ -8,8 +8,6 @@ export class UIRenderer extends EventTarget {
    buttonStates: {
       IN_GAME: string;
       GAME_OVER: string;
-      REMATCH_REQUEST: string;
-      WAITING_REMATCH: string;
       OPPONENT_LEFT: string;
    };
    initialized: boolean;
@@ -21,10 +19,7 @@ export class UIRenderer extends EventTarget {
       this.elements = {
          statusBar: null,
          gameStatus: null,
-         restartButton: null,
-         acceptRematchButton: null,
-         declineRematchButton: null,
-         cancelRematchButton: null,
+         resignButton: null,
          exitGameButton: null,
          menuOverlay: null,
          menuContent: null,
@@ -38,8 +33,6 @@ export class UIRenderer extends EventTarget {
       this.buttonStates = {
          IN_GAME: 'in_game',
          GAME_OVER: 'game_over',
-         REMATCH_REQUEST: 'rematch_request',
-         WAITING_REMATCH: 'waiting_rematch',
          OPPONENT_LEFT: 'opponent_left',
       };
 
@@ -72,10 +65,7 @@ export class UIRenderer extends EventTarget {
    cacheElements() {
       this.elements.statusBar = document.getElementById('statusBar');
       this.elements.gameStatus = document.getElementById('gameStatus');
-      this.elements.restartButton = document.getElementById('restartButton');
-      this.elements.acceptRematchButton = document.getElementById('acceptRematchButton');
-      this.elements.declineRematchButton = document.getElementById('declineRematchButton');
-      this.elements.cancelRematchButton = document.getElementById('cancelRematchButton');
+      this.elements.resignButton = document.getElementById('resignButton');
       this.elements.exitGameButton = document.getElementById('exitGameButton');
       this.elements.menuOverlay = document.getElementById('menuOverlay');
       this.elements.menuContent = document.getElementById('menuContent');
@@ -92,27 +82,9 @@ export class UIRenderer extends EventTarget {
    setupEventListeners() {
       // Status bar button listeners
 
-      if (this.elements.restartButton) {
-         this.elements.restartButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('rematchRequest'));
-         });
-      }
-
-      if (this.elements.acceptRematchButton) {
-         this.elements.acceptRematchButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('rematchAccept'));
-         });
-      }
-
-      if (this.elements.declineRematchButton) {
-         this.elements.declineRematchButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('rematchDecline'));
-         });
-      }
-
-      if (this.elements.cancelRematchButton) {
-         this.elements.cancelRematchButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('rematchCancel'));
+      if (this.elements.resignButton) {
+         this.elements.resignButton.addEventListener('click', () => {
+            this.dispatchEvent(new CustomEvent('resign'));
          });
       }
 
@@ -166,6 +138,13 @@ export class UIRenderer extends EventTarget {
             }
          });
       }
+
+      // Switch players event listener
+      this.addEventListener('switchPlayers', () => {
+         if (this.gameStateManager?.switchPlayers) {
+            this.gameStateManager.switchPlayers();
+         }
+      });
    }
 
    /**
@@ -216,31 +195,17 @@ export class UIRenderer extends EventTarget {
     */
    updateButtonState(state: string | null) {
       const buttons = {
-         restartButton: false,
-         acceptRematchButton: false,
-         declineRematchButton: false,
-         cancelRematchButton: false,
+         resignButton: false,
          exitGameButton: false,
       };
 
       switch (state) {
          case this.buttonStates.IN_GAME:
+            buttons.resignButton = true;
             buttons.exitGameButton = true;
             break;
 
          case this.buttonStates.GAME_OVER:
-            buttons.restartButton = true;
-            buttons.exitGameButton = true;
-            break;
-
-         case this.buttonStates.REMATCH_REQUEST:
-            buttons.acceptRematchButton = true;
-            buttons.declineRematchButton = true;
-            buttons.exitGameButton = true;
-            break;
-
-         case this.buttonStates.WAITING_REMATCH:
-            buttons.cancelRematchButton = true;
             buttons.exitGameButton = true;
             break;
 

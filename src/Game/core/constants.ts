@@ -39,6 +39,7 @@ export const GAME_CONSTANTS = {
       HOVER: '#888888',
       HOVER_X: '#ff6969',
       HOVER_O: '#a2bffe',
+      DRAW: '#fbbf24',
    },
 };
 

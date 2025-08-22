@@ -3,15 +3,11 @@
 export type GameMode = 'single' | 'bot' | 'multi' | null;
 export type Mark = 'X' | 'O';
 export type GamePhase = 'menu' | 'lobby' | 'playing' | 'paused' | 'ended';
-export type ButtonState =
-   | 'in_game'
-   | 'game_over'
-   | 'rematch_request'
-   | 'waiting_rematch'
-   | 'opponent_left'
-   | 'menu'
-   | 'lobby';
+export type ButtonState = 'in_game' | 'game_over' | 'opponent_left' | 'menu' | 'lobby';
 export type GameEndReason = 'completed' | 'draw' | 'abandoned' | 'opponent_left';
+export type WinMethod = 'line' | 'resignation' | 'timeout' | 'draw';
+export type WinningLineType = 'horizontal' | 'vertical' | 'diagonal' | 'anti-diagonal' | null;
+export type MenuState = 'main' | 'lobby' | 'game' | 'settings' | 'about';
 
 export interface GameState {
    // Index signature to allow Record<string, unknown> conversion
@@ -31,6 +27,8 @@ export interface GameState {
    isPaused: boolean;
    winner: Mark | null;
    winningCells: Array<[number, number]> | null;
+   winMethod: WinMethod | null;
+   winningLineType: WinningLineType;
 
    // Multiplayer state
    roomId: string;
@@ -84,6 +82,8 @@ export interface EndGameResult {
    winner?: Mark | null;
    winningCells?: Array<[number, number]> | null;
    reason?: GameEndReason;
+   winMethod?: WinMethod;
+   winningLineType?: WinningLineType;
 }
 
 export interface ResetGameOptions {
@@ -156,6 +156,8 @@ export interface TurnChangeDetail {
 export interface GameEndedDetail {
    winner: Mark | null;
    winningCells: Array<[number, number]> | null;
+   winMethod: WinMethod | null;
+   winningLineType: WinningLineType;
    state: GameState;
 }
 
@@ -201,8 +203,6 @@ export interface StateRestoredDetail {
 export interface ButtonStates {
    IN_GAME: 'in_game';
    GAME_OVER: 'game_over';
-   REMATCH_REQUEST: 'rematch_request';
-   WAITING_REMATCH: 'waiting_rematch';
    OPPONENT_LEFT: 'opponent_left';
    MENU: 'menu';
    LOBBY: 'lobby';

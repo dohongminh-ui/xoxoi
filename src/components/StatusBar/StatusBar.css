@@ -7,76 +7,168 @@
    padding: 10px 20px;
    border-radius: 25px;
    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-   display: flex;
-   align-items: center;
-   gap: 15px;
    z-index: 9999;
    pointer-events: none !important;
    border: 1px solid #000;
+   transition: all 0.3s ease;
+}
+
+.status-bar.expanded {
+   border-radius: 20px;
+   padding: 15px 25px;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .status-bar * {
    pointer-events: auto;
 }
 
+.status-bar-top {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 15px;
+   width: 100%;
+}
+
+.status-bar-top.has-expand-button {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 15px;
+   width: 100%;
+}
+
+.status-bar-top.has-expand-button .game-status {
+   text-align: left;
+   flex: 1;
+}
+
 .game-status {
    color: var(--text-dark);
    font-weight: normal;
+   text-align: center;
+   white-space: nowrap;
 }
 
-/* Button base styles */
-.status-bar button {
-   padding: 5px 15px;
+.expand-toggle {
+   padding: 5px 8px;
+   background: #666;
    color: #f8f7f6;
    border: none;
-   border-radius: 15px;
+   border-radius: 12px;
    cursor: pointer;
-   pointer-events: auto;
-   font-size: 14px;
-   transition: background-color 0.2s ease;
+   font-size: 12px;
+   transition: all 0.3s ease;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   min-width: 24px;
+   height: 24px;
 }
 
-.restart-button {
-   background: var(--color-1);
-}
-
-.restart-button:hover {
-   background: var(--color-1-hover);
-}
-
-.accept-rematch-button {
-   background: var(--color-1);
-}
-
-.accept-rematch-button:hover {
-   background: var(--color-1-hover);
-}
-
-.decline-rematch-button {
-   background: var(--danger-color);
-}
-
-.decline-rematch-button:hover {
-   background: var(--danger-color-hover);
-}
-
-.cancel-rematch-button {
-   background: var(--danger-color);
-}
-
-.cancel-rematch-button:hover {
-   background: var(--danger-color-hover);
-}
-
-.exit-game-button {
-   background: #666;
-}
-
-.exit-game-button:hover {
+.expand-toggle:hover {
    background: #555;
 }
 
-/* Room ID hover effects (for when gameStatus shows room ID) */
+.expand-toggle.expanded {
+   background: var(--color-1, #4caf50);
+}
+
+.expand-toggle.expanded:hover {
+   background: var(--color-1-hover, #45a049);
+}
+
+.expand-icon {
+   transition: transform 0.3s ease;
+   display: inline-block;
+   line-height: 1;
+}
+
+.expand-toggle.expanded .expand-icon {
+   transform: rotate(180deg);
+}
+
+.expandable-area {
+   overflow: hidden;
+   max-height: 0;
+   opacity: 0;
+   transition: all 0.125s ease;
+   margin-top: 0;
+}
+
+.expandable-area.expanded {
+   max-height: 500px;
+   opacity: 1;
+   margin-top: 15px;
+}
+
+.expandable-content {
+   width: 100%;
+}
+
+.expandable-title {
+   color: var(--text-dark);
+   font-weight: bold;
+   font-size: 14px;
+   margin-bottom: 12px;
+   padding-bottom: 8px;
+   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+   text-align: center;
+}
+
+.custom-content {
+   margin-bottom: 15px;
+   color: var(--text-dark);
+   text-align: left;
+}
+
+.custom-content:last-child {
+   margin-bottom: 0;
+}
+
+.button-section {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 8px;
+   justify-content: center;
+   align-items: center;
+}
+
+.button-section:not(:first-child) {
+   margin-top: 15px;
+   padding-top: 15px;
+   border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.status-button {
+   padding: 6px 12px;
+   color: #f8f7f6;
+   border: none;
+   border-radius: 12px;
+   cursor: pointer;
+   font-size: 13px;
+   transition: all 0.2s ease;
+   white-space: nowrap;
+   flex-shrink: 0;
+}
+
+.status-button.resign-button {
+   background: var(--danger-color);
+}
+
+.status-button.resign-button:hover {
+   background: var(--danger-color-hover);
+}
+
+.status-button.exit-game-button {
+   background: #666;
+}
+
+.status-button.exit-game-button:hover {
+   background: #555;
+}
+
 .game-status.room-id {
    transition: color 0.2s ease;
    cursor: pointer;
@@ -88,4 +180,24 @@
 
 .game-status.room-id:active {
    color: #4caf50;
+}
+
+@media (max-width: 480px) {
+   .status-bar {
+      left: 10px;
+      right: 10px;
+      transform: none;
+      min-width: auto;
+      max-width: calc(100vw - 20px);
+   }
+
+   .button-section {
+      flex-direction: column;
+      gap: 6px;
+   }
+
+   .status-button {
+      width: 100%;
+      text-align: center;
+   }
 }

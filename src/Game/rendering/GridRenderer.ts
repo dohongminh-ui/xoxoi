@@ -134,14 +134,15 @@ export class GridRenderer {
     * @returns {Promise} Promise that resolves when animation completes
     */
    animateWinningLine(cells: Array<[number, number]>): Promise<void> {
-      console.log('animateWinningLine called with:', cells);
+      console.log('GridRenderer: Starting winning line animation for cells:', cells);
       return new Promise<void>(resolve => {
          if (!cells || cells.length === 0) {
+            console.log('GridRenderer: No cells provided, resolving immediately');
             resolve();
             return;
          }
 
-         console.log('Starting winning animation for', cells.length, 'cells');
+         console.log('GridRenderer: Animating winning line for', cells.length, 'cells');
 
          this.winningCells = cells;
          const graphics = new PIXI.Graphics();
@@ -158,13 +159,17 @@ export class GridRenderer {
          const endY = endCell[1] * CELL_SIZE + CELL_SIZE / 2;
 
          let progress = 0;
+         const frameTime = 16.67; // ~60fps
+         const totalFrames = GAME_CONSTANTS.STRIKE_ANIMATION_DURATION / frameTime;
+
          const animate = () => {
             if (progress >= 1) {
+               console.log('GridRenderer: Winning line animation completed');
                resolve();
                return;
             }
 
-            progress += 1 / (GAME_CONSTANTS.STRIKE_ANIMATION_DURATION / 16.67);
+            progress += 1 / totalFrames;
             progress = Math.min(progress, 1);
 
             graphics.clear();
@@ -186,7 +191,8 @@ export class GridRenderer {
             if (progress < 1) {
                requestAnimationFrame(animate);
             } else {
-               return resolve();
+               console.log('GridRenderer: Winning line animation completed');
+               resolve();
             }
          };
 

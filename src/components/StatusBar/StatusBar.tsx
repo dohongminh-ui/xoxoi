@@ -1,67 +1,89 @@
+import {useState} from 'react';
+import type {ReactNode} from 'react';
 import './StatusBar.css';
 
 type StatusBarProps = {
    gameStatus?: string;
-   showRestartButton?: boolean;
-   showAcceptRematchButton?: boolean;
-   showDeclineRematchButton?: boolean;
-   showCancelRematchButton?: boolean;
    showExitGameButton?: boolean;
-   onRestart?: () => void;
-   onAcceptRematch?: () => void;
-   onDeclineRematch?: () => void;
-   onCancelRematch?: () => void;
+   showResignButton?: boolean;
    onExitGame?: () => void;
+   onResign?: () => void;
+   expandableContent?: ReactNode;
+   expandableTitle?: string;
+   alwaysShowExpandButton?: boolean;
 };
 
 const StatusBar = ({
    gameStatus = 'toe',
-   showRestartButton = false,
-   showAcceptRematchButton = false,
-   showDeclineRematchButton = false,
-   showCancelRematchButton = false,
    showExitGameButton = false,
-   onRestart,
-   onAcceptRematch,
-   onDeclineRematch,
-   onCancelRematch,
+   showResignButton = false,
+   onResign,
    onExitGame,
+   expandableContent,
+   expandableTitle,
+   alwaysShowExpandButton = false,
 }: StatusBarProps) => {
+   const [isExpanded, setIsExpanded] = useState(false);
+
+   const hasAnyButton = showResignButton || showExitGameButton;
+   const shouldShowExpandButton = alwaysShowExpandButton || hasAnyButton || expandableContent;
+
+   const handleButtonClick = (callback?: () => void) => {
+      callback?.();
+      // dont auto-collapse if theres custom expandable content
+      if (!expandableContent) {
+         setIsExpanded(false);
+      }
+   };
+
    return (
-      <div className='status-bar noselect' id='statusBar'>
-         <span className='game-status' id='gameStatus'>
-            {gameStatus}
-         </span>
+      <div className={`status-bar noselect ${isExpanded ? 'expanded' : ''}`} id='statusBar'>
+         <div className={`status-bar-top ${shouldShowExpandButton ? 'has-expand-button' : ''}`}>
+            <span className='game-status' id='gameStatus'>
+               {gameStatus}
+            </span>
 
-         {showRestartButton && (
-            <button className='restart-button' onClick={onRestart}>
-               Rematch
-            </button>
-         )}
+            {shouldShowExpandButton && (
+               <button
+                  className={`expand-toggle ${isExpanded ? 'expanded' : ''}`}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  aria-expanded={isExpanded}>
+                  <span className='expand-icon'>▼</span>
+               </button>
+            )}
+         </div>
 
-         {showAcceptRematchButton && (
-            <button className='accept-rematch-button' onClick={onAcceptRematch}>
-               Accept
-            </button>
-         )}
+         {/* expandable content area */}
+         <div className={`expandable-area ${isExpanded ? 'expanded' : ''}`}>
+            <div className='expandable-content'>
+               {/* title section */}
+               {expandableTitle && <div className='expandable-title'>{expandableTitle}</div>}
 
-         {showDeclineRematchButton && (
-            <button className='decline-rematch-button' onClick={onDeclineRematch}>
-               Decline
-            </button>
-         )}
+               {/* custom expandable content */}
+               {expandableContent && <div className='custom-content'>{expandableContent}</div>}
 
-         {showCancelRematchButton && (
-            <button className='cancel-rematch-button' onClick={onCancelRematch}>
-               Cancel
-            </button>
-         )}
+               {/* button section */}
+               {hasAnyButton && (
+                  <div className='button-section'>
+                     {showResignButton && (
+                        <button
+                           className='status-button resign-button'
+                           onClick={() => handleButtonClick(onResign)}>
+                           Resign
+                        </button>
+                     )}
 
-         {showExitGameButton && (
-            <button className='exit-game-button' onClick={onExitGame}>
-               Exit
-            </button>
-         )}
+                     {showExitGameButton && (
+                        <button
+                           className='status-button exit-game-button'
+                           onClick={() => handleButtonClick(onExitGame)}>
+                           Exit
+                        </button>
+                     )}
+                  </div>
+               )}
+            </div>
+         </div>
       </div>
    );
 };

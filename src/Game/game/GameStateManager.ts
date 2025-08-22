@@ -5,6 +5,8 @@ import type {
    GamePhase,
    ButtonState,
    GameEndReason,
+   WinMethod,
+   WinningLineType,
    StateChanges,
    StartGameOptions,
    EndGameResult,
@@ -30,6 +32,7 @@ import type {
    MenuStates,
    GamePhases,
 } from '../../types/state';
+import {formatDuration} from '../core/utils';
 
 /**
  * GameStateManager centralizes all game state management
@@ -63,6 +66,8 @@ export class GameStateManager extends EventTarget {
          isPaused: false,
          winner: null,
          winningCells: null,
+         winMethod: null,
+         winningLineType: null,
 
          // Multiplayer state
          roomId: '',
@@ -103,8 +108,6 @@ export class GameStateManager extends EventTarget {
       this.BUTTON_STATES = {
          IN_GAME: 'in_game',
          GAME_OVER: 'game_over',
-         REMATCH_REQUEST: 'rematch_request',
-         WAITING_REMATCH: 'waiting_rematch',
          OPPONENT_LEFT: 'opponent_left',
          MENU: 'menu',
          LOBBY: 'lobby',
@@ -315,6 +318,8 @@ export class GameStateManager extends EventTarget {
                detail: {
                   winner: this.state.winner,
                   winningCells: this.state.winningCells,
+                  winMethod: this.state.winMethod,
+                  winningLineType: this.state.winningLineType,
                   state,
                } as GameEndedDetail,
             })
@@ -386,6 +391,8 @@ export class GameStateManager extends EventTarget {
          isPaused: false,
          winner: null,
          winningCells: null,
+         winMethod: null,
+         winningLineType: null,
          roomId: mode === 'multi' ? roomId : '',
          hasOpponent: mode === 'multi' ? hasOpponent : false,
          isHost: mode === 'multi' ? isHost : false,
@@ -424,18 +431,105 @@ export class GameStateManager extends EventTarget {
    }
 
    /**
+    * Analyze winning line type based on winning cells
+    * @param {Array<[number, number]> | null} winningCells - Array of winning cell coordinates
+    * @returns {WinningLineType} Type of winning line
+    */
+   private analyzeWinningLineType(winningCells: Array<[number, number]> | null): WinningLineType {
+      if (!winningCells || winningCells.length < 2) {
+         return null;
+      }
+
+      // Sort cells by x coordinate first, then by y coordinate for consistent analysis
+      const sortedCells = [...winningCells].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+
+      const firstCell = sortedCells[0]!;
+      const secondCell = sortedCells[1]!;
+
+      const deltaX = secondCell[0] - firstCell[0];
+      const deltaY = secondCell[1] - firstCell[1];
+
+      // Horizontal line (same Y, different X)
+      if (deltaY === 0 && deltaX !== 0) {
+         return 'horizontal';
+      }
+
+      // Vertical line (same X, different Y)
+      if (deltaX === 0 && deltaY !== 0) {
+         return 'vertical';
+      }
+
+      // Diagonal lines (equal absolute deltas)
+      if (Math.abs(deltaX) === Math.abs(deltaY)) {
+         // Main diagonal (top-left to bottom-right): deltaX and deltaY have same sign
+         if (deltaX === deltaY) {
+            return 'diagonal';
+         }
+         // Anti-diagonal (top-right to bottom-left): deltaX and deltaY have opposite signs
+         if (deltaX === -deltaY) {
+            return 'anti-diagonal';
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Determine win method based on game result
+    * @param {Mark | null} winner - Game winner
+    * @param {GameEndReason} reason - End reason
+    * @param {Array<[number, number]> | null} winningCells - Winning cells
+    * @returns {WinMethod} Win method
+    */
+   private determineWinMethod(
+      winner: Mark | null,
+      reason: GameEndReason,
+      winningCells: Array<[number, number]> | null
+   ): WinMethod {
+      if (!winner) {
+         return 'draw';
+      }
+
+      switch (reason) {
+         case 'abandoned':
+         case 'opponent_left':
+            return 'resignation';
+         case 'draw':
+            return 'draw';
+         case 'completed':
+         default:
+            return winningCells && winningCells.length > 0 ? 'line' : 'timeout';
+      }
+   }
+
+   /**
     * End the current game
     * @param {EndGameResult} result - Game result
     */
    endGame(result: EndGameResult = {}) {
-      const {winner = null, winningCells = null, reason = 'completed'} = result;
+      const {
+         winner = null,
+         winningCells = null,
+         reason = 'completed',
+         winMethod: providedWinMethod,
+         winningLineType: providedWinningLineType,
+      } = result;
+
+      // Determine win method and winning line type
+      const winMethod = providedWinMethod || this.determineWinMethod(winner, reason, winningCells);
+      const winningLineType = providedWinningLineType || this.analyzeWinningLineType(winningCells);
+
+      // Calculate final game duration
+      const finalDuration = this.calculateCurrentDuration();
 
       this.set({
          isGameOver: true,
          gamePhase: this.GAME_PHASES.ENDED,
          winner,
          winningCells,
-         gameDuration: Date.now() - (this.state.gameStartTime || Date.now()),
+         winMethod,
+         winningLineType,
+         gameDuration: finalDuration,
          buttonState: this.BUTTON_STATES.GAME_OVER,
          statusMessage: this.getGameEndMessage(winner, reason),
       });
@@ -453,7 +547,7 @@ export class GameStateManager extends EventTarget {
    /**
     * Switch player turns
     */
-   switchTurn() {
+   switchPlayers() {
       const newPlayer: Mark = this.state.currentPlayer === 'X' ? 'O' : 'X';
       this.set({
          currentPlayer: newPlayer,
@@ -487,8 +581,11 @@ export class GameStateManager extends EventTarget {
          isPaused: false,
          winner: null,
          winningCells: null,
+         winMethod: null,
+         winningLineType: null,
          moveCount: 0,
          gameStartTime: Date.now(),
+         gameDuration: 0,
          currentMenu: returnToMenu ? this.MENU_STATES.MAIN : this.MENU_STATES.GAME,
          buttonState: returnToMenu ? this.BUTTON_STATES.MENU : this.BUTTON_STATES.IN_GAME,
          statusMessage: returnToMenu
@@ -572,34 +669,34 @@ export class GameStateManager extends EventTarget {
    }
 
    /**
-    * Get game end message
+    * Get game end message for status bar
     * @param {Mark | null} winner - Game winner
     * @param {GameEndReason} reason - End reason
-    * @returns {string} End message
+    * @returns {string} Brief end message for status bar
     */
    getGameEndMessage(winner: Mark | null, reason: GameEndReason): string {
       if (!winner) {
          switch (reason) {
             case 'draw':
-               return 'Game ended in a draw!';
+               return 'Draw Game';
             case 'abandoned':
-               return 'Game abandoned';
+               return 'Game Abandoned';
             case 'opponent_left':
-               return 'Opponent left the game';
+               return 'Opponent Left';
             default:
-               return 'Game ended';
+               return 'Game Ended';
          }
       }
 
       switch (this.state.gameMode) {
          case 'single':
-            return `${winner} wins!`;
+            return `${winner} Wins!`;
          case 'bot':
-            return winner === 'X' ? 'You win!' : 'Bot wins!';
+            return winner === 'X' ? 'You Win!' : 'Bot Wins!';
          case 'multi':
-            return winner === this.state.playerMark ? 'You win!' : 'Opponent wins!';
+            return winner === this.state.playerMark ? 'You Win!' : 'Opponent Wins!';
          default:
-            return `${winner} wins!`;
+            return 'Game Over!';
       }
    }
 
@@ -701,7 +798,7 @@ export class GameStateManager extends EventTarget {
    getGameStats(): GameStats {
       return {
          gameMode: this.state.gameMode,
-         duration: this.state.gameDuration || Date.now() - (this.state.gameStartTime || Date.now()),
+         duration: this.calculateCurrentDuration(),
          moveCount: this.state.moveCount,
          isGameOver: this.state.isGameOver,
          winner: this.state.winner,
@@ -710,10 +807,95 @@ export class GameStateManager extends EventTarget {
    }
 
    /**
+    * Calculate current game duration in milliseconds
+    * @returns {number} Duration in milliseconds
+    */
+   calculateCurrentDuration(): number {
+      if (this.state.isGameOver && this.state.gameDuration > 0) {
+         // Game is over, return the final duration
+         return this.state.gameDuration;
+      }
+
+      if (!this.state.gameStartTime) {
+         return 0;
+      }
+
+      // Game is still active, calculate current duration
+      return Date.now() - this.state.gameStartTime;
+   }
+
+   /**
+    * Get formatted current game duration
+    * @returns {string} Formatted duration string
+    */
+   getFormattedDuration(): string {
+      return formatDuration(this.calculateCurrentDuration());
+   }
+
+   /**
+    * Convert game mode to display label
+    * @param {GameMode} mode - Game mode
+    * @returns {string} Display label
+    */
+   getGameModeLabel(mode: GameMode = this.state.gameMode): string {
+      switch (mode) {
+         case 'bot':
+            return 'vs Bot';
+         case 'multi':
+            return 'Multiplayer';
+         case 'single':
+            return 'Singleplayer';
+         default:
+            return 'Unknown';
+      }
+   }
+
+   /**
+    * Get grid size display string for infinite grid
+    * @returns {string} Grid size display
+    */
+   getGridSizeDisplay(): string {
+      // For infinite grid, we show the infinity symbol
+      // In the future, this could be enhanced to show actual bounds or active area
+      return '∞';
+   }
+
+   /**
+    * Get comprehensive game statistics for display
+    * @returns {object} Comprehensive game stats
+    */
+   getDisplayStats(): object {
+      return {
+         moves: this.state.moveCount,
+         duration: this.getFormattedDuration(),
+         gridSize: this.getGridSizeDisplay(),
+         gameMode: this.getGameModeLabel(),
+      };
+   }
+
+   /**
     * Increment move count
     */
    incrementMoveCount() {
       this.set({moveCount: this.state.moveCount + 1});
+   }
+
+   /**
+    * Synchronize move count with actual game state
+    * This method can be called to ensure move count is accurate
+    * @param {number} actualMoveCount - The actual number of moves made
+    */
+   syncMoveCount(actualMoveCount: number) {
+      if (actualMoveCount !== this.state.moveCount) {
+         this.set({moveCount: actualMoveCount});
+      }
+   }
+
+   /**
+    * Reset move count to zero
+    */
+   resetMoveCount() {
+      this.set({moveCount: 0});
    }
 
    /**
