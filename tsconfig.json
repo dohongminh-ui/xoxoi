@@ -41,5 +41,5 @@
       "resolveJsonModule": true
    },
    "include": ["src", "server", "vite.config.ts"],
-   "exclude": ["dist", "node_modules", "src/Game/legacy"]
+   "exclude": ["dist", "node_modules"]
 }

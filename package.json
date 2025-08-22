@@ -9,7 +9,7 @@
       "backend:build": "tsc -p tsconfig.server.json",
       "frontend": "vite",
       "dev": "concurrently \"tsc -w -p tsconfig.server.json\" \"vite\"",
-      "build": "tsc -p tsconfig.server.json && vite build",
+      "build": "vite build && tsc -p tsconfig.server.json",
       "preview": "concurrently \"node dist/server/app.js\" \"vite preview\"",
       "type-check": "tsc -p tsconfig.json --noEmit",
       "test": "jest",
