@@ -2,7 +2,7 @@
 
 export type GameMode = 'single' | 'bot' | 'multi' | null;
 export type Mark = 'X' | 'O';
-export type GamePhase = 'menu' | 'lobby' | 'playing' | 'paused' | 'ended';
+export type GamePhase = 'menu' | 'lobby' | 'playing' | 'ended';
 export type ButtonState = 'in_game' | 'game_over' | 'opponent_left' | 'menu' | 'lobby';
 export type GameEndReason = 'completed' | 'draw' | 'abandoned' | 'opponent_left';
 export type WinMethod = 'line' | 'resignation' | 'timeout' | 'draw';
@@ -24,7 +24,6 @@ export interface GameState {
 
    // Game status
    isGameOver: boolean;
-   isPaused: boolean;
    winner: Mark | null;
    winningCells: Array<[number, number]> | null;
    winMethod: WinMethod | null;
@@ -220,6 +219,5 @@ export interface GamePhases {
    MENU: 'menu';
    LOBBY: 'lobby';
    PLAYING: 'playing';
-   PAUSED: 'paused';
    ENDED: 'ended';
 }

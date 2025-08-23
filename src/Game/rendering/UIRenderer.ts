@@ -1,15 +1,10 @@
 /**
- * Handles all UI rendering and interactions including menus, buttons, status bar, and overlays
+ * Handles all UI rendering and interactions including menus, buttons, and overlays
  */
 
 export class UIRenderer extends EventTarget {
    gameStateManager: any;
    elements: Record<string, any>;
-   buttonStates: {
-      IN_GAME: string;
-      GAME_OVER: string;
-      OPPONENT_LEFT: string;
-   };
    initialized: boolean;
    constructor(gameStateManager: any) {
       super();
@@ -17,10 +12,6 @@ export class UIRenderer extends EventTarget {
       this.gameStateManager = gameStateManager;
 
       this.elements = {
-         statusBar: null,
-         gameStatus: null,
-         resignButton: null,
-         exitGameButton: null,
          menuOverlay: null,
          menuContent: null,
          singlePlayerBtn: null,
@@ -28,12 +19,6 @@ export class UIRenderer extends EventTarget {
          createGameBtn: null,
          joinGameBtn: null,
          roomIdInput: null,
-      };
-
-      this.buttonStates = {
-         IN_GAME: 'in_game',
-         GAME_OVER: 'game_over',
-         OPPONENT_LEFT: 'opponent_left',
       };
 
       this.initialized = false;
@@ -63,10 +48,6 @@ export class UIRenderer extends EventTarget {
     * Cache DOM elements for performance
     */
    cacheElements() {
-      this.elements.statusBar = document.getElementById('statusBar');
-      this.elements.gameStatus = document.getElementById('gameStatus');
-      this.elements.resignButton = document.getElementById('resignButton');
-      this.elements.exitGameButton = document.getElementById('exitGameButton');
       this.elements.menuOverlay = document.getElementById('menuOverlay');
       this.elements.menuContent = document.getElementById('menuContent');
       this.elements.singlePlayerBtn = document.getElementById('singlePlayerBtn');
@@ -80,22 +61,7 @@ export class UIRenderer extends EventTarget {
     * Setup event listeners for UI interactions
     */
    setupEventListeners() {
-      // Status bar button listeners
-
-      if (this.elements.resignButton) {
-         this.elements.resignButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('resign'));
-         });
-      }
-
-      if (this.elements.exitGameButton) {
-         this.elements.exitGameButton.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('exitGame'));
-         });
-      }
-
       // Menu button listeners
-
       if (this.elements.singlePlayerBtn) {
          this.elements.singlePlayerBtn.addEventListener('click', () => {
             this.dispatchEvent(new CustomEvent('startSingle'));
@@ -162,10 +128,7 @@ export class UIRenderer extends EventTarget {
          this.updateUI();
       });
       gsm.addEventListener('gameStarted', (e: any) => {
-         this.updateGameStatus(`Game Started - ${e.detail.mode}`);
          this.hideMenu();
-
-         this.updateButtonState(this.buttonStates.IN_GAME);
       });
       gsm.addEventListener('gameEnded', () => {
          this.updateUI();
@@ -180,56 +143,9 @@ export class UIRenderer extends EventTarget {
          if (showMenu) this.showMenu();
          else this.hideMenu();
       });
-      gsm.addEventListener('stateButtonStateChanged', (e: any) => {
-         const {to} = e.detail;
-         this.updateButtonState(to);
-      });
       gsm.addEventListener('stateGameEnded', () => {
          this.updateUI();
       });
-   }
-
-   /**
-    * Update button visibility based on game state
-    * @param {string} state - Button state constant
-    */
-   updateButtonState(state: string | null) {
-      const buttons = {
-         resignButton: false,
-         exitGameButton: false,
-      };
-
-      switch (state) {
-         case this.buttonStates.IN_GAME:
-            buttons.resignButton = true;
-            buttons.exitGameButton = true;
-            break;
-
-         case this.buttonStates.GAME_OVER:
-            buttons.exitGameButton = true;
-            break;
-
-         case this.buttonStates.OPPONENT_LEFT:
-            buttons.exitGameButton = true;
-            break;
-      }
-
-      Object.entries(buttons).forEach(([buttonId, isVisible]) => {
-         const element = this.elements[buttonId];
-         if (element) {
-            element.style.display = isVisible ? 'block' : 'none';
-         }
-      });
-   }
-
-   /**
-    * Update game status text
-    * @param {string} text - Status text to display
-    */
-   updateGameStatus(text: string) {
-      if (this.elements.gameStatus) {
-         this.elements.gameStatus.textContent = text;
-      }
    }
 
    /**
@@ -289,16 +205,6 @@ export class UIRenderer extends EventTarget {
    }
 
    /**
-    * Update room ID display in various places
-    * @param {string} roomId - Room ID to display
-    */
-   updateRoomIdDisplay(roomId: string) {
-      if (roomId) {
-         this.updateGameStatus(`Room: ${roomId}`);
-      }
-   }
-
-   /**
     * Clear room ID input
     */
    clearRoomIdInput() {
@@ -330,24 +236,6 @@ export class UIRenderer extends EventTarget {
       // Update menu visibility
       if (state.showMenu) this.showMenu();
       else this.hideMenu();
-
-      // Update buttons from explicit buttonState when available; fallback to derived
-      if (state.buttonState) {
-         this.updateButtonState(state.buttonState);
-      } else if (state.isGameOver) {
-         this.updateButtonState(this.buttonStates.GAME_OVER);
-      } else if (state.gameMode && state.gameMode !== 'menu') {
-         this.updateButtonState(this.buttonStates.IN_GAME);
-      } else {
-         this.updateButtonState(null);
-      }
-
-      // Update status text from centralized statusMessage when present
-      if (state.statusMessage) {
-         this.updateGameStatus(state.statusMessage);
-      } else if (!state.gameMode || state.gameMode === 'menu') {
-         this.updateGameStatus('toe');
-      }
    }
 
    /**

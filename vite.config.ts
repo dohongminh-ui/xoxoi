@@ -1,5 +1,6 @@
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
+/// <reference types="vitest" />
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -54,5 +55,17 @@ export default defineConfig({
    // Define development environment variables
    define: {
       __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
+   },
+
+   // Test configuration
+   test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./src/setupTests.ts'],
+      css: {
+         modules: {
+            classNameStrategy: 'non-scoped',
+         },
+      },
    },
 });

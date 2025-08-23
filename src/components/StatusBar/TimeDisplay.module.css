@@ -1,0 +1,19 @@
+.timeDisplay {
+   display: flex;
+   align-items: center;
+   gap: var(--space-1-5);
+   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+   font-weight: 500;
+   font-size: var(--font-size-sm);
+   color: var(--color-text-primary);
+   line-height: var(--line-height-tight);
+   letter-spacing: 0.025em;
+   transition: var(--transition-colors);
+}
+
+/* Responsive design */
+@media (width <= 480px) {
+   .timeDisplay {
+      font-size: var(--font-size-xs);
+   }
+}

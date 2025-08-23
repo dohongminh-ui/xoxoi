@@ -7,6 +7,23 @@ type StatusBarProps = {
    showResignButton?: boolean;
    onExitGame?: () => void;
    onResign?: () => void;
+   // Enhanced properties
+   timeElapsed?: number;
+   gameMode?: string | null;
+   currentPlayer?: string;
+   playerMark?: string;
+   isMyTurn?: boolean;
+   connectionStatus?: 'connected' | 'reconnecting' | 'disconnected';
+   reconnectionAttempts?: number;
+   moveCount?: number;
+   gameStartTime?: number | null;
+   gameDuration?: number;
+   gamePhase?: string;
+   hasOpponent?: boolean;
+   roomId?: string;
+   isGameEnded?: boolean;
+   winner?: string | null;
+   isWaitingForOpponent?: boolean;
 };
 
 type MenuProps = {
@@ -41,9 +58,19 @@ const GameUI = ({statusBarState, statusBarActions, menuState, menuActions}: Game
       actions: gameEndActions,
    } = useGameEnd(ge);
 
+   // Determine if we should show time elapsed based on game state
+   const shouldShowTimeElapsed = Boolean(
+      statusBarState.gamePhase === 'playing' && statusBarState.gameStartTime
+   );
+
    return (
       <div className='ui-overlay'>
-         <StatusBar {...statusBarState} {...statusBarActions} isGameEnded={!!gameEndData} />
+         <StatusBar
+            {...statusBarState}
+            {...statusBarActions}
+            isGameEnded={!!gameEndData || !!statusBarState.isGameEnded}
+            showTimeElapsed={shouldShowTimeElapsed}
+         />
          <MainMenu {...menuState} {...menuActions} />
          {isGameEndVisible && gameEndData && (
             <GameEndMenu

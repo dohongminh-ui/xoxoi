@@ -1,5 +1,3 @@
-/* MainMenu component styles using CSS Modules and design tokens */
-
 .menuContent {
    background: var(--color-bg-glass);
    padding: var(--space-8);
