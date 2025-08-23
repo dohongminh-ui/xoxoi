@@ -43,7 +43,7 @@ const GameUI = ({statusBarState, statusBarActions, menuState, menuActions}: Game
 
    return (
       <div className='ui-overlay'>
-         <StatusBar {...statusBarState} {...statusBarActions} />
+         <StatusBar {...statusBarState} {...statusBarActions} isGameEnded={!!gameEndData} />
          <MainMenu {...menuState} {...menuActions} />
          {isGameEndVisible && gameEndData && (
             <GameEndMenu

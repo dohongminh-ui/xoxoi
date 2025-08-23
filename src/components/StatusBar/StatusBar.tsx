@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import type {ReactNode} from 'react';
 import styles from './StatusBar.module.css';
 import buttonStyles from '../../style/components/Button.module.css';
@@ -12,6 +12,7 @@ type StatusBarProps = {
    expandableContent?: ReactNode;
    expandableTitle?: string;
    alwaysShowExpandButton?: boolean;
+   isGameEnded?: boolean;
 };
 
 const StatusBar = ({
@@ -23,8 +24,16 @@ const StatusBar = ({
    expandableContent,
    expandableTitle,
    alwaysShowExpandButton = false,
+   isGameEnded = false,
 }: StatusBarProps) => {
    const [isExpanded, setIsExpanded] = useState(false);
+
+   // auto-collapse when game ends
+   useEffect(() => {
+      if (isGameEnded) {
+         setIsExpanded(false);
+      }
+   }, [isGameEnded]);
 
    const hasAnyButton = showResignButton || showExitGameButton;
    const shouldShowExpandButton = alwaysShowExpandButton || hasAnyButton || expandableContent;

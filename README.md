@@ -3,7 +3,7 @@
 ## Project Overview
 
 > [!IMPORTANT]
-> All of the things here are subject to change
+> Everything here is subject to change.
 
 This project is a feature-rich, multiplayer Tic-Tac-Toe game with advanced AI,
 real-time multiplayer capabilities, and comprehensive user management. The game
