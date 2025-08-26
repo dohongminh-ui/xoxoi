@@ -63,7 +63,6 @@ export class GameStateManager extends EventTarget {
 
          // Game status
          isGameOver: false,
-         isPaused: false,
          winner: null,
          winningCells: null,
          winMethod: null,
@@ -127,7 +126,6 @@ export class GameStateManager extends EventTarget {
          MENU: 'menu',
          LOBBY: 'lobby',
          PLAYING: 'playing',
-         PAUSED: 'paused',
          ENDED: 'ended',
       };
 
@@ -388,7 +386,6 @@ export class GameStateManager extends EventTarget {
          playerMark: mode === 'multi' ? playerMark : '',
          isMyTurn,
          isGameOver: false,
-         isPaused: false,
          winner: null,
          winningCells: null,
          winMethod: null,
@@ -578,7 +575,6 @@ export class GameStateManager extends EventTarget {
          currentPlayer: 'X',
          isMyTurn: this.state.gameMode === 'multi' ? this.state.playerMark === 'X' : true,
          isGameOver: false,
-         isPaused: false,
          winner: null,
          winningCells: null,
          winMethod: null,
@@ -768,11 +764,7 @@ export class GameStateManager extends EventTarget {
     * @returns {boolean} True if game is active
     */
    isGameActive(): boolean {
-      return (
-         this.state.gamePhase === this.GAME_PHASES.PLAYING &&
-         !this.state.isGameOver &&
-         !this.state.isPaused
-      );
+      return this.state.gamePhase === this.GAME_PHASES.PLAYING && !this.state.isGameOver;
    }
 
    /**

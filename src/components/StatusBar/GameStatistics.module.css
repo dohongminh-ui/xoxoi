@@ -1,0 +1,115 @@
+.statisticsSection {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+   gap: var(--space-3);
+   padding: var(--space-3) 0;
+   border-top: 1px solid var(--color-border-subtle);
+   margin-top: var(--space-3);
+}
+
+.statItem {
+   text-align: center;
+}
+
+.statValue {
+   font-weight: 600;
+   color: var(--color-text-primary);
+   font-size: var(--font-size-lg);
+   line-height: var(--line-height-tight);
+}
+
+.statLabel {
+   font-size: var(--font-size-xs);
+   color: var(--color-text-secondary);
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   margin-top: var(--space-1);
+}
+
+/* Connection status styling */
+.connectionStatus {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: var(--space-1-5);
+   font-size: var(--font-size-xs);
+   color: var(--color-text-secondary);
+}
+
+.connectionIndicator {
+   font-size: var(--font-size-sm);
+   line-height: 1;
+}
+
+.connectionIndicator.connected {
+   color: var(--color-success);
+}
+
+.connectionIndicator.reconnecting {
+   color: var(--color-warning);
+   animation: pulse 1.5s ease-in-out infinite;
+}
+
+.connectionIndicator.disconnected {
+   color: var(--color-danger);
+}
+
+.connectionLabel {
+   font-size: var(--font-size-xs);
+   white-space: nowrap;
+}
+
+/* Animations */
+@keyframes pulse {
+   0%,
+   100% {
+      opacity: 1;
+   }
+   50% {
+      opacity: 0.5;
+   }
+}
+
+/* Responsive design */
+@media (width <= 480px) {
+   .statisticsSection {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-2);
+   }
+
+   .statValue {
+      font-size: var(--font-size-base);
+   }
+
+   .connectionLabel {
+      font-size: var(--font-size-xs);
+   }
+}
+
+/* Inline statistics styling */
+.inlineStatistics {
+   display: flex;
+   align-items: center;
+   gap: var(--space-2);
+   font-size: var(--font-size-xs);
+   color: var(--color-text-secondary);
+}
+
+.inlineItem {
+   display: flex;
+   align-items: center;
+   gap: var(--space-1);
+   white-space: nowrap;
+}
+
+.inlineItem .connectionIndicator {
+   font-size: var(--font-size-xs);
+   margin-right: var(--space-0-5);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+   .connectionIndicator.reconnecting {
+      animation: none;
+   }
+}
