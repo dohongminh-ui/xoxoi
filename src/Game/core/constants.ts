@@ -29,6 +29,7 @@ export const GAME_CONSTANTS = {
 
    // Game rules
    WINNING_LENGTH: 5,
+   MIN_WINNING_LENGTH: 3,
 
    // Colors
    COLORS: {

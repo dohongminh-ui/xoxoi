@@ -64,11 +64,11 @@ export class GridRenderer {
       let endY = startY + Math.ceil(this.app.screen.height / (CELL_SIZE * scale)) + 40;
 
       // hard lock the grid if condition meet
-      if (!GRID_SIZE.INFINITE_X) {
+      if (!GAME_CONSTANTS.GRID_SIZE.INFINITE_X) {
          startX = 0;
          endX = GRID_SIZE.X;
       }
-      if (!GRID_SIZE.INFINITE_Y) {
+      if (!GAME_CONSTANTS.GRID_SIZE.INFINITE_Y) {
          startY = 0;
          endY = GRID_SIZE.Y;
       }

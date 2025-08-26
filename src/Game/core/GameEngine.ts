@@ -177,28 +177,50 @@ export class GameEngine {
       const constants = GAME_CONSTANTS;
 
       // Update grid size based on settings
-      if (settings.boardSize && settings.boardSize !== 3) {
-         // For infinite board, use large numbers
+      if (settings.customGrid) {
          if (settings.customGrid === 'infinite') {
-            constants.GRID_SIZE.X = 999;
-            constants.GRID_SIZE.Y = 999;
-            constants.GRID_SIZE.INFINITE_X = true;
-            constants.GRID_SIZE.INFINITE_Y = true;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_X = true;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_Y = true;
             console.log('Applied infinite grid settings');
-         } else {
-            // For fixed size boards
-            constants.GRID_SIZE.X = settings.boardSize;
-            constants.GRID_SIZE.Y = settings.boardSize;
-            constants.GRID_SIZE.INFINITE_X = false;
-            constants.GRID_SIZE.INFINITE_Y = false;
-            console.log(`Applied ${settings.boardSize}x${settings.boardSize} grid`);
+         } else if (settings.customGrid === '3x3') {
+            GAME_CONSTANTS.GRID_SIZE.X = 3;
+            GAME_CONSTANTS.GRID_SIZE.Y = 3;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_X = false;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_Y = false;
+            console.log('Applied 3x3 grid settings');
+         } else if (settings.customGrid === '5x5') {
+            GAME_CONSTANTS.GRID_SIZE.X = 5;
+            GAME_CONSTANTS.GRID_SIZE.Y = 5;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_X = false;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_Y = false;
+            console.log('Applied 5x5 grid settings');
+         } else if (settings.customGrid === 'custom' && settings.boardSize) {
+            GAME_CONSTANTS.GRID_SIZE.X = settings.boardSize;
+            GAME_CONSTANTS.GRID_SIZE.Y = settings.boardSize;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_X = false;
+            GAME_CONSTANTS.GRID_SIZE.INFINITE_Y = false;
+            console.log(`Applied ${settings.boardSize}x${settings.boardSize} custom grid`);
          }
       }
 
       // Update winning condition
       if (settings.winCondition) {
-         constants.WINNING_LENGTH = settings.winCondition;
-         console.log(`Applied win condition: ${settings.winCondition} in a row`);
+         let winCondition = settings.winCondition;
+
+         // For finite grids, win condition can't be larger than grid size
+         if (!GAME_CONSTANTS.GRID_SIZE.INFINITE_X && !GAME_CONSTANTS.GRID_SIZE.INFINITE_Y) {
+            const maxWin = Math.min(GAME_CONSTANTS.GRID_SIZE.X, GAME_CONSTANTS.GRID_SIZE.Y);
+            winCondition = Math.min(winCondition, maxWin);
+            console.log(
+               `Win condition adjusted from ${settings.winCondition} to ${winCondition} for ${GAME_CONSTANTS.GRID_SIZE.X}x${GAME_CONSTANTS.GRID_SIZE.Y} grid`
+            );
+         }
+
+         // Also ensure minimum win condition of 3
+         winCondition = Math.max(3, winCondition);
+
+         GAME_CONSTANTS.WINNING_LENGTH = winCondition;
+         console.log(`Applied win condition: ${winCondition} in a row`);
       }
 
       // Store other settings for components to use

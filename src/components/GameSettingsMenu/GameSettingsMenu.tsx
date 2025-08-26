@@ -113,9 +113,32 @@ const GameSettingsMenu: React.FC<GameSettingsMenuProps> = ({
                   <input
                      type='number'
                      min={3}
-                     max={20}
                      value={settings.boardSize}
-                     onChange={e => updateSetting('boardSize', parseInt(e.target.value) || 3)}
+                     onChange={e => {
+                        const value = e.target.value;
+                        if (value === '') {
+                           updateSetting('boardSize', '' as any);
+                        } else {
+                           const numValue = parseInt(value);
+                           if (!isNaN(numValue) && numValue >= 0) {
+                              updateSetting('boardSize', numValue);
+                           }
+                        }
+                     }}
+                     onBlur={e => {
+                        const value = parseInt(e.target.value) || 0;
+                        const correctedValue = Math.max(3, value);
+                        updateSetting('boardSize', correctedValue);
+                     }}
+                     onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                           const value = parseInt(e.currentTarget.value) || 0;
+                           const correctedValue = Math.max(3, value);
+                           updateSetting('boardSize', correctedValue);
+                           e.currentTarget.blur();
+                        }
+                     }}
+                     placeholder='3'
                   />
                </div>
             )}
@@ -177,7 +200,7 @@ const GameSettingsMenu: React.FC<GameSettingsMenuProps> = ({
                   <option value='custom'>Custom time</option>
                </select>
 
-               {/* FIXED: Custom timer input */}
+               {/* Custom timer input */}
                {isCustomTime && (
                   <div className='customInputGroup' style={{marginTop: '8px'}}>
                      <label>Minutes per turn:</label>
