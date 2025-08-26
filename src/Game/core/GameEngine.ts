@@ -168,6 +168,70 @@ export class GameEngine {
    }
 
    /**
+    * Apply game settings to the engine
+    */
+   private applyGameSettings(settings: any): void {
+      console.log('Applying game settings:', settings);
+
+      // Import the constants to modify them
+      const constants = GAME_CONSTANTS;
+
+      // Update grid size based on settings
+      if (settings.boardSize && settings.boardSize !== 3) {
+         // For infinite board, use large numbers
+         if (settings.customGrid === 'infinite') {
+            constants.GRID_SIZE.X = 999;
+            constants.GRID_SIZE.Y = 999;
+            constants.GRID_SIZE.INFINITE_X = true;
+            constants.GRID_SIZE.INFINITE_Y = true;
+            console.log('Applied infinite grid settings');
+         } else {
+            // For fixed size boards
+            constants.GRID_SIZE.X = settings.boardSize;
+            constants.GRID_SIZE.Y = settings.boardSize;
+            constants.GRID_SIZE.INFINITE_X = false;
+            constants.GRID_SIZE.INFINITE_Y = false;
+            console.log(`Applied ${settings.boardSize}x${settings.boardSize} grid`);
+         }
+      }
+
+      // Update winning condition
+      if (settings.winCondition) {
+         constants.WINNING_LENGTH = settings.winCondition;
+         console.log(`Applied win condition: ${settings.winCondition} in a row`);
+      }
+
+      // Store other settings for components to use
+      if (settings.timeLimitOption && settings.timeLimitOption !== 'none') {
+         console.log('Time limit set to:', settings.timeLimitOption, 'seconds');
+         // Store in a place where game logic can access it
+         (this as any).timeLimit = parseInt(settings.timeLimitOption) || 300;
+      }
+
+      if (settings.firstPlayer) {
+         console.log('First player setting:', settings.firstPlayer);
+         // Store for game logic to use when starting
+         (this as any).firstPlayerSetting = settings.firstPlayer;
+      }
+
+      if (settings.botDifficulty) {
+         console.log('Bot difficulty:', settings.botDifficulty);
+         // Store for bot controller to use
+         (this as any).botDifficulty = settings.botDifficulty;
+      }
+
+      // Force grid redraw with new settings
+      if (this.gridRenderer && this.cameraController) {
+         const cameraState = this.cameraController.getCameraState?.();
+         this.gridRenderer.drawGrid(
+            cameraState?.scale ?? 1,
+            cameraState?.x ?? 0,
+            cameraState?.y ?? 0
+         );
+      }
+   }
+
+   /**
     * Initialize all game components
     */
    initializeComponents(): void {
@@ -646,12 +710,28 @@ export class GameEngine {
    setupUIEventListeners(): void {
       if (!this.uiRenderer) return;
 
-      this.uiRenderer.addEventListener('startSingle', () => this.startSinglePlayerGame());
+      this.uiRenderer.addEventListener('startSingle', (event: Event) => {
+         const customEvent = event as CustomEvent;
+         const settings = customEvent.detail?.settings;
+         console.log('Received startSingle event with settings:', settings);
+         this.startSinglePlayerGame(settings);
+      });
 
-      this.uiRenderer.addEventListener('startBot', () => this.startBotGame());
+      this.uiRenderer.addEventListener('startBot', (event: Event) => {
+         const customEvent = event as CustomEvent;
+         const settings = customEvent.detail?.settings;
+         console.log('Received startBot event with settings:', settings);
+         this.startBotGame(settings);
+      });
 
-      this.uiRenderer.addEventListener('multiCreate', () => this.createMultiplayerGame());
+      this.uiRenderer.addEventListener('multiCreate', (event: Event) => {
+         const customEvent = event as CustomEvent;
+         const settings = customEvent.detail?.settings;
+         console.log('Received multiCreate event with settings:', settings);
+         this.createMultiplayerGame(settings);
+      });
 
+      // Keep the rest of your existing event listeners:
       this.uiRenderer.addEventListener('multiJoin', (event: Event) => {
          const uiEvent = event as UIEvent;
          const {roomId} = uiEvent.detail;
@@ -661,25 +741,19 @@ export class GameEngine {
       });
 
       this.uiRenderer.addEventListener('rematchRequest', () => this.gameLogic?.requestRematch?.());
-
       this.uiRenderer.addEventListener('rematchAccept', () =>
          this.networkManager?.acceptRematch?.()
       );
-
       this.uiRenderer.addEventListener('rematchDecline', () =>
          this.networkManager?.declineRematch?.()
       );
-
       this.uiRenderer.addEventListener('rematchCancel', () =>
          this.networkManager?.cancelRematch?.()
       );
-
       this.uiRenderer.addEventListener('exitGame', () => {
          this.leaveMultiplayerGame();
       });
-
       this.uiRenderer.addEventListener('shareGame', () => this.gameLogic?.handleShareGame?.());
-
       this.uiRenderer.addEventListener('newGame', () => this.gameLogic?.handleNewGame?.());
    }
 
@@ -763,7 +837,12 @@ export class GameEngine {
    /**
     * Start a single player game
     */
-   startSinglePlayerGame(): void {
+   startSinglePlayerGame(settings?: any): void {
+      // Apply settings if provided
+      if (settings) {
+         this.applyGameSettings(settings);
+      }
+
       this.gameStateManager?.startGame('single');
       this.gameLogic?.startGame('single');
       this.gridRenderer?.restart?.();
@@ -772,9 +851,14 @@ export class GameEngine {
    }
 
    /**
-    * Start a bot game
+    * Start a bot game with settings
     */
-   startBotGame(): void {
+   startBotGame(settings?: any): void {
+      // Apply settings if provided
+      if (settings) {
+         this.applyGameSettings(settings);
+      }
+
       this.gameStateManager?.startGame('bot');
       this.gameLogic?.startGame('bot');
       this.gridRenderer?.restart?.();
@@ -783,22 +867,16 @@ export class GameEngine {
    }
 
    /**
-    * Create a multiplayer room
+    * Create a multiplayer room with settings
     */
-   createMultiplayerGame(): boolean {
+   createMultiplayerGame(settings?: any): boolean {
+      // Apply settings if provided
+      if (settings) {
+         this.applyGameSettings(settings);
+      }
+
       if (this.networkManager) {
          return this.networkManager.createRoom();
-      }
-      return false;
-   }
-
-   /**
-    * Join a multiplayer room
-    * @param {string} roomId - Room ID to join
-    */
-   joinMultiplayerGame(roomId: string): boolean {
-      if (this.networkManager) {
-         return this.networkManager.joinRoom(roomId);
       }
       return false;
    }

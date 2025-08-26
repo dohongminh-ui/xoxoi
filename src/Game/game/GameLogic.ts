@@ -1,4 +1,4 @@
-import {WINNING_LENGTH, GRID_SIZE} from '../core/constants';
+import {GAME_CONSTANTS} from '../core/constants';
 import {coordKey, parseCoordKey} from '../core/utils';
 import type {Mark, MoveRecord, PotentialWinLine} from '../../types/engine';
 import type {
@@ -296,10 +296,16 @@ export class GameLogic extends EventTarget {
       }
 
       // Check if in bound
-      if (!GRID_SIZE.INFINITE_X && (cellX < 0 || cellX >= GRID_SIZE.X)) {
+      if (
+         !GAME_CONSTANTS.GRID_SIZE.INFINITE_X &&
+         (cellX < 0 || cellX >= GAME_CONSTANTS.GRID_SIZE.X)
+      ) {
          return {isValid: false, reason: 'Cell outside bound'};
       }
-      if (!GRID_SIZE.INFINITE_Y && (cellY < 0 || cellY >= GRID_SIZE.Y)) {
+      if (
+         !GAME_CONSTANTS.GRID_SIZE.INFINITE_Y &&
+         (cellY < 0 || cellY >= GAME_CONSTANTS.GRID_SIZE.Y)
+      ) {
          return {isValid: false, reason: 'Cell outside bound'};
       }
 
@@ -347,7 +353,7 @@ export class GameLogic extends EventTarget {
          // Check both directions from the placed mark
          for (let dir = -1; dir <= 1; dir += 2) {
             let consecutive = 0;
-            for (let i = 1; i < WINNING_LENGTH; i++) {
+            for (let i = 1; i < GAME_CONSTANTS.WINNING_LENGTH; i++) {
                const newX = cellX + dx * i * dir;
                const newY = cellY + dy * i * dir;
                const checkKey = coordKey(newX, newY);
@@ -380,7 +386,7 @@ export class GameLogic extends EventTarget {
          }
 
          // Check if we have enough in a row to win
-         if (count >= WINNING_LENGTH) {
+         if (count >= GAME_CONSTANTS.WINNING_LENGTH) {
             // Sort cells for consistent ordering
             cells.sort((a, b) => {
                if (a[0] === b[0]) return a[1] - b[1];
@@ -390,7 +396,7 @@ export class GameLogic extends EventTarget {
          }
 
          // Clean up potential wins that are now blocked
-         if (blocked === 2 && count < WINNING_LENGTH) {
+         if (blocked === 2 && count < GAME_CONSTANTS.WINNING_LENGTH) {
             const lineKey = `${dirKey},${cellX},${cellY}`;
             this.potentialWins.delete(lineKey);
          }
@@ -408,8 +414,8 @@ export class GameLogic extends EventTarget {
       // Instead, we could implement an user's specified time limit or other draw conditions
       // For now, return false as draws are impossible in infinite tic-tac-toe
       // Could be used when custom grid sizes are implemented or when a game hits the specified time limit
-      if (GRID_SIZE.INFINITE_X || GRID_SIZE.INFINITE_Y) return false;
-      const maxCell = GRID_SIZE.X * GRID_SIZE.Y;
+      if (GAME_CONSTANTS.GRID_SIZE.INFINITE_X || GAME_CONSTANTS.GRID_SIZE.INFINITE_Y) return false;
+      const maxCell = GAME_CONSTANTS.GRID_SIZE.X * GAME_CONSTANTS.GRID_SIZE.Y;
       if (this.placedMarks.size >= maxCell) return true;
       return false;
    }

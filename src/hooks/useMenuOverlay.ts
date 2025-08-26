@@ -1,12 +1,14 @@
 import {useState, useEffect} from 'react';
-import type {GameEngine} from '../Game/core/GameEngine';
-
+import {GameEngine} from '../Game/core/GameEngine';
+import type {GameMode, GameSettings} from '../types/game-settings';
 /**
  * Custom hook for managing menu overlay state and actions
  * Centralizes all menu logic and provides clean interface
  */
 export const useMenuOverlay = (gameEngine: GameEngine | null = null) => {
    const [isMenuVisible, setIsMenuVisible] = useState(true);
+   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
+   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
 
    useEffect(() => {
       const gsm = gameEngine?.gameStateManager;
@@ -39,62 +41,25 @@ export const useMenuOverlay = (gameEngine: GameEngine | null = null) => {
       };
    }, [gameEngine]);
 
+   const showSettingsMenu = (mode: GameMode) => {
+      setSelectedMode(mode);
+      setIsMenuVisible(false);
+      setIsSettingsVisible(true);
+   };
+
    const handleStartSinglePlayer = () => {
       console.log('Start single player clicked');
-      if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startSingle'));
-         if (gameEngine?.gameStateManager?.set) {
-            gameEngine.gameStateManager.set('showMenu', false);
-         } else {
-            setIsMenuVisible(false);
-         }
-      } else if ((gameEngine as any)?.startSinglePlayerGame) {
-         (gameEngine as any).startSinglePlayerGame();
-         if (gameEngine?.gameStateManager?.set) {
-            gameEngine.gameStateManager.set('showMenu', false);
-         } else {
-            setIsMenuVisible(false);
-         }
-      } else {
-         console.warn('Game engine or uiRenderer not available');
-      }
+      showSettingsMenu('singleplayer');
    };
 
    const handleStartBotGame = () => {
       console.log('Start bot game clicked');
-      if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startBot'));
-         if (gameEngine?.gameStateManager?.set) {
-            gameEngine.gameStateManager.set('showMenu', false);
-         } else {
-            setIsMenuVisible(false);
-         }
-      } else if ((gameEngine as any)?.startBotGame) {
-         (gameEngine as any).startBotGame();
-         if (gameEngine?.gameStateManager?.set) {
-            gameEngine.gameStateManager.set('showMenu', false);
-         } else {
-            setIsMenuVisible(false);
-         }
-      } else {
-         console.warn('Game engine or uiRenderer not available');
-      }
+      showSettingsMenu('bot');
    };
 
    const handleCreateMultiplayer = () => {
       console.log('Create multiplayer clicked');
-
-      if (gameEngine?.uiRenderer) {
-         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('multiCreate'));
-
-         if (gameEngine?.gameStateManager?.set) {
-            gameEngine.gameStateManager.set('showMenu', false);
-         } else {
-            setIsMenuVisible(false);
-         }
-      } else {
-         console.warn('Game engine or uiRenderer not available');
-      }
+      showSettingsMenu('multiplayer');
    };
 
    const handleJoinMultiplayer = (roomId: any) => {
@@ -117,6 +82,81 @@ export const useMenuOverlay = (gameEngine: GameEngine | null = null) => {
       }
    };
 
+   const startSinglePlayerGame = (settings: GameSettings) => {
+      console.log('Actually starting single player with settings:', settings);
+      if (gameEngine?.uiRenderer) {
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startSingle', {detail: {settings}}));
+
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+      } else if ((gameEngine as any)?.startSinglePlayerGame) {
+         (gameEngine as any).startSinglePlayerGame(settings);
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+      } else {
+         console.warn('Game engine or uiRenderer not available');
+      }
+   };
+
+   const startBotGame = (settings: GameSettings) => {
+      console.log('Actually starting bot game with settings:', settings);
+      if (gameEngine?.uiRenderer) {
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('startBot', {detail: {settings}}));
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+      } else if ((gameEngine as any)?.startBotGame) {
+         (gameEngine as any).startBotGame(settings);
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+      } else {
+         console.warn('Game engine or uiRenderer not available');
+      }
+   };
+
+   const startMultiplayerGame = (settings: GameSettings) => {
+      console.log('Actually starting multiplayer with settings:', settings);
+      if (gameEngine?.uiRenderer) {
+         gameEngine.uiRenderer.dispatchEvent(new CustomEvent('multiCreate', {detail: {settings}}));
+         if (gameEngine?.gameStateManager?.set) {
+            gameEngine.gameStateManager.set('showMenu', false);
+         } else {
+            setIsMenuVisible(false);
+         }
+      } else {
+         console.warn('Game engine or uiRenderer not available');
+      }
+   };
+
+   const handleStartGameWithSettings = (settings: GameSettings) => {
+      setIsSettingsVisible(false);
+
+      if (settings.mode === 'singleplayer') {
+         startSinglePlayerGame(settings);
+      } else if (settings.mode === 'bot') {
+         startBotGame(settings);
+      } else if (settings.mode === 'multiplayer') {
+         startMultiplayerGame(settings);
+      }
+   };
+
+   const handleCancelSettings = () => {
+      setIsMenuVisible(true);
+      setIsSettingsVisible(false);
+      setSelectedMode(null);
+   };
+
    const showMenu = () => {
       if (gameEngine?.gameStateManager?.set) {
          gameEngine.gameStateManager.set('showMenu', true);
@@ -136,11 +176,15 @@ export const useMenuOverlay = (gameEngine: GameEngine | null = null) => {
    return {
       // State
       isMenuVisible,
+      isSettingsVisible,
+      selectedMode,
       // Actions
       handleStartSinglePlayer,
       handleStartBotGame,
       handleCreateMultiplayer,
       handleJoinMultiplayer,
+      handleCancelSettings,
+      handleStartGameWithSettings,
       // Utilities
       showMenu,
       hideMenu,

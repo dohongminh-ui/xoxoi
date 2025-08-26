@@ -9,10 +9,14 @@ function App() {
    const {statusBarState, statusBarActions} = useStatusBar(gameEngine);
    const {
       isMenuVisible,
+      isSettingsVisible,
+      selectedMode,
       handleStartSinglePlayer,
       handleStartBotGame,
       handleCreateMultiplayer,
       handleJoinMultiplayer,
+      handleCancelSettings,
+      handleStartGameWithSettings,
    } = useMenuOverlay(gameEngine);
 
    useEffect(() => {
@@ -43,6 +47,14 @@ function App() {
                onStartBotGame: handleStartBotGame,
                onCreateMultiplayer: handleCreateMultiplayer,
                onJoinMultiplayer: handleJoinMultiplayer,
+            }}
+            settingsState={{
+               isVisible: isSettingsVisible,
+               selectedMode: selectedMode!,
+            }}
+            settingsActions={{
+               onStartGame: handleStartGameWithSettings,
+               onCancel: handleCancelSettings,
             }}
          />
       </div>
